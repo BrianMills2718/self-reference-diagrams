@@ -54,8 +54,12 @@ svg text{font-family:inherit;fill:var(--ink)}
 .port{cursor:pointer}
 .port.cur circle{stroke-width:5}
 .port.seen circle{stroke-width:3}
-.clash{font-size:13px}
-.clash.on{font-weight:700}
+.world{fill:color-mix(in srgb,var(--line) 14%,transparent);stroke:var(--line);stroke-width:1.25}
+.worldt{font-size:13px}
+.port.closed circle{fill:color-mix(in srgb,var(--line) 30%,transparent)!important;stroke:var(--line)!important}
+.port.closed text{fill:var(--quiet)!important}
+.port.closed{cursor:default}
+.slash{stroke:var(--line);stroke-width:1.5}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 8px}
 .hint{font-size:14px;color:var(--quiet)}
 .say{font-size:17px;min-height:52px;margin:8px 0 0}
@@ -73,7 +77,7 @@ svg text{font-family:inherit;fill:var(--ink)}
 <p class="sentence" id="sentence"></p>
 <p class="reads" id="reads"></p>
 <figure><svg id="dia" role="img" aria-label="Content diagram with value ports and implication arrows"></svg></figure>
-<div class="controls"><button id="step">Follow one arrow</button><button id="play">Play</button><button id="reset">Start over</button><span class="hint">Tap a T or F port to choose what to assume.</span></div>
+<div class="controls"><button id="step">Follow one arrow</button><button id="play">Play</button><button id="reset">Start over</button><button id="worldbtn" hidden></button><span class="hint">Tap a T or F port to choose what to assume.</span></div>
 <p class="say" id="say" aria-live="polite"></p>
 <p class="verdict" id="verdict"></p>
 <div class="key">
@@ -82,6 +86,7 @@ svg text{font-family:inherit;fill:var(--ink)}
 <span>Magenta arrow: “if this, then that”</span>
 <span>Red dashed: negation enclosure</span>
 <span>Thick blue: level-crossing reference</span>
+<span>Grey panel: the world; a crossed-out port is closed</span>
 </div>
 </main>
 <script>
@@ -90,9 +95,12 @@ const cap=(x,y,w,h,l)=>`<rect class="cap" x="${x}" y="${y}" width="${w}" height=
 const cut=(x,y,w,h)=>`<rect class="cutr" x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/><text class="cutt" x="${x+12}" y="${y+16}">not</text>`;
 const ref=(d,thick,lx,ly,l)=>`<path class="${thick?'refx':'edge'}" d="${d}" marker-end="url(#${thick?'mref':'medge'})"/>`+(l?`<text class="role" x="${lx}" y="${ly}" text-anchor="middle">${l}</text>`:'');
 const EX={
-snow:{label:'Snow is falling',sentence:'S: “Snow is falling.” (It is.)',reads:'S := Falling(thing that falls: Snow)',vb:'14 60 368 200',
- svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,106,'thing that falls')+`<text class="clash" id="clash" x="232" y="248" text-anchor="middle">✗ clashes with the weather</text>`,
- ports:{'S.T':[120,192],'S.F':[232,192]},arrows:[['S.F','clash','M232 204V230']]},
+snow:{label:'Snow is falling',sentence:'S: “Snow is falling.”',reads:'S := Falling(thing that falls: Snow)',vb:'14 60 368 240',facts:['snow'],
+ svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,106,'thing that falls')+`<rect class="world" x="24" y="236" width="344" height="44" rx="10"/><text class="worldt" id="worldtext" x="36" y="268"></text>`,
+ ports:{'S.T':[120,192],'S.F':[232,192],'snow.T':[120,236],'snow.F':[232,236]},arrows:()=>[['S.T','snow.T','M120 204V221'],['S.F','snow.F','M232 204V221']]},
+mixed:{label:'6 snow and liar',sentence:'S: “Snow is falling, and this sentence is false.”',reads:'S := Falling(thing that falls: Snow) ∧ ¬IsTrue(bearer: S)',vb:'14 60 368 276',facts:['snow'],
+ svg:bnd(24,72,344,148,'S')+cap(80,92,84,28,'Falling')+ref('M164 106H242',false,203,88,'thing that falls')+`<rect class="ent" x="244" y="92" width="64" height="28" rx="8"/><text x="276" y="111" text-anchor="middle">Snow</text>`+cut(40,134,136,64)+cap(56,152,96,30,'IsTrue')+ref('M152 167H365',true,262,159,'bearer')+`<rect class="world" x="24" y="276" width="344" height="44" rx="10"/><text class="worldt" id="worldtext" x="36" y="308"></text>`,
+ ports:{'S.T':[120,220],'S.F':[232,220],'snow.T':[120,276],'snow.F':[232,276]},arrows:w=>w.snow?[['S.T','snow.T','M120 232V261'],['S.T','S.F','M131 228Q176 250 220 229'],['S.F','S.T','M226 231Q176 268 127 231']]:[['S.T','snow.T','M120 232V261'],['S.T','S.F','M131 228Q176 250 220 229']]},
 'truth-teller':{label:'This statement is true',sentence:'S: “This statement is true.”',reads:'S := IsTrue(bearer: S)',vb:'382 60 368 200',
  svg:bnd(392,72,344,120,'S')+cap(440,114,96,36,'IsTrue')+ref('M536 132H733',true,636,122,'bearer'),
  ports:{'S.T':[488,192],'S.F':[640,192]},arrows:[['S.T','S.T','M478 204C462 248 514 248 498 205'],['S.F','S.F','M630 204C614 248 666 248 650 205']]},
@@ -112,40 +120,47 @@ mutual:{label:'A and B',sentence:'A: “B is false.”  B: “A is true.”',rea
  ports:{'Q.T':[520,620],'Q.F':[620,620],'S.T':[120,672],'S.F':[220,672]},
  arrows:[['Q.T','Q.T','M510 612C494 576 546 576 530 611'],['Q.T','S.T','M520 632C520 732 150 732 123 684'],['S.F','Q.T','M226 684C260 712 500 712 512 631'],['S.T','Q.F','M118 684C140 790 610 790 620 633']]}
 };
-const ORDER=['snow','truth-teller','liar','mutual','nested-a','nested-b'];
-const words=p=>p==='clash'?'a clash with the weather':p.split('.')[0]+' '+(p.endsWith('T')?'true':'false');
+const ORDER=['snow','truth-teller','liar','mutual','nested-a','nested-b','mixed'];
+const W={snow:true};
+const FACTWORDS={snow:['snow is falling','snow is not falling']};
+const isFact=p=>FACTWORDS[p.split('.')[0]]!==undefined;
+const closedP=p=>isFact(p)&&(W[p.split('.')[0]]?p.endsWith('F'):p.endsWith('T'));
+const ARR=ex=>typeof ex.arrows==='function'?ex.arrows(W):ex.arrows;
+const words=p=>isFact(p)?FACTWORDS[p.split('.')[0]][p.endsWith('T')?0:1]:p.split('.')[0]+' '+(p.endsWith('T')?'true':'false');
 const opp=p=>p.slice(0,-1)+(p.endsWith('T')?'F':'T');
 let cur,start=null,walk=null,timer=null;
 const picker=document.getElementById('picker'),dia=document.getElementById('dia'),say=document.getElementById('say');
 ORDER.forEach(id=>{const b=document.createElement('button');b.textContent=EX[id].label;b.dataset.ex=id;b.onclick=()=>{location.hash=id;};picker.appendChild(b);});
-const outs=(ex,p)=>ex.arrows.map((a,i)=>[a,i]).filter(([a])=>a[0]===p);
-function reach(ex,p){const seen=new Set([p]),st=[p];while(st.length){const q=st.pop();outs(ex,q).forEach(([a])=>{if(!seen.has(a[1])){seen.add(a[1]);if(a[1]!=='clash')st.push(a[1]);}});}return seen;}
-const ruled=(ex,p)=>{const r=reach(ex,p);return r.has(opp(p))||r.has('clash');};
-function verdict(ex){const sents=[...new Set(Object.keys(ex.ports).map(p=>p.split('.')[0]))];const ro=sents.map(s=>[ruled(ex,s+'.T'),ruled(ex,s+'.F')]);
+const outs=(ex,p)=>ARR(ex).map((a,i)=>[a,i]).filter(([a])=>a[0]===p);
+function reach(ex,p){const seen=new Set([p]),st=[p];while(st.length){const q=st.pop();outs(ex,q).forEach(([a])=>{if(!seen.has(a[1])){seen.add(a[1]);if(!closedP(a[1]))st.push(a[1]);}});}return seen;}
+const ruled=(ex,p)=>{const r=reach(ex,p);return r.has(opp(p))||[...r].some(closedP);};
+function verdict(ex){const sents=[...new Set(Object.keys(ex.ports).filter(p=>!isFact(p)).map(p=>p.split('.')[0]))];const ro=sents.map(s=>[ruled(ex,s+'.T'),ruled(ex,s+'.F')]);
  if(ro.some(([a,b])=>a&&b))return 'Contradiction loop: paradox. No consistent answer.';
  if(ro.every(([a,b])=>a!==b))return 'Exactly one consistent answer: '+sents.map((s,i)=>s+' '+(ro[i][0]?'false':'true')).join(', ')+'.';
  return 'More than one consistent answer: underdetermined.';}
-const tip=(ex,p)=>{const w=words(p);return w[0].toUpperCase()+w.slice(1)+'. '+(ruled(ex,p)?'Ruled out: following the arrows from here reaches '+(reach(ex,p).has('clash')?'a clash with the facts':words(opp(p)))+'.':'Not ruled out by following the arrows.')+' Tap to assume it.';};
+const tip=(ex,p)=>{const w=words(p);return w[0].toUpperCase()+w.slice(1)+'. '+(ruled(ex,p)?'Ruled out: following the arrows from here reaches '+([...reach(ex,p)].some(closedP)?'a port the world has closed':words(opp(p)))+'.':'Not ruled out by following the arrows.')+' Tap to assume it.';};
 function load(id){if(!EX[id])id='liar';stopPlay();cur=id;const ex=EX[id];
  picker.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ex===id));
  document.getElementById('sentence').textContent=ex.sentence;document.getElementById('reads').textContent='Reads back as '+ex.reads;
  let h='<defs><marker id="medge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker><marker id="mref" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ref)"/></marker><marker id="mimp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--imp)"/></marker></defs>'+ex.svg;
- ex.arrows.forEach((a,i)=>h+=`<g><title>If ${words(a[0])}, then ${words(a[1])}.</title><path d="${a[2]}" fill="none" stroke="transparent" stroke-width="14"/><path class="imp" id="ar${i}" d="${a[2]}" marker-end="url(#mimp)"/></g>`);
- Object.entries(ex.ports).forEach(([p,[x,y]])=>{const v=p.slice(-1);h+=`<g class="port ${v}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip(ex,p)}</title><circle cx="${x}" cy="${y}" r="12"/><text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
+ ARR(ex).forEach((a,i)=>h+=`<g><title>If ${words(a[0])}, then ${words(a[1])}.</title><path d="${a[2]}" fill="none" stroke="transparent" stroke-width="14"/><path class="imp" id="ar${i}" d="${a[2]}" marker-end="url(#mimp)"/></g>`);
+ Object.entries(ex.ports).forEach(([p,[x,y]])=>{const v=p.slice(-1);if(isFact(p)){const c=closedP(p);h+=`<g class="port ${v}${c?' closed':''}" data-p="${p}" data-fact="1"><title>The world: ${words(p)}. ${c?'Closed: the world rules this out.':'Open in this world.'}</title><circle cx="${x}" cy="${y}" r="12"/>${c?`<path class="slash" d="M${x-9} ${y+9}L${x+9} ${y-9}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;return;}h+=`<g class="port ${v}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip(ex,p)}</title><circle cx="${x}" cy="${y}" r="12"/><text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
  dia.setAttribute('viewBox',ex.vb);dia.innerHTML=h;
- dia.querySelectorAll('.port').forEach(g=>{const go=()=>{stopPlay();begin(g.dataset.p);};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};});
- document.getElementById('verdict').textContent=verdict(ex);
+ dia.querySelectorAll('.port:not([data-fact])').forEach(g=>{const go=()=>{stopPlay();begin(g.dataset.p);};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};});
+ const wt=document.getElementById('worldtext');if(wt)wt.textContent='World: Falling(thing that falls: Snow) '+(W.snow?'holds':'does not hold');
+ const wb=document.getElementById('worldbtn');wb.hidden=!ex.facts;wb.textContent=W.snow?'Change the world: stop the snow':'Change the world: make it snow';
+ document.getElementById('verdict').textContent=verdict(ex)+(ex.facts?' (In this world.)':'');
  begin(Object.keys(ex.ports)[0]);}
-function clear(){dia.querySelectorAll('.imp').forEach(a=>a.classList.remove('on'));dia.querySelectorAll('.port').forEach(g=>g.classList.remove('cur','seen'));const c=document.getElementById('clash');if(c)c.classList.remove('on');}
-function mark(p,cls){if(p==='clash'){const c=document.getElementById('clash');if(c)c.classList.add('on');return;}const g=dia.querySelector(`.port[data-p="${p}"]`);if(g)g.classList.add(cls);}
+function clear(){dia.querySelectorAll('.imp').forEach(a=>a.classList.remove('on'));dia.querySelectorAll('.port').forEach(g=>g.classList.remove('cur','seen'));}
+function mark(p,cls){const g=dia.querySelector(`.port[data-p="${p}"]`);if(g)g.classList.add(cls);}
 function begin(p){start=p;walk={frontier:[p],seen:new Set([p]),steps:0,loops:0};clear();mark(p,'cur');say.textContent='Assume '+words(p)+'. Follow the arrows to see what that forces.';}
 function step(){const ex=EX[cur];if(!walk)return;const nf=[],lines=[];
- walk.frontier.forEach(p=>{if(p==='clash')return;const os=outs(ex,p);os.forEach(([a,i])=>{document.getElementById('ar'+i).classList.add('on');lines.push('If '+words(p)+', then '+words(a[1])+'.');nf.push(a[1]);});});
+ walk.frontier.forEach(p=>{if(closedP(p))return;const os=outs(ex,p);os.forEach(([a,i])=>{document.getElementById('ar'+i).classList.add('on');lines.push('If '+words(p)+', then '+words(a[1])+'.');nf.push(a[1]);});});
  dia.querySelectorAll('.port.cur').forEach(g=>{g.classList.remove('cur');g.classList.add('seen');});
  if(!nf.length){say.textContent=walk.done||('Nothing more is forced. '+summary());stopPlay();return;}
  const fresh=nf.filter(q=>!walk.seen.has(q));nf.forEach(q=>mark(q,'cur'));fresh.forEach(q=>walk.seen.add(q));walk.steps++;
  let tail='';if(nf.includes(opp(start)))tail=' That contradicts the assumption that '+words(start)+'.';
- if(nf.includes('clash'))tail=' That clashes with the facts.';
+ if(nf.some(closedP))tail=' That contradicts the world: that port is closed.';
  if(!fresh.length){walk.loops++;tail+=' Back at a port we already reached, so the reasoning goes round this loop forever.';}
  say.textContent=lines.join(' ')+tail;
  walk.frontier=fresh.length?fresh:(timer&&walk.loops<3?nf:[]);
@@ -155,6 +170,7 @@ function stopPlay(){if(timer){clearInterval(timer);timer=null;}document.getEleme
 document.getElementById('step').onclick=()=>{stopPlay();step();};
 document.getElementById('play').onclick=()=>{if(timer){stopPlay();return;}begin(start);document.getElementById('play').textContent='Pause';if(matchMedia('(prefers-reduced-motion: reduce)').matches){for(let i=0;i<4&&walk.frontier.length;i++)step();stopPlay();return;}timer=setInterval(step,1300);};
 document.getElementById('reset').onclick=()=>begin(start);
+document.getElementById('worldbtn').onclick=()=>{W.snow=!W.snow;load(cur);};
 window.addEventListener('hashchange',()=>load(location.hash.slice(1)));
 load(location.hash.slice(1)||'liar');
 </script>
