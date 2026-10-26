@@ -90,8 +90,8 @@ const cap=(x,y,w,h,l)=>`<rect class="cap" x="${x}" y="${y}" width="${w}" height=
 const cut=(x,y,w,h)=>`<rect class="cutr" x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/><text class="cutt" x="${x+12}" y="${y+16}">not</text>`;
 const ref=(d,thick,lx,ly,l)=>`<path class="${thick?'refx':'edge'}" d="${d}" marker-end="url(#${thick?'mref':'medge'})"/>`+(l?`<text class="role" x="${lx}" y="${ly}" text-anchor="middle">${l}</text>`:'');
 const EX={
-snow:{label:'Snow is falling',sentence:'S: “Snow is falling.” (It is.)',reads:'S := Falling(thing: Snow)',vb:'14 60 368 200',
- svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,124,'thing')+`<text class="clash" id="clash" x="232" y="248" text-anchor="middle">✗ clashes with the weather</text>`,
+snow:{label:'Snow is falling',sentence:'S: “Snow is falling.” (It is.)',reads:'S := Falling(thing that falls: Snow)',vb:'14 60 368 200',
+ svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,106,'thing that falls')+`<text class="clash" id="clash" x="232" y="248" text-anchor="middle">✗ clashes with the weather</text>`,
  ports:{'S.T':[120,192],'S.F':[232,192]},arrows:[['S.F','clash','M232 204V230']]},
 'truth-teller':{label:'This statement is true',sentence:'S: “This statement is true.”',reads:'S := IsTrue(bearer: S)',vb:'382 60 368 200',
  svg:bnd(392,72,344,120,'S')+cap(440,114,96,36,'IsTrue')+ref('M536 132H733',true,636,122,'bearer'),
@@ -100,7 +100,7 @@ liar:{label:'This statement is false',sentence:'S: “This statement is false.�
  svg:bnd(24,372,344,120,'S')+cut(56,406,136,72)+cap(76,428,96,36,'IsTrue')+ref('M172 446H365',true,280,436,'bearer'),
  ports:{'S.T':[120,492],'S.F':[232,492]},arrows:[['S.T','S.F','M131 500Q176 528 220 501'],['S.F','S.T','M226 503Q176 560 127 503']]},
 mutual:{label:'A and B',sentence:'A: “B is false.”  B: “A is true.”',reads:'A := ¬IsTrue(bearer: B),  B := IsTrue(bearer: A)',vb:'382 360 368 240',
- svg:bnd(392,372,140,120,'A')+bnd(596,372,140,120,'B')+cut(406,400,112,64)+cap(422,420,80,32,'IsTrue')+cap(626,440,80,32,'IsTrue')+ref('M502 436H596',false)+ref('M626 456H532',false),
+ svg:bnd(392,372,140,120,'A')+bnd(596,372,140,120,'B')+cut(406,400,112,64)+cap(422,420,80,32,'IsTrue')+cap(626,440,80,32,'IsTrue')+ref('M502 436H596',false,564,428,'bearer')+ref('M626 456H532',false,564,472,'bearer'),
  ports:{'A.T':[432,492],'A.F':[492,492],'B.T':[636,492],'B.F':[696,492]},
  arrows:[['A.T','B.F','M432 505C440 610 690 610 696 506'],['B.F','A.F','M692 505C684 560 500 560 494 506'],['A.F','B.T','M496 504C506 530 626 530 634 506'],['B.T','A.T','M632 505C620 572 446 572 436 506']]},
 'nested-a':{label:'5a nested liar',sentence:'S: “The statement ‘this statement is false’ is false.” The inner sentence is Q.',reads:'S := ¬IsTrue(bearer: Q),  Q := ¬IsTrue(bearer: Q)',vb:'14 64 732 316',
