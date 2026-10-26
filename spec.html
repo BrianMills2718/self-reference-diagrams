@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A visual language for self-reference: spec v0.1</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css"></head><body>
+<nav class="top"><a href="./">How to read</a><a href="spec.html" aria-current="page">Spec</a><a href="stepper.html">Stepper</a></nav>
+<main><h1>A visual language for self-reference: spec v0.1</h1>
+<p class="byline">Brian Mills · October 2026</p>
+
+<h2>Goal and acceptance tests</h2>
+<p>The goal is a diagram language in which any sentence, including self-referential ones, can be read back into exactly one formula, and in which loops, contradictions and recursion are visible as shapes rather than worked out on the side.</p>
+<p>Every new rule or diagram has to pass two tests before it is accepted:</p>
+<ol>
+<li><strong>Recovery test.</strong> Following the reading rules in this spec, a reader who has never seen the original sentence gets back exactly one formula, and it  is the right one. If two readings are possible, the diagram fails.</li>
+<li><strong>Visibility test.</strong> Whether a sentence refers to itself, sits  in a loop, crosses levels, or is paradoxical can be seen by tracing the drawing, not only by converting it to a formula first.</li>
+</ol>
+<p>This spec is the single source of truth. A diagram that departs from it is wrong, and a change to the language means editing this document first and then redrawing.</p>
+<p>New to the diagrams? Start with the reader&#39;s guide, <a href="./">How to read the self-reference diagrams</a>, and come back here for the full rules.</p>
+<h2>Glossary</h2>
+<p>This spec uses the clearest name for each idea, even when it is long. The standard term from the literature is given beside it, so the spec can be read alongside the published work without translating.</p>
+<table>
+<thead>
+<tr>
+<th>Name in this spec</th>
+<th>Standard term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sentence</td>
+<td>Sentence</td>
+<td>A named piece of language, drawn as a boundary</td>
+</tr>
+<tr>
+<td>Content</td>
+<td>Proposition</td>
+<td>What a sentence says, drawn inside its boundary</td>
+</tr>
+<tr>
+<td>Truth-bearer (bearer)</td>
+<td>Truth-bearer</td>
+<td>The role of the sentence that an IsTrue relation is about</td>
+</tr>
+<tr>
+<td>Negation enclosure</td>
+<td>Cut (Peirce)</td>
+<td>Denies everything inside it</td>
+</tr>
+<tr>
+<td>Reference cycle</td>
+<td>Cycle in the reference graph</td>
+<td>Following reference edges leads back to the starting sentence</td>
+</tr>
+<tr>
+<td>Level-crossing reference</td>
+<td>No standard term; Hofstadter&#39;s strange loop</td>
+<td>A reference to a sentence that contains it</td>
+</tr>
+<tr>
+<td>Value port</td>
+<td>Literal, in an implication graph</td>
+<td>&quot;This sentence is true&quot; or &quot;this sentence is false&quot;, drawn as a small circle on the boundary</td>
+</tr>
+<tr>
+<td>Implication arrow</td>
+<td>Edge of an implication graph</td>
+<td>If the port it starts from holds, the port it ends at must hold</td>
+</tr>
+<tr>
+<td>Ruled out</td>
+<td>Refuted</td>
+<td>A value whose port leads to the opposite port of the same sentence, or to a clash with a known fact</td>
+</tr>
+<tr>
+<td>Consistent answer</td>
+<td>Fixed point (Kripke), or satisfying assignment</td>
+<td>A choice of true or false for every sentence that agrees with what each sentence says</td>
+</tr>
+<tr>
+<td>Contradiction loop</td>
+<td>Paradox</td>
+<td>A sentence&#39;s T port leads to its F port and back: no consistent answer</td>
+</tr>
+<tr>
+<td>More than one consistent answer</td>
+<td>Underdetermined</td>
+<td>Several answers agree with the sentences and nothing picks one</td>
+</tr>
+<tr>
+<td>Exactly one consistent answer</td>
+<td>No standard term</td>
+<td>Every sentence has one value ruled out, leaving a single answer</td>
+</tr>
+</tbody></table>
+<p>&quot;Exactly one consistent answer&quot; is deliberately not called &quot;grounded&quot;. Kripke uses grounded for something narrower: a sentence whose value traces back to facts that are not about truth, like &quot;snow is falling&quot;.</p>
+<h2>Vocabulary</h2>
+<p>The language has seven marks. Each has one look and one meaning, and no other mark may reuse that look.</p>
+<table>
+<thead>
+<tr>
+<th>Mark</th>
+<th>Drawn as</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Sentence boundary</td>
+<td>Solid rectangle with a one-letter name tag (S, A, Q) at its top left</td>
+<td>Defines a sentence. Everything inside its region, apart from nested boundaries, is its content: what the sentence says.</td>
+</tr>
+<tr>
+<td>Relation</td>
+<td>Dark blue capsule labelled with a predicate in PascalCase (Falling, IsTrue)</td>
+<td>One application of a predicate. Every role the predicate has must be filled exactly once.</td>
+</tr>
+<tr>
+<td>Entity</td>
+<td>Plain grey rounded box labelled with a name (Snow, Alice)</td>
+<td>A thing that can fill a role.</td>
+</tr>
+<tr>
+<td>Role edge</td>
+<td>Thin grey arrow from a relation to a participant, labelled with the role in lower case</td>
+<td>The participant at the arrowhead fills that role of the relation.</td>
+</tr>
+<tr>
+<td>Reference edge</td>
+<td>A role edge whose arrowhead lands on a sentence boundary line instead of an entity</td>
+<td>The participant is that whole sentence.</td>
+</tr>
+<tr>
+<td>Level-crossing reference</td>
+<td>A reference edge drawn thick and in bright blue</td>
+<td>A reference whose target boundary encloses the relation it starts from: the sentence is talking about something it is part of.</td>
+</tr>
+<tr>
+<td>Negation enclosure</td>
+<td>Red dashed rounded enclosure with a light tint and a small &quot;not&quot; tag</td>
+<td>Denies everything inside it, taken together. Peirce&#39;s standard term for it is a cut.</td>
+</tr>
+</tbody></table>
+<p>Two rules about placement complete the vocabulary. Items placed side by side in the same region are joined by <strong>and</strong>. A sentence boundary drawn inside another sentence&#39;s region is <strong>mentioned, not asserted</strong>: it is part of the outer sentence&#39;s wording, and the outer sentence says something about it only if one of its relations points at it.</p>
+<p>&quot;False&quot; is not a primitive. &quot;S is false&quot; is drawn as an IsTrue relation pointing at S, inside a negation enclosure. That way the number of negations on any path can be counted directly off the picture.</p>
+<p><strong>Sentence, content, bearer.</strong> A boundary is a sentence: a named piece of language. What sits inside it is its content, the proposition the sentence expresses. When IsTrue points at a sentence, its role is called <strong>bearer</strong>, short for truth-bearer, the thing whose truth is in question. Truth is predicated of sentences here, as in Kripke&#39;s theory, so the box is the thing and &quot;bearer&quot; is the job it does on the edge.</p>
+<h2>Reading rules</h2>
+<p>A well-formed diagram reads back into one definition per sentence boundary, and only one. The reader applies four rules, working from the outside in.</p>
+<ol>
+<li><strong>Boundary.</strong> For each boundary named X, write X := followed by the reading of its region. Nested boundaries inside the region are skipped here; each gets its own definition.</li>
+<li><strong>Region.</strong> The reading of a region is the readings of the relations and negation enclosures sitting directly in it, joined by ∧ (and). An empty region reads as ⊤ (true).</li>
+<li><strong>Negation enclosure.</strong> A negation enclosure reads as ¬( … ) wrapped around the reading of its own region.</li>
+<li><strong>Relation.</strong> A relation reads as its predicate name followed by its roles and their targets: Falling(thing: Snow). A target is an entity&#39;s name, or a sentence&#39;s name when the edge lands on a boundary.</li>
+</ol>
+<p>The diagram is well formed when four conditions hold. Boundaries and negation enclosures nest properly and never partly overlap. Every relation and every negation enclosure sits in exactly one innermost region. Every role edge has exactly one target. Every boundary has a unique name.</p>
+<p>These conditions are what make recovery unambiguous. Because enclosures never partly overlap, they form a tree, so the order of ∧ and ¬ is fixed by the drawing. Edges carry only &quot;who fills which role&quot;, so where lines cross or bend never changes the reading.</p>
+<p>The liar, for example, reads back as:</p>
+<pre><code class="language-latex">S := \neg\,\mathrm{IsTrue}(\text{bearer}: S)
+</code></pre>
+<h2>Seeing loops, paradox and ambiguity on one diagram</h2>
+<p>Paradox, ambiguity and loops are all shown on the content diagram itself, by two marks added on top of it. These marks never change the reading: remove them and the reading rules give exactly the same formulas.</p>
+<table>
+<thead>
+<tr>
+<th>Mark</th>
+<th>Drawn as</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Value ports</td>
+<td>Two small circles on the bottom edge of every sentence boundary: a green T port and an orange F port</td>
+<td>&quot;This sentence is true&quot; and &quot;this sentence is false&quot;, as two places the reasoning can be</td>
+</tr>
+<tr>
+<td>Implication arrow</td>
+<td>Magenta arrow from one port to another</td>
+<td>If the first holds, the second must hold</td>
+</tr>
+</tbody></table>
+<h3>Drawing the implication arrows</h3>
+<p>Arrows are derived from the content, never drawn freehand. Each port asks one question: if this sentence had this value, what would its content require?</p>
+<ol>
+<li><strong>True port.</strong> The content must hold. For each relation in the content that points at a sentence Y, draw an arrow to the port of Y that makes that relation hold. An IsTrue inside an even number of negation enclosures, including none, needs Y&#39;s T port; inside an odd number, Y&#39;s F port.</li>
+<li><strong>False port.</strong> The content must fail. When the content is a single IsTrue relation, draw one arrow to the opposite port from rule 1.</li>
+<li><strong>Facts.</strong> A relation about the world, like Falling(thing: Snow), points at no sentence. When the fact is known, the port that would contradict it gets an arrow to a ✗ clash mark.</li>
+</ol>
+<p>When the content says several things joined by <strong>and</strong>, the true port gets one arrow per relation, since all of them must hold. The false port only requires that at least one of them fails, which is an either/or. Version 0.1 has no mark for that yet (see Known limits). When the either/or is already satisfied by the port it starts from, no arrow is needed.</p>
+<h3>Reading the verdict</h3>
+<p>Follow the arrows from a port. A value is <strong>ruled out</strong> when its port leads, along arrows, to the opposite port of the same sentence or to a ✗ clash. That path is the &quot;assume it and play it out&quot; reasoning, drawn once.</p>
+<table>
+<thead>
+<tr>
+<th>What the arrows show</th>
+<th>Name in this spec</th>
+<th>Standard term</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A sentence&#39;s T port leads to its F port, and its F port leads back to its T port</td>
+<td>Contradiction loop</td>
+<td>Paradox</td>
+<td>3, 4, 5a</td>
+</tr>
+<tr>
+<td>Every sentence has exactly one value ruled out</td>
+<td>Exactly one consistent answer</td>
+<td>No standard term</td>
+<td>1, 5b</td>
+</tr>
+<tr>
+<td>No contradiction loop, and some sentence has neither value ruled out</td>
+<td>More than one consistent answer</td>
+<td>Underdetermined</td>
+<td>2</td>
+</tr>
+</tbody></table>
+<p>The standard name for this structure is an implication graph. Its test, a sentence&#39;s true and false versions sitting on one loop, is the standard test for contradiction in 2-SAT (Aspvall, Plass and Tarjan, 1979). It is exact when each sentence says one thing; contents with either/or need the missing either mark.</p>
+<p><strong>Interactive version.</strong> The <a href="stepper.html">Self-reference stepper</a> animates these same diagrams. Tap a T or F port to choose what to assume, then follow the arrows one at a time and watch the reasoning either settle, clash, or go round a loop. Each example has its own link: <a href="stepper.html#snow">1 snow</a>, <a href="stepper.html#truth-teller">2 truth-teller</a>, <a href="stepper.html#liar">3 liar</a>, <a href="stepper.html#mutual">4 A and B</a>, <a href="stepper.html#nested-a">5a</a>, <a href="stepper.html#nested-b">5b</a>.</p>
+<h3>Where the self-reference is</h3>
+<p><strong>Reference cycle</strong> (standard: a cycle in the reference graph). Start at a sentence, follow its reference edges to the sentences they land on, then follow theirs. If you can get back to where you started, those sentences form a reference cycle.</p>
+<p><strong>Strange loop</strong> (Hofstadter&#39;s term). A reference cycle that includes at least one level-crossing reference, the thick bright blue edge. An ordinary reference cycle runs between sentences at the same level; a strange loop climbs out to a sentence that contains it.</p>
+<p>Reference edges show where self-reference happens. Implication arrows show what it does. A reference cycle is needed for a contradiction loop, but does not guarantee one: the truth-teller has a reference cycle and no contradiction.</p>
+<h2>Examples 1–4: the base cases</h2>
+<p>Each base case is one diagram. The content reads back into its formula, and the implication arrows on the ports show the verdict. Self-reference needs no inner copy of S: the reference edge simply lands on the boundary of S.</p>
+<figure class="dia"><svg viewBox="0 0 760 652" role="img" aria-label="A paradox is an implication loop through both ports of one sentence" font-size="13"><defs><marker id="p-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--cds-chart-axis)"></path></marker><marker id="p-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--cds-chart-categorical-1)"></path></marker><marker id="p-imp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--cds-chart-categorical-5)"></path></marker></defs><text x="24" y="28" font-size="15" font-weight="600" fill="var(--cds-text-primary)">A paradox is an implication loop through both ports of one sentence</text><g><title>Snow is falling. Reads back as S := Falling(thing: Snow). No reference edges, so no self-reference.</title><text x="24" y="64" font-weight="600" fill="var(--cds-text-primary)">1 · Snow is falling</text><rect x="24" y="72" width="344" height="120" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="36" y="94" font-weight="600" fill="var(--cds-text-primary)">S</text><rect x="72" y="114" width="104" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="124" y="136" text-anchor="middle" fill="var(--cds-text-primary)">Falling</text><rect x="256" y="114" width="80" height="36" rx="8" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.25"></rect><text x="296" y="136" text-anchor="middle" fill="var(--cds-text-primary)">Snow</text><path d="M176 132H256" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.25" marker-end="url(#p-arrow)"></path><text x="216" y="124" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">thing</text><g><title>S true. Stands: snow is falling, so nothing clashes.</title><circle cx="120" cy="192" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>S false. Ruled out: it clashes with the fact that snow is falling.</title><circle cx="232" cy="192" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><text x="120" y="196" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="232" y="196" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><g><title>If S is false, its content must fail, but snow is falling: a clash.</title><path d="M232 204V228" fill="none" stroke="transparent" stroke-width="14"></path><path d="M232 204V228" fill="none" stroke="var(--cds-chart-categorical-5)" stroke-width="1.5" marker-end="url(#p-imp)"></path></g><text x="232" y="246" text-anchor="middle" font-size="11.5" fill="var(--cds-text-primary)">✗ clashes with the weather</text><text x="24" y="284" font-size="11.5" fill="var(--cds-text-secondary)">F is ruled out, T stands: exactly one consistent answer</text></g><g><title>This statement is true. Reads back as S := IsTrue(bearer: S).</title><text x="392" y="64" font-weight="600" fill="var(--cds-text-primary)">2 · This statement is true</text><rect x="392" y="72" width="344" height="120" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="404" y="94" font-weight="600" fill="var(--cds-text-primary)">S</text><rect x="440" y="114" width="96" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="488" y="136" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><path d="M536 132H733" fill="none" stroke="var(--cds-chart-categorical-1)" stroke-width="2.5" marker-end="url(#p-acc)"></path><text x="636" y="122" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">bearer</text><g><title>S true. Its content then holds, so S is true: consistent.</title><circle cx="488" cy="192" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>S false. Its content then fails, so S is false: also consistent.</title><circle cx="640" cy="192" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><text x="488" y="196" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="640" y="196" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><g fill="none" stroke="var(--cds-chart-categorical-5)" stroke-width="1.5"><g><title>If S is true, then S is true: its content must hold.</title><path d="M478 204C462 248 514 248 498 205" stroke="transparent" stroke-width="14"></path><path d="M478 204C462 248 514 248 498 205" marker-end="url(#p-imp)"></path></g><g><title>If S is false, then S is false: its content must fail.</title><path d="M630 204C614 248 666 248 650 205" stroke="transparent" stroke-width="14"></path><path d="M630 204C614 248 666 248 650 205" marker-end="url(#p-imp)"></path></g></g><text x="392" y="284" font-size="11.5" fill="var(--cds-text-secondary)">Each port leads only to itself: more than one consistent answer</text></g><g><title>This statement is false. Reads back as S := ¬IsTrue(bearer: S).</title><text x="24" y="364" font-weight="600" fill="var(--cds-text-primary)">3 · This statement is false</text><rect x="24" y="372" width="344" height="120" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="36" y="394" font-weight="600" fill="var(--cds-text-primary)">S</text><rect x="56" y="406" width="136" height="72" rx="18" fill="var(--cds-chart-status-critical)" fill-opacity="0.06" stroke="var(--cds-chart-status-critical)" stroke-width="1.25" stroke-dasharray="5 4"></rect><text x="68" y="422" font-size="11.5" font-weight="600" fill="var(--cds-chart-status-critical)">not</text><rect x="76" y="428" width="96" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="124" y="450" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><path d="M172 446H365" fill="none" stroke="var(--cds-chart-categorical-1)" stroke-width="2.5" marker-end="url(#p-acc)"></path><text x="280" y="436" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">bearer</text><g><title>S true. Ruled out: its content then says S is not true.</title><circle cx="120" cy="492" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>S false. Ruled out: its content then fails, so S is true.</title><circle cx="232" cy="492" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><text x="120" y="496" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="232" y="496" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><g fill="none" stroke="var(--cds-chart-categorical-5)" stroke-width="1.5"><g><title>If S is true, then S is false: its content must hold.</title><path d="M131 500Q176 528 220 501" stroke="transparent" stroke-width="14"></path><path d="M131 500Q176 528 220 501" marker-end="url(#p-imp)"></path></g><g><title>If S is false, then S is true: its content must fail.</title><path d="M226 503Q176 560 127 503" stroke="transparent" stroke-width="14"></path><path d="M226 503Q176 560 127 503" marker-end="url(#p-imp)"></path></g></g><text x="24" y="628" font-size="11.5" fill="var(--cds-text-secondary)">T leads to F and F leads back to T: contradiction loop (paradox)</text></g><g><title>A: “B is false.” B: “A is true.” Reads back as A := ¬IsTrue(bearer: B), B := IsTrue(bearer: A).</title><text x="392" y="364" font-weight="600" fill="var(--cds-text-primary)">4 · A: B is false.  B: A is true.</text><rect x="392" y="372" width="140" height="120" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><rect x="596" y="372" width="140" height="120" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="404" y="394" font-weight="600" fill="var(--cds-text-primary)">A</text><text x="608" y="394" font-weight="600" fill="var(--cds-text-primary)">B</text><rect x="406" y="400" width="112" height="64" rx="18" fill="var(--cds-chart-status-critical)" fill-opacity="0.06" stroke="var(--cds-chart-status-critical)" stroke-width="1.25" stroke-dasharray="5 4"></rect><text x="416" y="414" font-size="11.5" font-weight="600" fill="var(--cds-chart-status-critical)">not</text><rect x="422" y="420" width="80" height="32" rx="16" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="462" y="441" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><rect x="626" y="440" width="80" height="32" rx="16" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="666" y="461" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><path d="M502 436H596" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.25" marker-end="url(#p-arrow)"></path><path d="M626 456H532" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.25" marker-end="url(#p-arrow)"></path><g><title>A true. Ruled out: it leads to B false, then A false.</title><circle cx="432" cy="492" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>A false. Ruled out: it leads to B true, then A true.</title><circle cx="492" cy="492" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><g><title>B true. Ruled out: it leads to A true, then B false.</title><circle cx="636" cy="492" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>B false. Ruled out: it leads to A false, then B true.</title><circle cx="696" cy="492" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><text x="432" y="496" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="492" y="496" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><text x="636" y="496" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="696" y="496" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><g fill="none" stroke="var(--cds-chart-categorical-5)" stroke-width="1.5"><g><title>If A is true, then B is false: A’s content must hold.</title><path d="M432 505C440 610 690 610 696 506" stroke="transparent" stroke-width="14"></path><path d="M432 505C440 610 690 610 696 506" marker-end="url(#p-imp)"></path></g><g><title>If B is false, then A is false: B’s content must fail.</title><path d="M692 505C684 560 500 560 494 506" stroke="transparent" stroke-width="14"></path><path d="M692 505C684 560 500 560 494 506" marker-end="url(#p-imp)"></path></g><g><title>If A is false, then B is true: A’s content must fail.</title><path d="M496 504C506 530 626 530 634 506" stroke="transparent" stroke-width="14"></path><path d="M496 504C506 530 626 530 634 506" marker-end="url(#p-imp)"></path></g><g><title>If B is true, then A is true: B’s content must hold.</title><path d="M632 505C620 572 446 572 436 506" stroke="transparent" stroke-width="14"></path><path d="M632 505C620 572 446 572 436 506" marker-end="url(#p-imp)"></path></g></g><text x="392" y="628" font-size="11.5" fill="var(--cds-text-secondary)">A true, B false, A false, B true, back to A true: contradiction loop</text></g></svg><figcaption>Four base cases: content, ports and implication arrows in one diagram. Hover for detail.</figcaption></figure>
+
+
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Read back with the rules</th>
+<th>Reference cycle</th>
+<th>Implication arrows</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>S := Falling(thing: Snow)</td>
+<td>None</td>
+<td>F leads to a clash with the fact</td>
+<td>Exactly one consistent answer: S true</td>
+</tr>
+<tr>
+<td>2</td>
+<td>S := IsTrue(bearer: S)</td>
+<td>S to S, through 0 negation enclosures, level-crossing</td>
+<td>T leads to T; F leads to F</td>
+<td>More than one consistent answer (underdetermined)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>S := ¬IsTrue(bearer: S)</td>
+<td>S to S, through 1 negation enclosure, level-crossing</td>
+<td>T leads to F; F leads to T</td>
+<td>Contradiction loop (paradox)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>A := ¬IsTrue(bearer: B), B := IsTrue(bearer: A)</td>
+<td>A to B to A, through 1 negation enclosure, no level crossing</td>
+<td>A true, B false, A false, B true, A true</td>
+<td>Contradiction loop (paradox)</td>
+</tr>
+</tbody></table>
+<p>Example 4 shows how the arrows come from the content. If A is true, its content must hold, so B is not true: an arrow from A&#39;s T port to B&#39;s F port. If B is false, its content fails, so A is not true: an arrow from B&#39;s F port to A&#39;s F port. Following the four arrows returns to A&#39;s T port after passing through A&#39;s F port, so neither value of A can hold.</p>
+<p>Examples 3 and 4 are both paradoxes, but the drawing tells them apart. In 3 the edge is thick because S talks about a sentence that contains it. In 4 the loop runs between two peers, and neither contains the other.</p>
+<h2>Example 5: a loop inside a loop</h2>
+<p>Nesting a liar inside another sentence does not by itself create a second loop. A second loop appears only when the inner sentence points back out at the sentence that contains it, and the drawing shows that as a second thick bright blue edge.</p>
+<figure class="dia"><svg viewBox="0 0 760 840" role="img" aria-label="Following the arrows finds the paradox in 5a and the single answer in 5b" font-size="13"><defs><marker id="q-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--cds-chart-axis)"></path></marker><marker id="q-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--cds-chart-categorical-1)"></path></marker><marker id="q-imp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--cds-chart-categorical-5)"></path></marker></defs><text x="24" y="28" font-size="15" font-weight="600" fill="var(--cds-text-primary)">Following the arrows finds the paradox in 5a and the single answer in 5b</text><g><title>5a. Reads back as S := ¬IsTrue(bearer: Q) and Q := ¬IsTrue(bearer: Q). Q is a liar quoted inside S.</title><text x="24" y="64" font-weight="600" fill="var(--cds-text-primary)">5a · The statement “this statement is false” is false</text><rect x="24" y="72" width="712" height="236" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="36" y="94" font-weight="600" fill="var(--cds-text-primary)">S</text><rect x="56" y="132" width="160" height="76" rx="18" fill="var(--cds-chart-status-critical)" fill-opacity="0.06" stroke="var(--cds-chart-status-critical)" stroke-width="1.25" stroke-dasharray="5 4"></rect><text x="68" y="148" font-size="11.5" font-weight="600" fill="var(--cds-chart-status-critical)">not</text><rect x="80" y="152" width="104" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="132" y="174" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><path d="M184 170H312" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.25" marker-end="url(#q-arrow)"></path><text x="256" y="160" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">bearer</text><rect x="312" y="96" width="400" height="136" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="324" y="118" font-weight="600" fill="var(--cds-text-primary)">Q</text><rect x="344" y="128" width="160" height="76" rx="18" fill="var(--cds-chart-status-critical)" fill-opacity="0.06" stroke="var(--cds-chart-status-critical)" stroke-width="1.25" stroke-dasharray="5 4"></rect><text x="356" y="144" font-size="11.5" font-weight="600" fill="var(--cds-chart-status-critical)">not</text><rect x="368" y="148" width="104" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="420" y="170" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><path d="M472 166H709" fill="none" stroke="var(--cds-chart-categorical-1)" stroke-width="2.5" marker-end="url(#q-acc)"></path><text x="592" y="156" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">bearer</text><g><title>Q true. Ruled out: it leads to Q false.</title><circle cx="440" cy="232" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>Q false. Ruled out: it leads to Q true.</title><circle cx="600" cy="232" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><g><title>S true. Not ruled out on its own, but it leads into Q’s contradiction loop, which has no consistent answer.</title><circle cx="120" cy="308" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>S false. Not ruled out on its own, but it leads into Q’s contradiction loop, which has no consistent answer.</title><circle cx="220" cy="308" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><text x="440" y="236" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="600" y="236" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><text x="120" y="312" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="220" y="312" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><g fill="none" stroke="var(--cds-chart-categorical-5)" stroke-width="1.5"><g><title>If Q is true, then Q is false: Q’s content must hold.</title><path d="M452 238Q520 262 587 239" stroke="transparent" stroke-width="14"></path><path d="M452 238Q520 262 587 239" marker-end="url(#q-imp)"></path></g><g><title>If Q is false, then Q is true: Q’s content must fail.</title><path d="M596 244Q520 300 445 244" stroke="transparent" stroke-width="14"></path><path d="M596 244Q520 300 445 244" marker-end="url(#q-imp)"></path></g><g><title>If S is false, then Q is true: S’s content must fail.</title><path d="M226 297C260 270 410 280 431 242" stroke="transparent" stroke-width="14"></path><path d="M226 297C260 270 410 280 431 242" marker-end="url(#q-imp)"></path></g><g><title>If S is true, then Q is false: S’s content must hold.</title><path d="M120 320C150 380 600 380 604 245" stroke="transparent" stroke-width="14"></path><path d="M120 320C150 380 600 380 604 245" marker-end="url(#q-imp)"></path></g></g><text x="24" y="396" font-size="11.5" fill="var(--cds-text-secondary)">Q’s ports form a contradiction loop: paradox. S’s arrows lead into that loop, so S has no consistent answer either.</text></g><g id="ex5b"><title>5b. Reads back as S := ¬IsTrue(bearer: Q) and Q := IsTrue(bearer: Q) ∧ IsTrue(bearer: S).</title><text x="24" y="428" font-weight="600" fill="var(--cds-text-primary)">5b · The statement “this statement is true and S is true” is false</text><rect x="24" y="436" width="712" height="236" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="36" y="458" font-weight="600" fill="var(--cds-text-primary)">S</text><rect x="56" y="516" width="160" height="76" rx="18" fill="var(--cds-chart-status-critical)" fill-opacity="0.06" stroke="var(--cds-chart-status-critical)" stroke-width="1.25" stroke-dasharray="5 4"></rect><text x="68" y="532" font-size="11.5" font-weight="600" fill="var(--cds-chart-status-critical)">not</text><rect x="80" y="536" width="104" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="132" y="558" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><path d="M184 554H312" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.25" marker-end="url(#q-arrow)"></path><text x="248" y="544" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">bearer</text><rect x="312" y="460" width="360" height="160" rx="4" fill="none" stroke="var(--cds-chart-axis)" stroke-width="1.5"></rect><text x="324" y="482" font-weight="600" fill="var(--cds-text-primary)">Q</text><rect x="352" y="492" width="104" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="404" y="514" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><rect x="352" y="552" width="104" height="36" rx="18" fill="var(--cds-chart-categorical-4)" fill-opacity="0.12" stroke="var(--cds-chart-categorical-4)" stroke-width="1.25"></rect><text x="404" y="574" text-anchor="middle" fill="var(--cds-text-primary)">IsTrue</text><path d="M456 510H669" fill="none" stroke="var(--cds-chart-categorical-1)" stroke-width="2.5" marker-end="url(#q-acc)"></path><text x="562" y="500" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">bearer</text><path d="M456 570H733" fill="none" stroke="var(--cds-chart-categorical-1)" stroke-width="2.5" marker-end="url(#q-acc)"></path><text x="600" y="560" text-anchor="middle" font-size="11.5" fill="var(--cds-text-secondary)">bearer, lands on S</text><g><title>Q true. Ruled out: it leads to S true, which leads to Q false.</title><circle cx="520" cy="620" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>Q false. Stands: no arrow leaves it, because Q being false already makes its content false.</title><circle cx="620" cy="620" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><g><title>S true. Stands: it leads to Q false, and nothing clashes.</title><circle cx="120" cy="672" r="12" fill="var(--cds-chart-status-good)" fill-opacity="0.18" stroke="var(--cds-chart-status-good)" stroke-width="1.5"></circle></g><g><title>S false. Ruled out: it leads to Q true, and then to S true.</title><circle cx="220" cy="672" r="12" fill="var(--cds-chart-categorical-2)" fill-opacity="0.18" stroke="var(--cds-chart-categorical-2)" stroke-width="1.5"></circle></g><text x="520" y="624" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="620" y="624" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><text x="120" y="676" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">T</text><text x="220" y="676" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--cds-text-primary)">F</text><g fill="none" stroke="var(--cds-chart-categorical-5)" stroke-width="1.5"><g><title>If Q is true, then Q is true (Q’s first claim). This adds nothing.</title><path d="M510 612C494 576 546 576 530 611" stroke="transparent" stroke-width="14"></path><path d="M510 612C494 576 546 576 530 611" marker-end="url(#q-imp)"></path></g><g><title>If Q is true, then S is true: Q’s second claim must hold.</title><path d="M520 632C520 732 150 732 123 684" stroke="transparent" stroke-width="14"></path><path d="M520 632C520 732 150 732 123 684" marker-end="url(#q-imp)"></path></g><g><title>If S is false, then Q is true: S’s content must fail.</title><path d="M226 684C260 712 500 712 512 631" stroke="transparent" stroke-width="14"></path><path d="M226 684C260 712 500 712 512 631" marker-end="url(#q-imp)"></path></g><g><title>If S is true, then Q is false: S’s content must hold.</title><path d="M118 684C140 790 610 790 620 633" stroke="transparent" stroke-width="14"></path><path d="M118 684C140 790 610 790 620 633" marker-end="url(#q-imp)"></path></g></g><text x="24" y="800" font-size="11.5" fill="var(--cds-text-secondary)">Q true leads to S true, which leads to Q false: Q true is ruled out. S false leads to Q true, then S true: S false is ruled out.</text><text x="24" y="818" font-size="11.5" fill="var(--cds-text-secondary)">Left standing: Q false, S true. Q false needs no arrow, because it already makes Q’s content false.</text></g></svg><figcaption>Nested self-reference: content, ports and implication arrows in one diagram. Hover for detail.</figcaption></figure>
+
+
+
+<p><strong>5a reads back as</strong> S := ¬IsTrue(bearer: Q) and Q := ¬IsTrue(bearer: Q). This is the sentence from the start of the earlier conversation. Q is the liar and has its own loop. S points down into Q, but no edge comes back to S, so S is not in any loop. S inherits Q&#39;s lack of a stable value without adding a loop of its own.</p>
+<p><strong>5b reads back as</strong> S := ¬IsTrue(bearer: Q) and Q := IsTrue(bearer: Q) ∧ IsTrue(bearer: S). Q now has two relations side by side, so it says two things joined by <strong>and</strong>. One points at Q itself, and the other climbs out to S. That gives two reference cycles sharing Q: Q to Q, and S to Q to S.</p>
+<p><strong>5a&#39;s arrows.</strong> Q&#39;s two ports form a contradiction loop, exactly like the liar&#39;s. S is not in a reference cycle itself, but its arrows lead into Q&#39;s loop: if S is true, Q must be false; if S is false, Q must be true. Neither can hold, so S has no consistent answer either.</p>
+<p><strong>5b&#39;s arrows.</strong> Q&#39;s true port has two arrows, because Q says two things joined by <strong>and</strong>: one back to itself and one to S&#39;s true port. S&#39;s true port leads to Q&#39;s false port, so following the arrows from Q true reaches Q false, and Q true is ruled out. S&#39;s false port leads to Q&#39;s true port and on to S&#39;s true port, so S false is ruled out. What is left is exactly one consistent answer: Q false and S true. Q&#39;s false port needs no arrow, because Q being false already makes &quot;Q is true and S is true&quot; false.</p>
+<h2>Known limits and open questions</h2>
+<p>Version 0.1 handles sentences built from named things, relations, <strong>and</strong>, and <strong>not</strong>. Five gaps remain, each a decision to make before the next version.</p>
+<ol>
+<li><strong>Quantifiers.</strong> &quot;Every sentence on this list is false&quot; needs variables. Peirce&#39;s lines of identity are the established graphical answer and are the likely extension.</li>
+<li><strong>Infinite chains.</strong> Yablo&#39;s paradox is contradictory without any loop, so it has no reference cycle, and its assignment-update map would have infinitely many dots. It needs a drawn convention for &quot;and so on forever&quot;.</li>
+<li><strong>False versus not true.</strong> v0.1 assumes every sentence is either true or false, so &quot;false&quot; is drawn as a negation enclosure around IsTrue. Under Kripke&#39;s theory, some sentences are neither, and then &quot;false&quot; and &quot;not true&quot; come apart. If we adopt that, IsFalse becomes its own relation.</li>
+<li><strong>Or and if-then.</strong> These can already be drawn with negation enclosures, since A or B is the same as not (not A and not B), but the drawings get heavy. Any shorthand must be defined by translation into negation enclosures, so the recovery test still holds. The implication arrows hit the same gap: the false port of an &quot;and&quot;, or the true port of an &quot;or&quot;, leads to an either/or, and v0.1 has no either mark yet.</li>
+<li><strong>Layout.</strong> The reading rules ignore where things sit, which is good for recovery but says nothing about clarity. Larger diagrams will need layout conventions, such as drawing references downward and keeping level crossings on the right.</li>
+</ol>
+</main>
+<footer>A visual language for self-reference · <a href="https://github.com/BrianMills2718/self-reference-diagrams">source</a></footer>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script>document.querySelectorAll('code.language-latex').forEach(c=>{const d=document.createElement('div');d.className='math';try{katex.render(c.textContent,d,{displayMode:true,throwOnError:false});c.parentElement.replaceWith(d);}catch(e){}});</script>
+</body></html>

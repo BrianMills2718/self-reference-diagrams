@@ -1,0 +1,23 @@
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light dark;
+--bg:#fbfbfa;--ink:#1d1d1b;--quiet:#5f5e5a;--hair:#e2e0d8;--link:#1F3F75;--code:#f1efe8;
+--cds-text-primary:#1d1d1b;--cds-text-secondary:#5f5e5a;--cds-chart-axis:#a9a79e;--cds-chart-categorical-1:#2F7BD9;--cds-chart-categorical-2:#E0702E;--cds-chart-categorical-4:#1F3F75;--cds-chart-categorical-5:#C93F7E;--cds-chart-status-critical:#D63B3A;--cds-chart-status-good:#2E9E3F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+--bg:#181817;--ink:#ecebe6;--quiet:#a8a69e;--hair:#33322f;--link:#8fb0e6;--code:#22221f;
+--cds-text-primary:#ecebe6;--cds-text-secondary:#a8a69e;--cds-chart-axis:#6f6d66;--cds-chart-categorical-1:#6ea6f0;--cds-chart-categorical-2:#f29a5e;--cds-chart-categorical-4:#8fb0e6;--cds-chart-categorical-5:#ec7fb0;--cds-chart-status-critical:#f07a79;--cds-chart-status-good:#5cc96c}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.6}
+nav.top{display:flex;gap:20px;max-width:860px;margin:0 auto;padding:16px 20px;border-bottom:1px solid var(--hair);font-size:15px}
+nav.top a{color:var(--quiet);text-decoration:none}nav.top a[aria-current]{color:var(--ink);font-weight:700}
+main{max-width:860px;margin:0 auto;padding:28px 20px 48px}
+h1{font-size:32px;line-height:1.2;margin:0 0 6px}h2{font-size:23px;margin:2.2em 0 .5em}h3{font-size:19px;margin:1.6em 0 .4em}
+p,li{max-width:70ch}.byline{color:var(--quiet);font-size:15px;margin-top:0}
+a{color:var(--link)}
+table{border-collapse:collapse;width:100%;font-size:15px;margin:1em 0;display:block;overflow-x:auto}
+th,td{border:1px solid var(--hair);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+pre{background:var(--code);padding:12px 14px;border-radius:8px;overflow-x:auto}code{font-size:.92em}
+.math{overflow-x:auto;margin:1em 0}
+figure.dia{margin:1.5em 0;overflow-x:auto}figure.dia svg{display:block;width:100%;min-width:560px;height:auto}
+figure.dia svg text{font-family:inherit}
+figcaption{font-size:14px;color:var(--quiet);margin-top:6px}
+footer{max-width:860px;margin:0 auto;padding:20px;border-top:1px solid var(--hair);font-size:14px;color:var(--quiet)}

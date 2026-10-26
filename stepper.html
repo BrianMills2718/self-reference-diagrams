@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Self-reference stepper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fbfbfa;--ink:#1d1d1b;--quiet:#5f5e5a;--line:#a9a79e;--hair:#e2e0d8;
+--cap-fill:#E6EDF7;--cap-stroke:#1F3F75;--cap-ink:#1F3F75;--cut:#D63B3A;--ref:#2F7BD9;
+--pT:#2E9E3F;--pF:#E0702E;--imp:#C93F7E;--btn:#ffffff;--btn-on:#1F3F75;--btn-on-ink:#ffffff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+--bg:#181817;--ink:#ecebe6;--quiet:#a8a69e;--line:#6f6d66;--hair:#33322f;
+--cap-fill:#1f2f4d;--cap-stroke:#8fb0e6;--cap-ink:#d7e3f7;--cut:#f07a79;--ref:#6ea6f0;
+--pT:#5cc96c;--pF:#f29a5e;--imp:#ec7fb0;--btn:#22221f;--btn-on:#8fb0e6;--btn-on-ink:#111a2b}}
+:root[data-theme="dark"]{color-scheme:dark;
+--bg:#181817;--ink:#ecebe6;--quiet:#a8a69e;--line:#6f6d66;--hair:#33322f;
+--cap-fill:#1f2f4d;--cap-stroke:#8fb0e6;--cap-ink:#d7e3f7;--cut:#f07a79;--ref:#6ea6f0;
+--pT:#5cc96c;--pF:#f29a5e;--imp:#ec7fb0;--btn:#22221f;--btn-on:#8fb0e6;--btn-on-ink:#111a2b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.55}
+main{max-width:860px;margin:0 auto;padding:32px 20px 48px}
+h1{font-size:28px;line-height:1.2;margin:0 0 8px;font-weight:700}
+.lede{max-width:66ch;color:var(--quiet);margin:0 0 24px}
+.picker{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+button{font:inherit;font-size:15px;color:var(--ink);background:var(--btn);border:1px solid var(--line);border-radius:8px;padding:7px 14px;cursor:pointer}
+button[aria-pressed="true"]{background:var(--btn-on);color:var(--btn-on-ink);border-color:var(--btn-on)}
+button:focus-visible,.port:focus-visible{outline:2px solid var(--cap-stroke);outline-offset:2px}
+.sentence{font-size:20px;margin:0 0 4px}
+.reads{font-size:15px;color:var(--quiet);margin:0 0 12px}
+figure{margin:0;border-top:1px solid var(--hair);padding-top:12px}
+svg{width:100%;height:auto;display:block;max-height:70vh}
+svg text{font-family:inherit;fill:var(--ink)}
+.bnd{fill:none;stroke:var(--line);stroke-width:1.5}
+.tag{font-weight:700;font-size:15px}
+.cap{fill:var(--cap-fill);stroke:var(--cap-stroke);stroke-width:1.25}
+.capt{fill:var(--cap-ink)!important;font-size:14px}
+.ent{fill:none;stroke:var(--line);stroke-width:1.25}
+.cutr{fill:none;stroke:var(--cut);stroke-width:1.25;stroke-dasharray:5 4}
+.cutt{fill:var(--cut)!important;font-size:12px;font-weight:700}
+.role{fill:var(--quiet)!important;font-size:12px}
+.edge{fill:none;stroke:var(--line);stroke-width:1.25}
+.refx{fill:none;stroke:var(--ref);stroke-width:2.5}
+.imp{fill:none;stroke:var(--imp);stroke-width:1.5;opacity:.55;transition:stroke-width .2s,opacity .2s}
+.imp.on{stroke-width:3.5;opacity:1}
+.port circle{stroke-width:1.5;transition:stroke-width .2s}
+.port.T circle{fill:color-mix(in srgb,var(--pT) 18%,transparent);stroke:var(--pT)}
+.port.F circle{fill:color-mix(in srgb,var(--pF) 18%,transparent);stroke:var(--pF)}
+.port text{font-size:12px;font-weight:700}
+.port{cursor:pointer}
+.port.cur circle{stroke-width:5}
+.port.seen circle{stroke-width:3}
+.clash{font-size:13px}
+.clash.on{font-weight:700}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 8px}
+.hint{font-size:14px;color:var(--quiet)}
+.say{font-size:17px;min-height:52px;margin:8px 0 0}
+.verdict{font-size:16px;font-weight:700;margin:12px 0 0}
+.key{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--quiet);margin-top:20px;border-top:1px solid var(--hair);padding-top:12px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:6px;border:2px solid}
+</style>
+</head>
+<body>
+<nav style="max-width:860px;margin:0 auto;padding:16px 20px 0;font-size:15px;display:flex;gap:20px"><a href="./" style="color:var(--quiet);text-decoration:none">How to read</a><a href="spec.html" style="color:var(--quiet);text-decoration:none">Spec</a><a href="stepper.html" style="color:var(--ink);font-weight:700;text-decoration:none">Stepper</a></nav>
+<main>
+<h1>Self-reference stepper</h1>
+<p class="lede">Each example is one diagram. The boxes show what the sentences say. The small T and F ports on each box stand for “this sentence is true” and “this sentence is false”, and the magenta arrows say what each of those would force. Pick a port and follow the arrows to play out the reasoning.</p>
+<div class="picker" id="picker" role="group" aria-label="Example"></div>
+<p class="sentence" id="sentence"></p>
+<p class="reads" id="reads"></p>
+<figure><svg id="dia" role="img" aria-label="Content diagram with value ports and implication arrows"></svg></figure>
+<div class="controls"><button id="step">Follow one arrow</button><button id="play">Play</button><button id="reset">Start over</button><span class="hint">Tap a T or F port to choose what to assume.</span></div>
+<p class="say" id="say" aria-live="polite"></p>
+<p class="verdict" id="verdict"></p>
+<div class="key">
+<span><span class="sw" style="border-color:var(--pT)"></span>T port: this sentence is true</span>
+<span><span class="sw" style="border-color:var(--pF)"></span>F port: this sentence is false</span>
+<span>Magenta arrow: “if this, then that”</span>
+<span>Red dashed: negation enclosure</span>
+<span>Thick blue: level-crossing reference</span>
+</div>
+</main>
+<script>
+const bnd=(x,y,w,h,n)=>`<rect class="bnd" x="${x}" y="${y}" width="${w}" height="${h}" rx="4"/><text class="tag" x="${x+12}" y="${y+22}">${n}</text>`;
+const cap=(x,y,w,h,l)=>`<rect class="cap" x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}"/><text class="capt" x="${x+w/2}" y="${y+h/2+5}" text-anchor="middle">${l}</text>`;
+const cut=(x,y,w,h)=>`<rect class="cutr" x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/><text class="cutt" x="${x+12}" y="${y+16}">not</text>`;
+const ref=(d,thick,lx,ly,l)=>`<path class="${thick?'refx':'edge'}" d="${d}" marker-end="url(#${thick?'mref':'medge'})"/>`+(l?`<text class="role" x="${lx}" y="${ly}" text-anchor="middle">${l}</text>`:'');
+const EX={
+snow:{label:'Snow is falling',sentence:'S: “Snow is falling.” (It is.)',reads:'S := Falling(thing: Snow)',vb:'14 60 368 200',
+ svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,124,'thing')+`<text class="clash" id="clash" x="232" y="248" text-anchor="middle">✗ clashes with the weather</text>`,
+ ports:{'S.T':[120,192],'S.F':[232,192]},arrows:[['S.F','clash','M232 204V230']]},
+'truth-teller':{label:'This statement is true',sentence:'S: “This statement is true.”',reads:'S := IsTrue(bearer: S)',vb:'382 60 368 200',
+ svg:bnd(392,72,344,120,'S')+cap(440,114,96,36,'IsTrue')+ref('M536 132H733',true,636,122,'bearer'),
+ ports:{'S.T':[488,192],'S.F':[640,192]},arrows:[['S.T','S.T','M478 204C462 248 514 248 498 205'],['S.F','S.F','M630 204C614 248 666 248 650 205']]},
+liar:{label:'This statement is false',sentence:'S: “This statement is false.”',reads:'S := ¬IsTrue(bearer: S)',vb:'14 360 368 200',
+ svg:bnd(24,372,344,120,'S')+cut(56,406,136,72)+cap(76,428,96,36,'IsTrue')+ref('M172 446H365',true,280,436,'bearer'),
+ ports:{'S.T':[120,492],'S.F':[232,492]},arrows:[['S.T','S.F','M131 500Q176 528 220 501'],['S.F','S.T','M226 503Q176 560 127 503']]},
+mutual:{label:'A and B',sentence:'A: “B is false.”  B: “A is true.”',reads:'A := ¬IsTrue(bearer: B),  B := IsTrue(bearer: A)',vb:'382 360 368 240',
+ svg:bnd(392,372,140,120,'A')+bnd(596,372,140,120,'B')+cut(406,400,112,64)+cap(422,420,80,32,'IsTrue')+cap(626,440,80,32,'IsTrue')+ref('M502 436H596',false)+ref('M626 456H532',false),
+ ports:{'A.T':[432,492],'A.F':[492,492],'B.T':[636,492],'B.F':[696,492]},
+ arrows:[['A.T','B.F','M432 505C440 610 690 610 696 506'],['B.F','A.F','M692 505C684 560 500 560 494 506'],['A.F','B.T','M496 504C506 530 626 530 634 506'],['B.T','A.T','M632 505C620 572 446 572 436 506']]},
+'nested-a':{label:'5a nested liar',sentence:'S: “The statement ‘this statement is false’ is false.” The inner sentence is Q.',reads:'S := ¬IsTrue(bearer: Q),  Q := ¬IsTrue(bearer: Q)',vb:'14 64 732 316',
+ svg:bnd(24,72,712,236,'S')+cut(56,132,160,76)+cap(80,152,104,36,'IsTrue')+ref('M184 170H312',false,256,160,'bearer')+bnd(312,96,400,136,'Q')+cut(344,128,160,76)+cap(368,148,104,36,'IsTrue')+ref('M472 166H709',true,592,156,'bearer'),
+ ports:{'Q.T':[440,232],'Q.F':[600,232],'S.T':[120,308],'S.F':[220,308]},
+ arrows:[['Q.T','Q.F','M452 238Q520 262 587 239'],['Q.F','Q.T','M596 244Q520 300 445 244'],['S.F','Q.T','M226 297C260 270 410 280 431 242'],['S.T','Q.F','M120 320C150 380 600 380 604 245']]},
+'nested-b':{label:'5b loop inside a loop',sentence:'S: “The statement ‘this statement is true and S is true’ is false.” The inner sentence is Q.',reads:'S := ¬IsTrue(bearer: Q),  Q := IsTrue(bearer: Q) ∧ IsTrue(bearer: S)',vb:'14 428 732 356',
+ svg:bnd(24,436,712,236,'S')+cut(56,516,160,76)+cap(80,536,104,36,'IsTrue')+ref('M184 554H312',false,248,544,'bearer')+bnd(312,460,360,160,'Q')+cap(352,492,104,36,'IsTrue')+cap(352,552,104,36,'IsTrue')+ref('M456 510H669',true,562,500,'bearer')+ref('M456 570H733',true,600,560,'bearer, lands on S'),
+ ports:{'Q.T':[520,620],'Q.F':[620,620],'S.T':[120,672],'S.F':[220,672]},
+ arrows:[['Q.T','Q.T','M510 612C494 576 546 576 530 611'],['Q.T','S.T','M520 632C520 732 150 732 123 684'],['S.F','Q.T','M226 684C260 712 500 712 512 631'],['S.T','Q.F','M118 684C140 790 610 790 620 633']]}
+};
+const ORDER=['snow','truth-teller','liar','mutual','nested-a','nested-b'];
+const words=p=>p==='clash'?'a clash with the weather':p.split('.')[0]+' '+(p.endsWith('T')?'true':'false');
+const opp=p=>p.slice(0,-1)+(p.endsWith('T')?'F':'T');
+let cur,start=null,walk=null,timer=null;
+const picker=document.getElementById('picker'),dia=document.getElementById('dia'),say=document.getElementById('say');
+ORDER.forEach(id=>{const b=document.createElement('button');b.textContent=EX[id].label;b.dataset.ex=id;b.onclick=()=>{location.hash=id;};picker.appendChild(b);});
+const outs=(ex,p)=>ex.arrows.map((a,i)=>[a,i]).filter(([a])=>a[0]===p);
+function reach(ex,p){const seen=new Set([p]),st=[p];while(st.length){const q=st.pop();outs(ex,q).forEach(([a])=>{if(!seen.has(a[1])){seen.add(a[1]);if(a[1]!=='clash')st.push(a[1]);}});}return seen;}
+const ruled=(ex,p)=>{const r=reach(ex,p);return r.has(opp(p))||r.has('clash');};
+function verdict(ex){const sents=[...new Set(Object.keys(ex.ports).map(p=>p.split('.')[0]))];const ro=sents.map(s=>[ruled(ex,s+'.T'),ruled(ex,s+'.F')]);
+ if(ro.some(([a,b])=>a&&b))return 'Contradiction loop: paradox. No consistent answer.';
+ if(ro.every(([a,b])=>a!==b))return 'Exactly one consistent answer: '+sents.map((s,i)=>s+' '+(ro[i][0]?'false':'true')).join(', ')+'.';
+ return 'More than one consistent answer: underdetermined.';}
+const tip=(ex,p)=>{const w=words(p);return w[0].toUpperCase()+w.slice(1)+'. '+(ruled(ex,p)?'Ruled out: following the arrows from here reaches '+(reach(ex,p).has('clash')?'a clash with the facts':words(opp(p)))+'.':'Not ruled out by following the arrows.')+' Tap to assume it.';};
+function load(id){if(!EX[id])id='liar';stopPlay();cur=id;const ex=EX[id];
+ picker.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ex===id));
+ document.getElementById('sentence').textContent=ex.sentence;document.getElementById('reads').textContent='Reads back as '+ex.reads;
+ let h='<defs><marker id="medge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker><marker id="mref" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ref)"/></marker><marker id="mimp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--imp)"/></marker></defs>'+ex.svg;
+ ex.arrows.forEach((a,i)=>h+=`<g><title>If ${words(a[0])}, then ${words(a[1])}.</title><path d="${a[2]}" fill="none" stroke="transparent" stroke-width="14"/><path class="imp" id="ar${i}" d="${a[2]}" marker-end="url(#mimp)"/></g>`);
+ Object.entries(ex.ports).forEach(([p,[x,y]])=>{const v=p.slice(-1);h+=`<g class="port ${v}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip(ex,p)}</title><circle cx="${x}" cy="${y}" r="12"/><text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
+ dia.setAttribute('viewBox',ex.vb);dia.innerHTML=h;
+ dia.querySelectorAll('.port').forEach(g=>{const go=()=>{stopPlay();begin(g.dataset.p);};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};});
+ document.getElementById('verdict').textContent=verdict(ex);
+ begin(Object.keys(ex.ports)[0]);}
+function clear(){dia.querySelectorAll('.imp').forEach(a=>a.classList.remove('on'));dia.querySelectorAll('.port').forEach(g=>g.classList.remove('cur','seen'));const c=document.getElementById('clash');if(c)c.classList.remove('on');}
+function mark(p,cls){if(p==='clash'){const c=document.getElementById('clash');if(c)c.classList.add('on');return;}const g=dia.querySelector(`.port[data-p="${p}"]`);if(g)g.classList.add(cls);}
+function begin(p){start=p;walk={frontier:[p],seen:new Set([p]),steps:0,loops:0};clear();mark(p,'cur');say.textContent='Assume '+words(p)+'. Follow the arrows to see what that forces.';}
+function step(){const ex=EX[cur];if(!walk)return;const nf=[],lines=[];
+ walk.frontier.forEach(p=>{if(p==='clash')return;const os=outs(ex,p);os.forEach(([a,i])=>{document.getElementById('ar'+i).classList.add('on');lines.push('If '+words(p)+', then '+words(a[1])+'.');nf.push(a[1]);});});
+ dia.querySelectorAll('.port.cur').forEach(g=>{g.classList.remove('cur');g.classList.add('seen');});
+ if(!nf.length){say.textContent=walk.done||('Nothing more is forced. '+summary());stopPlay();return;}
+ const fresh=nf.filter(q=>!walk.seen.has(q));nf.forEach(q=>mark(q,'cur'));fresh.forEach(q=>walk.seen.add(q));walk.steps++;
+ let tail='';if(nf.includes(opp(start)))tail=' That contradicts the assumption that '+words(start)+'.';
+ if(nf.includes('clash'))tail=' That clashes with the facts.';
+ if(!fresh.length){walk.loops++;tail+=' Back at a port we already reached, so the reasoning goes round this loop forever.';}
+ say.textContent=lines.join(' ')+tail;
+ walk.frontier=fresh.length?fresh:(timer&&walk.loops<3?nf:[]);
+ if(!walk.frontier.length){say.textContent+=' '+summary();walk.done=say.textContent;if(timer)stopPlay();}}
+function summary(){const ex=EX[cur];return ruled(ex,start)?words(start).replace(/^./,c=>c.toUpperCase())+' is ruled out.':words(start).replace(/^./,c=>c.toUpperCase())+' is not ruled out.';}
+function stopPlay(){if(timer){clearInterval(timer);timer=null;}document.getElementById('play').textContent='Play';}
+document.getElementById('step').onclick=()=>{stopPlay();step();};
+document.getElementById('play').onclick=()=>{if(timer){stopPlay();return;}begin(start);document.getElementById('play').textContent='Pause';if(matchMedia('(prefers-reduced-motion: reduce)').matches){for(let i=0;i<4&&walk.frontier.length;i++)step();stopPlay();return;}timer=setInterval(step,1300);};
+document.getElementById('reset').onclick=()=>begin(start);
+window.addEventListener('hashchange',()=>load(location.hash.slice(1)));
+load(location.hash.slice(1)||'liar');
+</script>
+</body>
+</html>
