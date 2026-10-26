@@ -59,7 +59,14 @@ svg text{font-family:inherit;fill:var(--ink)}
 .port.closed circle{fill:color-mix(in srgb,var(--line) 30%,transparent)!important;stroke:var(--line)!important}
 .port.closed text{fill:var(--quiet)!important}
 .port.closed{cursor:default}
-.slash{stroke:var(--line);stroke-width:1.5}
+.slash{stroke:var(--line);stroke-width:1.25}
+.factbox{fill:none;stroke:var(--line);stroke-width:1.25}
+.port rect{stroke-width:1.5;transition:stroke-width .2s}
+.port.T rect{fill:color-mix(in srgb,var(--pT) 18%,transparent);stroke:var(--pT)}
+.port.F rect{fill:color-mix(in srgb,var(--pF) 18%,transparent);stroke:var(--pF)}
+.port.closed rect{fill:color-mix(in srgb,var(--line) 30%,transparent)!important;stroke:var(--line)!important}
+.port.cur rect{stroke-width:4}
+.port.seen rect{stroke-width:2.5}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 8px}
 .hint{font-size:14px;color:var(--quiet)}
 .say{font-size:17px;min-height:52px;margin:8px 0 0}
@@ -86,7 +93,7 @@ svg text{font-family:inherit;fill:var(--ink)}
 <span>Magenta arrow: “if this, then that”</span>
 <span>Red dashed: negation enclosure</span>
 <span>Thick blue: level-crossing reference</span>
-<span>Grey panel: the world; a crossed-out port is closed</span>
+<span>Grey panel: the world, one box per fact with holds and doesn’t hold ports; a crossed-out port is closed</span>
 </div>
 </main>
 <script>
@@ -95,12 +102,12 @@ const cap=(x,y,w,h,l)=>`<rect class="cap" x="${x}" y="${y}" width="${w}" height=
 const cut=(x,y,w,h)=>`<rect class="cutr" x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/><text class="cutt" x="${x+12}" y="${y+16}">not</text>`;
 const ref=(d,thick,lx,ly,l)=>`<path class="${thick?'refx':'edge'}" d="${d}" marker-end="url(#${thick?'mref':'medge'})"/>`+(l?`<text class="role" x="${lx}" y="${ly}" text-anchor="middle">${l}</text>`:'');
 const EX={
-snow:{label:'Snow is falling',sentence:'S: “Snow is falling.”',reads:'S := Falling(thing that falls: Snow)',vb:'14 60 368 240',facts:['snow'],
- svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,106,'thing that falls')+`<rect class="world" x="24" y="236" width="344" height="44" rx="10"/><text class="worldt" id="worldtext" x="36" y="268"></text>`,
- ports:{'S.T':[120,192],'S.F':[232,192],'snow.T':[120,236],'snow.F':[232,236]},arrows:()=>[['S.T','snow.T','M120 204V221'],['S.F','snow.F','M232 204V221']]},
-mixed:{label:'6 snow and liar',sentence:'S: “Snow is falling, and this sentence is false.”',reads:'S := Falling(thing that falls: Snow) ∧ ¬IsTrue(bearer: S)',vb:'14 60 368 276',facts:['snow'],
- svg:bnd(24,72,344,148,'S')+cap(80,92,84,28,'Falling')+ref('M164 106H242',false,203,88,'thing that falls')+`<rect class="ent" x="244" y="92" width="64" height="28" rx="8"/><text x="276" y="111" text-anchor="middle">Snow</text>`+cut(40,134,136,64)+cap(56,152,96,30,'IsTrue')+ref('M152 167H365',true,262,159,'bearer')+`<rect class="world" x="24" y="276" width="344" height="44" rx="10"/><text class="worldt" id="worldtext" x="36" y="308"></text>`,
- ports:{'S.T':[120,220],'S.F':[232,220],'snow.T':[120,276],'snow.F':[232,276]},arrows:w=>w.snow?[['S.T','snow.T','M120 232V261'],['S.T','S.F','M131 228Q176 250 220 229'],['S.F','S.T','M226 231Q176 268 127 231']]:[['S.T','snow.T','M120 232V261'],['S.T','S.F','M131 228Q176 250 220 229']]},
+snow:{label:'Snow is falling',sentence:'S: “Snow is falling.”',reads:'S := Falling(thing that falls: Snow)',vb:'14 60 368 300',facts:['snow'],
+ svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,106,'thing that falls')+`<rect class="world" x="24" y="222" width="344" height="112" rx="10"/><rect class="factbox" x="40" y="256" width="312" height="58" rx="8"/>`+cap(64,276,84,28,'Falling')+ref('M148 290H228',false,188,308,'thing that falls')+`<rect class="ent" x="230" y="276" width="64" height="28" rx="8"/><text x="262" y="295" text-anchor="middle">Snow</text><text class="worldt" id="worldtext" x="36" y="328" font-weight="700"></text>`,
+ ports:{'S.T':[120,192],'S.F':[232,192],'snow.T':[120,256],'snow.F':[232,256]},arrows:()=>[['S.T','snow.T','M120 204V243'],['S.F','snow.F','M232 204V243']]},
+mixed:{label:'6 snow and liar',sentence:'S: “Snow is falling, and this sentence is false.”',reads:'S := Falling(thing that falls: Snow) ∧ ¬IsTrue(bearer: S)',vb:'14 60 368 330',facts:['snow'],
+ svg:bnd(24,72,344,148,'S')+cap(80,92,84,28,'Falling')+ref('M164 106H242',false,203,88,'thing that falls')+`<rect class="ent" x="244" y="92" width="64" height="28" rx="8"/><text x="276" y="111" text-anchor="middle">Snow</text>`+cut(40,134,136,64)+cap(56,152,96,30,'IsTrue')+ref('M152 167H365',true,262,159,'bearer')+`<rect class="world" x="24" y="252" width="344" height="112" rx="10"/><rect class="factbox" x="40" y="286" width="312" height="58" rx="8"/>`+cap(64,306,84,28,'Falling')+ref('M148 320H228',false,188,338,'thing that falls')+`<rect class="ent" x="230" y="306" width="64" height="28" rx="8"/><text x="262" y="325" text-anchor="middle">Snow</text><text class="worldt" id="worldtext" x="36" y="358" font-weight="700"></text>`,
+ ports:{'S.T':[120,220],'S.F':[232,220],'snow.T':[120,286],'snow.F':[232,286]},arrows:w=>w.snow?[['S.T','snow.T','M120 232V273'],['S.T','S.F','M131 228Q176 250 220 229'],['S.F','S.T','M226 231Q176 268 127 231']]:[['S.T','snow.T','M120 232V273'],['S.T','S.F','M131 228Q176 250 220 229']]},
 'truth-teller':{label:'This statement is true',sentence:'S: “This statement is true.”',reads:'S := IsTrue(bearer: S)',vb:'382 60 368 200',
  svg:bnd(392,72,344,120,'S')+cap(440,114,96,36,'IsTrue')+ref('M536 132H733',true,636,122,'bearer'),
  ports:{'S.T':[488,192],'S.F':[640,192]},arrows:[['S.T','S.T','M478 204C462 248 514 248 498 205'],['S.F','S.F','M630 204C614 248 666 248 650 205']]},
@@ -144,10 +151,10 @@ function load(id){if(!EX[id])id='liar';stopPlay();cur=id;const ex=EX[id];
  document.getElementById('sentence').textContent=ex.sentence;document.getElementById('reads').textContent='Reads back as '+ex.reads;
  let h='<defs><marker id="medge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker><marker id="mref" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ref)"/></marker><marker id="mimp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--imp)"/></marker></defs>'+ex.svg;
  ARR(ex).forEach((a,i)=>h+=`<g><title>If ${words(a[0])}, then ${words(a[1])}.</title><path d="${a[2]}" fill="none" stroke="transparent" stroke-width="14"/><path class="imp" id="ar${i}" d="${a[2]}" marker-end="url(#mimp)"/></g>`);
- Object.entries(ex.ports).forEach(([p,[x,y]])=>{const v=p.slice(-1);if(isFact(p)){const c=closedP(p);h+=`<g class="port ${v}${c?' closed':''}" data-p="${p}" data-fact="1"><title>The world: ${words(p)}. ${c?'Closed: the world rules this out.':'Open in this world.'}</title><circle cx="${x}" cy="${y}" r="12"/>${c?`<path class="slash" d="M${x-9} ${y+9}L${x+9} ${y-9}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;return;}h+=`<g class="port ${v}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip(ex,p)}</title><circle cx="${x}" cy="${y}" r="12"/><text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
+ Object.entries(ex.ports).forEach(([p,[x,y]])=>{const v=p.slice(-1);if(isFact(p)){const c=closedP(p),w=v==='T'?56:90,lab=v==='T'?'holds':'doesn’t hold';h+=`<g class="port ${v}${c?' closed':''}" data-p="${p}" data-fact="1"><title>${v==='T'?'Holds':'Doesn’t hold'}: ${words(p)}. ${c?'Closed: the world rules this out.':'Open in this world.'}</title><rect x="${x-w/2}" y="${y-11}" width="${w}" height="22" rx="11"/>${c?`<path class="slash" d="M${x-w/2+3} ${y+10}L${x+w/2-3} ${y-10}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${lab}</text></g>`;return;}h+=`<g class="port ${v}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip(ex,p)}</title><circle cx="${x}" cy="${y}" r="12"/><text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
  dia.setAttribute('viewBox',ex.vb);dia.innerHTML=h;
  dia.querySelectorAll('.port:not([data-fact])').forEach(g=>{const go=()=>{stopPlay();begin(g.dataset.p);};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};});
- const wt=document.getElementById('worldtext');if(wt)wt.textContent='World: Falling(thing that falls: Snow) '+(W.snow?'holds':'does not hold');
+ const wt=document.getElementById('worldtext');if(wt)wt.textContent='World: snow is '+(W.snow?'falling':'not falling');
  const wb=document.getElementById('worldbtn');wb.hidden=!ex.facts;wb.textContent=W.snow?'Change the world: stop the snow':'Change the world: make it snow';
  document.getElementById('verdict').textContent=verdict(ex)+(ex.facts?' (In this world.)':'');
  begin(Object.keys(ex.ports)[0]);}
