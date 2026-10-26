@@ -79,6 +79,7 @@ svg text{font-family:inherit;fill:var(--ink)}
 .jn circle{fill:var(--imp);stroke:var(--imp);stroke-width:2}.jn.oneof circle{fill:var(--bg)}
 .jn.jbad circle{stroke:var(--cut)}.jn.both.jbad circle{fill:var(--cut)}
 .and{font-style:italic}
+.pnum{fill:var(--bg);stroke:var(--quiet);stroke-width:1}.pnumt{font-size:10.5px;fill:var(--quiet)}
 .badge rect{stroke-width:1.25}.badge text{font-size:12px;font-weight:700}
 .bgood rect{fill:color-mix(in srgb,var(--pT) 16%,transparent);stroke:var(--pT)}
 .bbad rect{fill:color-mix(in srgb,var(--cut) 16%,transparent);stroke:var(--cut)}
@@ -99,7 +100,7 @@ svg text{font-family:inherit;fill:var(--ink)}
 <p class="sentence" id="sentence"></p>
 <p class="reads" id="reads"></p>
 <figure><svg id="dia" role="img" aria-label="Content diagram with value ports and implication arrows"></svg></figure>
-<div class="controls"><button id="step">Follow one arrow</button><button id="play">Play</button><button id="reset">Start over</button><button id="worldbtn" hidden></button><span class="hint">Tap a T or F port to choose what to assume.</span></div>
+<div class="controls"><button id="step">Follow one arrow</button><button id="play">Play</button><button id="reset">Start over</button><span id="worldbtns"></span><span class="hint">Tap a T or F port to choose what to assume.</span></div>
 <p class="say" id="say" aria-live="polite"></p>
 <p class="verdict" id="verdict"></p>
 <div class="key">
@@ -111,7 +112,7 @@ svg text{font-family:inherit;fill:var(--ink)}
 <span>Grey panel: the world; a crossed-out port is closed or ruled out</span>
 <span>Red loop on a red patch: paradox</span>
 <span>Green dashed loop: self-supporting</span>
-<span>Filled dot: both · hollow ring: one of</span>
+<span>Filled dot: both · hollow ring: one of · circled numbers: which part</span>
 </div>
 </main>
 <script>
@@ -119,6 +120,7 @@ const bnd=(x,y,w,h,n)=>`<rect class="bnd" x="${x}" y="${y}" width="${w}" height=
 const cap=(x,y,w,h,l)=>`<rect class="cap" x="${x}" y="${y}" width="${w}" height="${h}" rx="${h/2}"/><text class="capt" x="${x+w/2}" y="${y+h/2+5}" text-anchor="middle">${l}</text>`;
 const cut=(x,y,w,h)=>`<rect class="cutr" x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/><text class="cutt" x="${x+12}" y="${y+16}">not</text>`;
 const ref=(d,thick,lx,ly,l)=>`<path class="${thick?'refx':'edge'}" d="${d}" marker-end="url(#${thick?'mref':'medge'})"/>`+(l?`<text class="role" x="${lx}" y="${ly}" text-anchor="middle">${l}</text>`:'');
+const PN=(x,y,n)=>`<circle class="pnum" cx="${x}" cy="${y}" r="7.5"/><text class="pnumt" x="${x}" y="${y+4}" text-anchor="middle">${n}</text>`;
 const EX={
 snow:{label:'Snow is falling',sentence:'S: “Snow is falling.”',reads:'S := Falling(thing that falls: Snow)',vb:'14 60 368 300',facts:['snow'],
  svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,106,'thing that falls')+`<rect class="world" x="24" y="222" width="344" height="112" rx="10"/><rect class="factbox" x="40" y="256" width="312" height="58" rx="8"/>`+cap(64,276,84,28,'Falling')+ref('M148 290H228',false,188,308,'thing that falls')+`<rect class="ent" x="230" y="276" width="64" height="28" rx="8"/><text x="262" y="295" text-anchor="middle">Snow</text><text class="worldt" id="worldtext" x="36" y="328" font-weight="700"></text>`,
@@ -144,7 +146,15 @@ mutual:{label:'A and B',sentence:'A: “B is false.”  B: “A is true.”',rea
 'nested-b':{label:'5b loop inside a loop',sentence:'S: “The statement ‘this statement is true and S is true’ is false.” The inner sentence is Q.',reads:'S := ¬IsTrue(bearer: Q),  Q := IsTrue(bearer: Q) ∧ IsTrue(bearer: S)',vb:'14 428 732 356',
  svg:bnd(24,436,712,236,'S')+cut(56,516,160,76)+cap(80,536,104,36,'IsTrue')+ref('M184 554H312',false,248,544,'bearer')+bnd(312,460,360,160,'Q')+cap(352,492,104,36,'IsTrue')+cap(352,552,104,36,'IsTrue')+ref('M456 510H669',true,562,500,'bearer')+ref('M456 570H733',true,600,560,'bearer, lands on S'),
  ports:{'Q.T':[520,620],'Q.F':[620,620],'S.T':[120,672],'S.F':[220,672]},
- arrows:[['Q.T','jQ','M520 632V643'],['jQ','S.T','M516 654C470 730 160 730 123 685'],['jQ','Q.T','M525 652C560 664 566 622 533 621'],['S.F','Q.T','M226 684C260 712 500 712 512 631'],['S.T','Q.F','M118 684C140 790 610 790 620 633']]}
+ arrows:[['Q.T','jQ','M520 632V643'],['jQ','S.T','M516 654C470 730 160 730 123 685'],['jQ','Q.T','M525 652C560 664 566 622 533 621'],['S.F','Q.T','M226 684C260 712 500 712 512 631'],['S.T','Q.F','M118 684C140 790 610 790 620 633']]},
+'king-a':{label:'7A king of France, deny the whole',sentence:'N: “The present king of France is not bald”, read as “it is not the case that there is a king of France and he is bald.”',reads:'N := ¬(Exists(thing that exists: King of France) ∧ Bald(bald thing: King of France))',vb:'14 60 732 312',facts:['exists','bald'],
+svg:bnd(24,72,712,124,'N')+cut(56,84,600,100)+cap(96,118,84,30,'Exists')+ref('M180 133H262',false,221,113,'thing that exists')+`<rect class="ent" x="264" y="118" width="128" height="30" rx="8"/><text x="328" y="138" text-anchor="middle">King of France</text>`+cap(480,118,72,30,'Bald')+ref('M480 133H394',false,437,124,'bald thing')+`<text class="role and" x="437" y="168" text-anchor="middle">and</text>`+PN(84,133,1)+PN(566,133,2)+`<rect class="world" x="24" y="252" width="712" height="108" rx="10"/><rect class="factbox" x="40" y="278" width="320" height="62" rx="8"/><rect class="factbox" x="400" y="278" width="320" height="62" rx="8"/>`+cap(64,296,84,26,'Exists')+ref('M148 309H208',false,178,333,'thing that exists')+`<rect class="ent" x="210" y="296" width="132" height="26" rx="8"/><text x="276" y="314" text-anchor="middle">King of France</text>`+cap(424,296,72,26,'Bald')+ref('M496 309H568',false,532,333,'bald thing')+`<rect class="ent" x="570" y="296" width="132" height="26" rx="8"/><text x="636" y="314" text-anchor="middle">King of France</text><text class="worldt" id="worldtext" x="36" y="354" font-weight="700"></text>`,
+ports:{'N.T':[300,196],'N.F':[420,196],'exists.T':[120,278],'exists.F':[240,278],'bald.T':[480,278],'bald.F':[600,278]},
+arrows:[['N.T','jT','M300 208V217'],['jT','exists.F','M297 229L246 265'],['jT','bald.F','M305 227C400 246 560 246 596 265'],['N.F','jF','M420 208V217'],['jF','exists.T','M415 227C330 248 160 248 124 265'],['jF','bald.T','M423 229L474 265']]},
+'king-b':{label:'7B king of France, deny baldness',sentence:'N: “The present king of France is not bald”, read as “there is a king of France, and he is not bald.”',reads:'N := Exists(thing that exists: King of France) ∧ ¬Bald(bald thing: King of France)',vb:'14 60 732 312',facts:['exists','bald'],
+svg:bnd(24,72,712,124,'N')+cap(64,118,84,30,'Exists')+ref('M148 133H230',false,189,113,'thing that exists')+`<rect class="ent" x="232" y="118" width="128" height="30" rx="8"/><text x="296" y="138" text-anchor="middle">King of France</text><text class="role and" x="376" y="168" text-anchor="middle">and</text>`+cut(400,90,260,90)+cap(560,118,72,30,'Bald')+ref('M560 133H362',false,480,124,'bald thing')+PN(52,133,1)+PN(660,90,2)+`<rect class="world" x="24" y="252" width="712" height="108" rx="10"/><rect class="factbox" x="40" y="278" width="320" height="62" rx="8"/><rect class="factbox" x="400" y="278" width="320" height="62" rx="8"/>`+cap(64,296,84,26,'Exists')+ref('M148 309H208',false,178,333,'thing that exists')+`<rect class="ent" x="210" y="296" width="132" height="26" rx="8"/><text x="276" y="314" text-anchor="middle">King of France</text>`+cap(424,296,72,26,'Bald')+ref('M496 309H568',false,532,333,'bald thing')+`<rect class="ent" x="570" y="296" width="132" height="26" rx="8"/><text x="636" y="314" text-anchor="middle">King of France</text><text class="worldt" id="worldtext" x="36" y="354" font-weight="700"></text>`,
+ports:{'N.T':[300,196],'N.F':[420,196],'exists.T':[120,278],'exists.F':[240,278],'bald.T':[480,278],'bald.F':[600,278]},
+arrows:[['N.T','jT','M300 208V217'],['jT','exists.T','M296 228C240 246 150 248 124 265'],['jT','bald.F','M305 227C400 246 560 246 596 265'],['N.F','jF','M420 208V217'],['jF','exists.F','M415 228C360 246 270 248 246 265'],['jF','bald.T','M423 229L474 265']]},
 };
 
 const META={
@@ -153,12 +163,19 @@ const META={
  liar:{boxes:{S:[24,372,344,120]}},
  mutual:{boxes:{A:[392,372,140,120],B:[596,372,140,120]}},
  'nested-a':{boxes:{S:[24,72,712,236],Q:[312,96,400,136]}},
- 'nested-b':{boxes:{S:[24,436,712,236],Q:[312,460,360,160]},junctions:{jQ:{kind:'both',x:520,y:650,lx:508,anchor:'end'}},extra:'<text class="role and" x="404" y="545" text-anchor="middle">and</text>'},
- mixed:{boxes:{S:[24,72,344,148]},junctions:{jA:{kind:'both',x:100,y:246,lx:90,anchor:'end'},jO:{kind:'oneof',x:252,y:246,lx:262,anchor:'start'}},extra:'<text class="role and" x="52" y="129">and</text>'}
+ 'nested-b':{nums:[[338,510,1],[338,570,2],[498,676,2],[574,644,1]],boxes:{S:[24,436,712,236],Q:[312,460,360,160]},junctions:{jQ:{kind:'both',x:520,y:650,lx:508,anchor:'end'}},extra:'<text class="role and" x="404" y="545" text-anchor="middle">and</text>'},
+ 'king-a':{boxes:{N:[24,72,712,124]},junctions:{jT:{kind:'oneof',x:300,y:224,lx:290,anchor:'end'},jF:{kind:'both',x:420,y:224,lx:430,anchor:'start'}},nums:[[138,254,1],[262,254,1],[488,254,2],[612,254,2]]},
+ 'king-b':{boxes:{N:[24,72,712,124]},junctions:{jT:{kind:'both',x:300,y:224,lx:290,anchor:'end'},jF:{kind:'oneof',x:420,y:224,lx:430,anchor:'start'}},nums:[[138,254,1],[612,254,2],[262,254,1],[488,254,2]]},
+ mixed:{nums:[[68,106,1],[176,134,2],[97,266,1],[165,272,2],[257,266,1],[190,229,2]],boxes:{S:[24,72,344,148]},junctions:{jA:{kind:'both',x:100,y:246,lx:90,anchor:'end'},jO:{kind:'oneof',x:252,y:246,lx:262,anchor:'start'}},extra:'<text class="role and" x="52" y="129">and</text>'}
 };
-const ORDER=['snow','truth-teller','liar','mutual','nested-a','nested-b','mixed'];
-const W={snow:true};
-const FACTWORDS={snow:['snow is falling','snow is not falling']};
+const ORDER=['snow','truth-teller','liar','mutual','nested-a','nested-b','mixed','king-a','king-b'];
+const FORM={snow:{S:['fact','snow']},'truth-teller':{S:['T','S']},liar:{S:['not',['T','S']]},mutual:{A:['not',['T','B']],B:['T','A']},'nested-a':{S:['not',['T','Q']],Q:['not',['T','Q']]},'nested-b':{S:['not',['T','Q']],Q:['and',['T','Q'],['T','S']]},mixed:{S:['and',['fact','snow'],['not',['T','S']]]},'king-a':{N:['not',['and',['fact','exists'],['fact','bald']]]},'king-b':{N:['and',['fact','exists'],['not',['fact','bald']]]}};
+const eva=(e,a)=>e[0]==='fact'?!!W[e[1]]:e[0]==='T'?a[e[1]]:e[0]==='not'?!eva(e[1],a):eva(e[1],a)&&eva(e[2],a);
+function answers(id){const f=FORM[id],ss=Object.keys(f),out=[];for(let m=0;m<(1<<ss.length);m++){const a={};ss.forEach((s,k)=>a[s]=!!(m>>k&1));if(ss.every(s=>a[s]===eva(f[s],a)))out.push(a);}return out;}
+const W={snow:true,exists:false,bald:false};
+const FACTWORDS={snow:['snow is falling','snow is not falling'],exists:['there is a present king of France','there is no present king of France'],bald:['the king of France is bald','the king of France is not bald']};
+const WBTN={snow:['Stop the snow','Make it snow'],exists:['Remove the king','Add a king'],bald:['Make him not bald','Make him bald']};
+const WTEXT={snow:()=>'World: snow is '+(W.snow?'falling':'not falling'),exists:()=>'World: '+(W.exists?'there is a present king of France, and he is '+(W.bald?'bald':'not bald'):'there is no present king of France'+(W.bald?' (the bald fact is set, but has nothing to apply to)':''))};
 const sentOf=p=>p.split('.')[0];
 const isPort=n=>n.includes('.');
 const isFact=p=>isPort(p)&&FACTWORDS[sentOf(p)]!==undefined;
@@ -175,11 +192,13 @@ const outs=(ex,n)=>ex.arrows.map((a,i)=>[a,i]).filter(([a])=>a[0]===n);
 function oneofState(id,n,F,p){const os=outs(EX[id],n);
  if(os.some(([a])=>openFact(a[1])||(isPort(a[1])&&F.has(a[1]))))return {sat:true,open:[],os};
  const open=os.filter(([a])=>!closedP(a[1])&&a[1]!==opp(p)&&!F.has(opp(a[1])));return {sat:false,open,os};}
-function prop(id,p){const F=new Set([p]),used=new Set(),q=[p];let bad=false;
+function prop(id,p,seed){const F=new Set(seed||[p]),used=new Set(),q=[...F];let bad=false;
  while(q.length){const n=q.shift();if(closedP(n)){bad=true;continue;}if(n===opp(p)){bad=true;}
   const j=JN(id,n);
   if(j&&j.kind==='oneof'){const st=oneofState(id,n,F,p);if(st.sat)continue;st.os.forEach(([a,i])=>used.add(i));
-   if(st.open.length===0){bad=true;continue;}if(st.open.length===1){const t=st.open[0][0][1];if(!F.has(t)){F.add(t);q.push(t);}}continue;}
+   let open=st.open;
+   if(open.length>1){open=open.filter(([a])=>!prop(id,p,[...F,a[1]]).bad);}
+   if(open.length===0){bad=true;continue;}if(open.length===1){const t=open[0][0][1];if(!F.has(t)){F.add(t);q.push(t);}}continue;}
   outs(EX[id],n).forEach(([a,i])=>{used.add(i);if(!F.has(a[1])){F.add(a[1]);q.push(a[1]);}});}
  return {F,used,bad};}
 function effOuts(id,v){const os=outs(EX[id],v);const j=JN(id,v);if(!j||j.kind!=='oneof')return os;if(os.some(([a])=>openFact(a[1])))return [];const open=os.filter(([a])=>!closedP(a[1]));return open.length===1?open:[];}
@@ -190,10 +209,8 @@ function sccs(id){const ex=EX[id],nodes=new Set();ex.arrows.forEach(a=>{nodes.ad
  nodes.forEach(v=>{if(I[v]===undefined)sc(v);});return comp;}
 function analyse(id){const ex=EX[id];const sents=[...new Set(Object.keys(ex.ports).filter(p=>!isFact(p)).map(sentOf))];
  const P={};sents.forEach(s=>{P[s+'.T']=prop(id,s+'.T');P[s+'.F']=prop(id,s+'.F');});
- const verdict={};sents.forEach(s=>{const rT=P[s+'.T'].bad,rF=P[s+'.F'].bad;verdict[s]=rT&&rF?'paradox':rT?'false':rF?'true':'either';});
- const pdx=sents.filter(s=>verdict[s]==='paradox');
- sents.forEach(s=>{if(verdict[s]==='either'&&pdx.length&&['T','F'].every(v=>[...P[s+'.'+v].F].some(n=>isPort(n)&&pdx.includes(sentOf(n))&&sentOf(n)!==s)))verdict[s]='depends';});
- const comp=sccs(id);const size={};Object.values(comp).forEach(c=>size[c]=(size[c]||0)+1);
+ const comp=sccs(id);const ans=answers(id);const verdict={};
+ sents.forEach(s=>{if(!ans.length){const c=comp[s+'.T'];verdict[s]=(c!==undefined&&c===comp[s+'.F'])||(P[s+'.T'].bad&&P[s+'.F'].bad)?'paradox':'depends';return;}const vs=new Set(ans.map(a=>a[s]));verdict[s]=vs.size===2?'either':vs.has(true)?'true':'false';});const size={};Object.values(comp).forEach(c=>size[c]=(size[c]||0)+1);
  const badComp=new Set();sents.forEach(s=>{const a=comp[s+'.T'],b=comp[s+'.F'];if(a!==undefined&&a===b)badComp.add(a);});
  const used=new Set();sents.forEach(s=>{['T','F'].forEach(v=>{const r=P[s+'.'+v];if((r.bad&&verdict[s]!=='paradox')||verdict[s]==='depends')r.used.forEach(i=>used.add(i));});});
  const cls=ex.arrows.map((a,i)=>{const ca=comp[a[0]],cb=comp[a[1]];
@@ -214,11 +231,11 @@ function load(id){if(!EX[id])id='liar';stopPlay();cur=id;const ex=EX[id],M=META[
   const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);const x0=Math.min(...xs)-34,x1=Math.max(...xs)+34,y0=Math.min(...ys)-20,y1=Math.max(...ys)+(pts.length>2?100:56);
   h+=`<rect class="patch" x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" rx="30"><title>Contradiction loop: these ports all lead round to each other, and include both values of a sentence.</title></rect>`;});
  Object.entries(M.boxes||{}).forEach(([s,[x,y,w,hh]])=>{if(V.verdict[s]==='depends')h+=`<rect class="dtint" x="${x}" y="${y}" width="${w}" height="${hh}" rx="4"/>`;});
- h+=ex.svg+(M.extra||'');
+ h+=ex.svg+(M.extra||'')+(M.nums||[]).map(([x,y,n])=>PN(x,y,n)).join('');
  Object.entries(M.boxes||{}).forEach(([s,[x,y,w]])=>{const v=V.verdict[s];if(!v)return;const lab=VLABEL[v],bw=lab.length*7+18;const bx=x+w-8-bw;
   h+=`<g class="badge ${v==='paradox'||v==='depends'?'bbad':'bgood'}"><title>${s}. ${VTIP[v]}${META[cur].boxes&&EX[cur].facts?' In this world.':''}</title><rect x="${bx}" y="${y-6}" width="${bw}" height="18" rx="9"/><text x="${bx+bw/2}" y="${y+7}" text-anchor="middle">${lab}</text></g>`;});
  ex.arrows.forEach((a,i)=>{const c=V.cls[i];const m=c==='bad'?'mbad':c==='ok'?'mok':c==='blocked'?'medge':'mimp';const toJ=JN(id,a[1]);
-  const tip=JN(id,a[0])?(c==='blocked'?`Branch: ${words(a[1])}. Blocked: that port is closed.`:`Branch: ${words(a[1])}.`):toJ?(toJ.kind==='both'?`If ${words(a[0])}, every claim must hold.`:`If ${words(a[0])}, at least one claim must fail.`):`If ${words(a[0])}, then ${words(a[1])}.`;
+  const tip=JN(id,a[0])?(c==='blocked'?`Branch: ${words(a[1])}. Blocked: that port is closed.`:`Branch: ${words(a[1])}.`):toJ?(toJ.kind==='both'?`If ${words(a[0])}, every part must hold.`:`If ${words(a[0])}, at least one part must fail.`):`If ${words(a[0])}, then ${words(a[1])}.`;
   const lab={bad:' Part of a contradiction loop.',ok:' Part of a self-supporting loop.',faint:' This decides nothing, so it is drawn faint.',solid:'',blocked:''}[c];
   h+=`<g><title>${tip}${lab}</title><path d="${a[2]}" fill="none" stroke="transparent" stroke-width="14"/><path class="imp ${c}" id="ar${i}" d="${a[2]}" ${toJ?'':`marker-end="url(#${m})"`}/></g>`;});
  Object.entries(M.junctions||{}).forEach(([n,j])=>{const bad=V.badComp.has(V.comp[n]);h+=`<g class="jn ${j.kind}${bad?' jbad':''}"><title>${j.kind==='both'?'Both junction: every branch must hold.':'One-of junction: at least one branch must hold. Blocked branches drop out; one left is forced.'}</title><circle cx="${j.x}" cy="${j.y}" r="5"/><text class="role and" x="${j.lx}" y="${j.y+4}" text-anchor="${j.anchor}">${j.kind==='both'?'both':'one of'}</text></g>`;});
@@ -228,8 +245,8 @@ function load(id){if(!EX[id])id='liar';stopPlay();cur=id;const ex=EX[id],M=META[
   h+=`<g class="port ${v}${r?' ruled':''}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip}</title><circle cx="${x}" cy="${y}" r="12"/>${r?`<path class="slash" d="M${x-9} ${y+9}L${x+9} ${y-9}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
  dia.setAttribute('viewBox',ex.vb);dia.innerHTML=h;
  dia.querySelectorAll('.port:not([data-fact])').forEach(g=>{const go=()=>{stopPlay();begin(g.dataset.p);};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};});
- const wt=document.getElementById('worldtext');if(wt)wt.textContent='World: snow is '+(W.snow?'falling':'not falling');
- const wb=document.getElementById('worldbtn');wb.hidden=!ex.facts;wb.textContent=W.snow?'Change the world: stop the snow':'Change the world: make it snow';
+ const wt=document.getElementById('worldtext');if(wt&&ex.facts)wt.textContent=WTEXT[ex.facts[0]]();
+ const wbs=document.getElementById('worldbtns');wbs.innerHTML='';(ex.facts||[]).forEach(f=>{const b=document.createElement('button');b.textContent='Change the world: '+WBTN[f][W[f]?0:1].toLowerCase();b.onclick=()=>{W[f]=!W[f];load(cur);};wbs.appendChild(b);});
  const vs=V.sents.map(s=>s+': '+VLABEL[V.verdict[s]]).join(' · ');
  document.getElementById('verdict').textContent='Verdict '+(ex.facts?'in this world':'')+' — '+vs+'.';
  begin(Object.keys(ex.ports).find(p=>!isFact(p)));}
@@ -242,9 +259,9 @@ function step(){if(!walk)return;const id=cur,nf=[],lines=[];let blocked=false;
    if(st.sat){lines.push('One of the options already holds, so nothing more is forced.');return;}
    if(st.open.length===0){lines.push('Every option is blocked.');blocked=true;return;}
    if(st.open.length===1){const t=st.open[0][0][1];lines.push('The only open option is that '+words(t)+'.');nf.push(t);return;}
-   lines.push('More than one option is open, so nothing more is forced.');return;}
+   const surv=st.open.filter(([a])=>!prop(id,start,[...walk.F,a[1]]).bad);if(surv.length===0){lines.push('Trying each open option in turn: every case runs into a contradiction.');blocked=true;return;}if(surv.length===1){const t=surv[0][0][1];lines.push('Trying each open option in turn: only “'+words(t)+'” survives, so it is forced.');nf.push(t);return;}lines.push('More than one option survives, so nothing more is forced.');return;}
   outs(EX[id],n).forEach(([a,i])=>{document.getElementById('ar'+i).classList.add('on');const toJ=JN(id,a[1]);
-   if(toJ)lines.push('If '+words(n)+', then '+(toJ.kind==='both'?'every claim must hold':'at least one claim must fail')+'.');
+   if(toJ)lines.push('If '+words(n)+', then '+(toJ.kind==='both'?'every part must hold':'at least one part must fail')+'.');
    else lines.push((JN(id,n)?'So ':'If '+words(n)+', then ')+words(a[1])+'.');nf.push(a[1]);});});
  dia.querySelectorAll('.port.cur').forEach(g=>{g.classList.remove('cur');g.classList.add('seen');});
  if(!nf.length){say.textContent=(lines.join(' ')+' '+(blocked?Cap(words(start))+' is ruled out.':walk.done||summary())).trim();stopPlay();walk.frontier=[];return;}
@@ -260,7 +277,6 @@ function stopPlay(){if(timer){clearInterval(timer);timer=null;}document.getEleme
 document.getElementById('step').onclick=()=>{stopPlay();step();};
 document.getElementById('play').onclick=()=>{if(timer){stopPlay();return;}begin(start);document.getElementById('play').textContent='Pause';if(matchMedia('(prefers-reduced-motion: reduce)').matches){for(let i=0;i<4&&walk.frontier.length;i++)step();stopPlay();return;}timer=setInterval(step,1300);};
 document.getElementById('reset').onclick=()=>begin(start);
-document.getElementById('worldbtn').onclick=()=>{W.snow=!W.snow;load(cur);};
 window.addEventListener('hashchange',()=>load(location.hash.slice(1)));
 load(location.hash.slice(1)||'liar');
 </script>
