@@ -67,6 +67,21 @@ svg text{font-family:inherit;fill:var(--ink)}
 .port.closed rect{fill:color-mix(in srgb,var(--line) 30%,transparent)!important;stroke:var(--line)!important}
 .port.cur rect{stroke-width:4}
 .port.seen rect{stroke-width:2.5}
+.patch{fill:color-mix(in srgb,var(--cut) 13%,transparent)}
+.dtint{fill:color-mix(in srgb,var(--cut) 6%,transparent);pointer-events:none}
+.imp.faint{opacity:.28}.imp.solid{opacity:.9}
+.imp.bad{stroke:var(--cut);stroke-width:3;opacity:1}
+.imp.ok{stroke:var(--pT);stroke-dasharray:4 3;stroke-width:2;opacity:1}
+.imp.blocked{stroke:var(--line);stroke-dasharray:3 3;opacity:.7}
+.imp.on{stroke-width:4;opacity:1}
+.port.ruled circle{fill:color-mix(in srgb,var(--line) 30%,transparent)!important;stroke:var(--line)!important}
+.port.ruled text{fill:var(--quiet)!important}
+.jn circle{fill:var(--imp);stroke:var(--imp);stroke-width:2}.jn.oneof circle{fill:var(--bg)}
+.jn.jbad circle{stroke:var(--cut)}.jn.both.jbad circle{fill:var(--cut)}
+.and{font-style:italic}
+.badge rect{stroke-width:1.25}.badge text{font-size:12px;font-weight:700}
+.bgood rect{fill:color-mix(in srgb,var(--pT) 16%,transparent);stroke:var(--pT)}
+.bbad rect{fill:color-mix(in srgb,var(--cut) 16%,transparent);stroke:var(--cut)}
 .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0 8px}
 .hint{font-size:14px;color:var(--quiet)}
 .say{font-size:17px;min-height:52px;margin:8px 0 0}
@@ -93,7 +108,10 @@ svg text{font-family:inherit;fill:var(--ink)}
 <span>Magenta arrow: “if this, then that”</span>
 <span>Red dashed: negation enclosure</span>
 <span>Thick blue: level-crossing reference</span>
-<span>Grey panel: the world, one box per fact with holds and doesn’t hold ports; a crossed-out port is closed</span>
+<span>Grey panel: the world; a crossed-out port is closed or ruled out</span>
+<span>Red loop on a red patch: paradox</span>
+<span>Green dashed loop: self-supporting</span>
+<span>Filled dot: both · hollow ring: one of</span>
 </div>
 </main>
 <script>
@@ -104,10 +122,11 @@ const ref=(d,thick,lx,ly,l)=>`<path class="${thick?'refx':'edge'}" d="${d}" mark
 const EX={
 snow:{label:'Snow is falling',sentence:'S: “Snow is falling.”',reads:'S := Falling(thing that falls: Snow)',vb:'14 60 368 300',facts:['snow'],
  svg:bnd(24,72,344,120,'S')+cap(72,114,104,36,'Falling')+`<rect class="ent" x="256" y="114" width="80" height="36" rx="8"/><text x="296" y="137" text-anchor="middle">Snow</text>`+ref('M176 132H256',false,216,106,'thing that falls')+`<rect class="world" x="24" y="222" width="344" height="112" rx="10"/><rect class="factbox" x="40" y="256" width="312" height="58" rx="8"/>`+cap(64,276,84,28,'Falling')+ref('M148 290H228',false,188,308,'thing that falls')+`<rect class="ent" x="230" y="276" width="64" height="28" rx="8"/><text x="262" y="295" text-anchor="middle">Snow</text><text class="worldt" id="worldtext" x="36" y="328" font-weight="700"></text>`,
- ports:{'S.T':[120,192],'S.F':[232,192],'snow.T':[120,256],'snow.F':[232,256]},arrows:()=>[['S.T','snow.T','M120 204V243'],['S.F','snow.F','M232 204V243']]},
+ ports:{'S.T':[120,192],'S.F':[232,192],'snow.T':[120,256],'snow.F':[232,256]},arrows:[['S.T','snow.T','M120 204V243'],['S.F','snow.F','M232 204V243']]},
 mixed:{label:'6 snow and liar',sentence:'S: “Snow is falling, and this sentence is false.”',reads:'S := Falling(thing that falls: Snow) ∧ ¬IsTrue(bearer: S)',vb:'14 60 368 330',facts:['snow'],
  svg:bnd(24,72,344,148,'S')+cap(80,92,84,28,'Falling')+ref('M164 106H242',false,203,88,'thing that falls')+`<rect class="ent" x="244" y="92" width="64" height="28" rx="8"/><text x="276" y="111" text-anchor="middle">Snow</text>`+cut(40,134,136,64)+cap(56,152,96,30,'IsTrue')+ref('M152 167H365',true,262,159,'bearer')+`<rect class="world" x="24" y="252" width="344" height="112" rx="10"/><rect class="factbox" x="40" y="286" width="312" height="58" rx="8"/>`+cap(64,306,84,28,'Falling')+ref('M148 320H228',false,188,338,'thing that falls')+`<rect class="ent" x="230" y="306" width="64" height="28" rx="8"/><text x="262" y="325" text-anchor="middle">Snow</text><text class="worldt" id="worldtext" x="36" y="358" font-weight="700"></text>`,
- ports:{'S.T':[120,220],'S.F':[232,220],'snow.T':[120,286],'snow.F':[232,286]},arrows:w=>w.snow?[['S.T','snow.T','M120 232V273'],['S.T','S.F','M131 228Q176 250 220 229'],['S.F','S.T','M226 231Q176 268 127 231']]:[['S.T','snow.T','M120 232V273'],['S.T','S.F','M131 228Q176 250 220 229']]},
+ ports:{'S.T':[120,220],'S.F':[232,220],'snow.T':[120,286],'snow.F':[232,286]},arrows:[['S.T','jA','M114 231L104 241'],['jA','snow.T','M101 251L113 272'],['jA','S.F','M105 249C150 266 200 262 223 231'],['S.F','jO','M238 231L248 241'],['jO','snow.F','M251 251L239 272'],['jO','S.T','M247 248C200 238 160 236 131 226']]},
+
 'truth-teller':{label:'This statement is true',sentence:'S: “This statement is true.”',reads:'S := IsTrue(bearer: S)',vb:'382 60 368 200',
  svg:bnd(392,72,344,120,'S')+cap(440,114,96,36,'IsTrue')+ref('M536 132H733',true,636,122,'bearer'),
  ports:{'S.T':[488,192],'S.F':[640,192]},arrows:[['S.T','S.T','M478 204C462 248 514 248 498 205'],['S.F','S.F','M630 204C614 248 666 248 650 205']]},
@@ -125,54 +144,118 @@ mutual:{label:'A and B',sentence:'A: “B is false.”  B: “A is true.”',rea
 'nested-b':{label:'5b loop inside a loop',sentence:'S: “The statement ‘this statement is true and S is true’ is false.” The inner sentence is Q.',reads:'S := ¬IsTrue(bearer: Q),  Q := IsTrue(bearer: Q) ∧ IsTrue(bearer: S)',vb:'14 428 732 356',
  svg:bnd(24,436,712,236,'S')+cut(56,516,160,76)+cap(80,536,104,36,'IsTrue')+ref('M184 554H312',false,248,544,'bearer')+bnd(312,460,360,160,'Q')+cap(352,492,104,36,'IsTrue')+cap(352,552,104,36,'IsTrue')+ref('M456 510H669',true,562,500,'bearer')+ref('M456 570H733',true,600,560,'bearer, lands on S'),
  ports:{'Q.T':[520,620],'Q.F':[620,620],'S.T':[120,672],'S.F':[220,672]},
- arrows:[['Q.T','Q.T','M510 612C494 576 546 576 530 611'],['Q.T','S.T','M520 632C520 732 150 732 123 684'],['S.F','Q.T','M226 684C260 712 500 712 512 631'],['S.T','Q.F','M118 684C140 790 610 790 620 633']]}
+ arrows:[['Q.T','jQ','M520 632V643'],['jQ','S.T','M516 654C470 730 160 730 123 685'],['jQ','Q.T','M525 652C560 664 566 622 533 621'],['S.F','Q.T','M226 684C260 712 500 712 512 631'],['S.T','Q.F','M118 684C140 790 610 790 620 633']]}
+};
+
+const META={
+ snow:{boxes:{S:[24,72,344,120]}},
+ 'truth-teller':{boxes:{S:[392,72,344,120]}},
+ liar:{boxes:{S:[24,372,344,120]}},
+ mutual:{boxes:{A:[392,372,140,120],B:[596,372,140,120]}},
+ 'nested-a':{boxes:{S:[24,72,712,236],Q:[312,96,400,136]}},
+ 'nested-b':{boxes:{S:[24,436,712,236],Q:[312,460,360,160]},junctions:{jQ:{kind:'both',x:520,y:650,lx:508,anchor:'end'}},extra:'<text class="role and" x="404" y="545" text-anchor="middle">and</text>'},
+ mixed:{boxes:{S:[24,72,344,148]},junctions:{jA:{kind:'both',x:100,y:246,lx:90,anchor:'end'},jO:{kind:'oneof',x:252,y:246,lx:262,anchor:'start'}},extra:'<text class="role and" x="52" y="129">and</text>'}
 };
 const ORDER=['snow','truth-teller','liar','mutual','nested-a','nested-b','mixed'];
 const W={snow:true};
 const FACTWORDS={snow:['snow is falling','snow is not falling']};
-const isFact=p=>FACTWORDS[p.split('.')[0]]!==undefined;
-const closedP=p=>isFact(p)&&(W[p.split('.')[0]]?p.endsWith('F'):p.endsWith('T'));
-const ARR=ex=>typeof ex.arrows==='function'?ex.arrows(W):ex.arrows;
-const words=p=>isFact(p)?FACTWORDS[p.split('.')[0]][p.endsWith('T')?0:1]:p.split('.')[0]+' '+(p.endsWith('T')?'true':'false');
+const sentOf=p=>p.split('.')[0];
+const isPort=n=>n.includes('.');
+const isFact=p=>isPort(p)&&FACTWORDS[sentOf(p)]!==undefined;
+const closedP=p=>isFact(p)&&(W[sentOf(p)]?p.endsWith('F'):p.endsWith('T'));
+const openFact=p=>isFact(p)&&!closedP(p);
 const opp=p=>p.slice(0,-1)+(p.endsWith('T')?'F':'T');
-let cur,start=null,walk=null,timer=null;
+const words=p=>isFact(p)?FACTWORDS[sentOf(p)][p.endsWith('T')?0:1]:sentOf(p)+' is '+(p.endsWith('T')?'true':'false');
+const Cap=t=>t[0].toUpperCase()+t.slice(1);
+let cur,start=null,walk=null,timer=null,V=null;
 const picker=document.getElementById('picker'),dia=document.getElementById('dia'),say=document.getElementById('say');
 ORDER.forEach(id=>{const b=document.createElement('button');b.textContent=EX[id].label;b.dataset.ex=id;b.onclick=()=>{location.hash=id;};picker.appendChild(b);});
-const outs=(ex,p)=>ARR(ex).map((a,i)=>[a,i]).filter(([a])=>a[0]===p);
-function reach(ex,p){const seen=new Set([p]),st=[p];while(st.length){const q=st.pop();outs(ex,q).forEach(([a])=>{if(!seen.has(a[1])){seen.add(a[1]);if(!closedP(a[1]))st.push(a[1]);}});}return seen;}
-const ruled=(ex,p)=>{const r=reach(ex,p);return r.has(opp(p))||[...r].some(closedP);};
-function verdict(ex){const sents=[...new Set(Object.keys(ex.ports).filter(p=>!isFact(p)).map(p=>p.split('.')[0]))];const ro=sents.map(s=>[ruled(ex,s+'.T'),ruled(ex,s+'.F')]);
- if(ro.some(([a,b])=>a&&b))return 'Contradiction loop: paradox. No consistent answer.';
- if(ro.every(([a,b])=>a!==b))return 'Exactly one consistent answer: '+sents.map((s,i)=>s+' '+(ro[i][0]?'false':'true')).join(', ')+'.';
- return 'More than one consistent answer: underdetermined.';}
-const tip=(ex,p)=>{const w=words(p);return w[0].toUpperCase()+w.slice(1)+'. '+(ruled(ex,p)?'Ruled out: following the arrows from here reaches '+([...reach(ex,p)].some(closedP)?'a port the world has closed':words(opp(p)))+'.':'Not ruled out by following the arrows.')+' Tap to assume it.';};
-function load(id){if(!EX[id])id='liar';stopPlay();cur=id;const ex=EX[id];
+const JN=(id,n)=>((META[id]||{}).junctions||{})[n];
+const outs=(ex,n)=>ex.arrows.map((a,i)=>[a,i]).filter(([a])=>a[0]===n);
+function oneofState(id,n,F,p){const os=outs(EX[id],n);
+ if(os.some(([a])=>openFact(a[1])||(isPort(a[1])&&F.has(a[1]))))return {sat:true,open:[],os};
+ const open=os.filter(([a])=>!closedP(a[1])&&a[1]!==opp(p)&&!F.has(opp(a[1])));return {sat:false,open,os};}
+function prop(id,p){const F=new Set([p]),used=new Set(),q=[p];let bad=false;
+ while(q.length){const n=q.shift();if(closedP(n)){bad=true;continue;}if(n===opp(p)){bad=true;}
+  const j=JN(id,n);
+  if(j&&j.kind==='oneof'){const st=oneofState(id,n,F,p);if(st.sat)continue;st.os.forEach(([a,i])=>used.add(i));
+   if(st.open.length===0){bad=true;continue;}if(st.open.length===1){const t=st.open[0][0][1];if(!F.has(t)){F.add(t);q.push(t);}}continue;}
+  outs(EX[id],n).forEach(([a,i])=>{used.add(i);if(!F.has(a[1])){F.add(a[1]);q.push(a[1]);}});}
+ return {F,used,bad};}
+function effOuts(id,v){const os=outs(EX[id],v);const j=JN(id,v);if(!j||j.kind!=='oneof')return os;if(os.some(([a])=>openFact(a[1])))return [];const open=os.filter(([a])=>!closedP(a[1]));return open.length===1?open:[];}
+function sccs(id){const ex=EX[id],nodes=new Set();ex.arrows.forEach(a=>{nodes.add(a[0]);nodes.add(a[1]);});
+ let idx=0;const I={},L={},on=new Set(),st=[],comp={};let c=0;
+ function sc(v){I[v]=L[v]=idx++;st.push(v);on.add(v);effOuts(id,v).forEach(([a])=>{const w=a[1];if(I[w]===undefined){sc(w);L[v]=Math.min(L[v],L[w]);}else if(on.has(w))L[v]=Math.min(L[v],I[w]);});
+  if(L[v]===I[v]){let w;do{w=st.pop();on.delete(w);comp[w]=c;}while(w!==v);c++;}}
+ nodes.forEach(v=>{if(I[v]===undefined)sc(v);});return comp;}
+function analyse(id){const ex=EX[id];const sents=[...new Set(Object.keys(ex.ports).filter(p=>!isFact(p)).map(sentOf))];
+ const P={};sents.forEach(s=>{P[s+'.T']=prop(id,s+'.T');P[s+'.F']=prop(id,s+'.F');});
+ const verdict={};sents.forEach(s=>{const rT=P[s+'.T'].bad,rF=P[s+'.F'].bad;verdict[s]=rT&&rF?'paradox':rT?'false':rF?'true':'either';});
+ const pdx=sents.filter(s=>verdict[s]==='paradox');
+ sents.forEach(s=>{if(verdict[s]==='either'&&pdx.length&&['T','F'].every(v=>[...P[s+'.'+v].F].some(n=>isPort(n)&&pdx.includes(sentOf(n))&&sentOf(n)!==s)))verdict[s]='depends';});
+ const comp=sccs(id);const size={};Object.values(comp).forEach(c=>size[c]=(size[c]||0)+1);
+ const badComp=new Set();sents.forEach(s=>{const a=comp[s+'.T'],b=comp[s+'.F'];if(a!==undefined&&a===b)badComp.add(a);});
+ const used=new Set();sents.forEach(s=>{['T','F'].forEach(v=>{const r=P[s+'.'+v];if((r.bad&&verdict[s]!=='paradox')||verdict[s]==='depends')r.used.forEach(i=>used.add(i));});});
+ const cls=ex.arrows.map((a,i)=>{const ca=comp[a[0]],cb=comp[a[1]];
+  if(ca===cb&&badComp.has(ca))return 'bad';
+  if(ca===cb&&(size[ca]>1||a[0]===a[1]))return 'ok';
+  if(closedP(a[1])&&JN(id,a[0])&&JN(id,a[0]).kind==='oneof')return 'blocked';
+  return used.has(i)?'solid':'faint';});
+ const ruled=new Set();sents.forEach(s=>['T','F'].forEach(v=>{if(P[s+'.'+v].bad)ruled.add(s+'.'+v);}));
+ return {sents,P,verdict,comp,badComp,cls,ruled};}
+const VLABEL={true:'true',false:'false',either:'either',paradox:'paradox',depends:'depends on a paradox'};
+const VTIP={true:'Verdict: true. Its F port is ruled out.',false:'Verdict: false. Its T port is ruled out.',either:'Verdict: either. Neither value is ruled out.',paradox:'Verdict: paradox. Both of its ports are on one contradiction loop.',depends:'Verdict: depends on a paradox. It is on no contradiction loop itself, but its arrows lead into one.'};
+function load(id){if(!EX[id])id='liar';stopPlay();cur=id;const ex=EX[id],M=META[id]||{};V=analyse(id);
  picker.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ex===id));
  document.getElementById('sentence').textContent=ex.sentence;document.getElementById('reads').textContent='Reads back as '+ex.reads;
- let h='<defs><marker id="medge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker><marker id="mref" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ref)"/></marker><marker id="mimp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--imp)"/></marker></defs>'+ex.svg;
- ARR(ex).forEach((a,i)=>h+=`<g><title>If ${words(a[0])}, then ${words(a[1])}.</title><path d="${a[2]}" fill="none" stroke="transparent" stroke-width="14"/><path class="imp" id="ar${i}" d="${a[2]}" marker-end="url(#mimp)"/></g>`);
- Object.entries(ex.ports).forEach(([p,[x,y]])=>{const v=p.slice(-1);if(isFact(p)){const c=closedP(p),w=v==='T'?56:90,lab=v==='T'?'holds':'doesn’t hold';h+=`<g class="port ${v}${c?' closed':''}" data-p="${p}" data-fact="1"><title>${v==='T'?'Holds':'Doesn’t hold'}: ${words(p)}. ${c?'Closed: the world rules this out.':'Open in this world.'}</title><rect x="${x-w/2}" y="${y-11}" width="${w}" height="22" rx="11"/>${c?`<path class="slash" d="M${x-w/2+3} ${y+10}L${x+w/2-3} ${y-10}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${lab}</text></g>`;return;}h+=`<g class="port ${v}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip(ex,p)}</title><circle cx="${x}" cy="${y}" r="12"/><text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
+ const mk=(n,c)=>`<marker id="${n}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`;
+ let h='<defs>'+mk('medge','var(--line)')+mk('mref','var(--ref)')+mk('mimp','var(--imp)')+mk('mbad','var(--cut)')+mk('mok','var(--pT)')+'</defs>';
+ V.badComp.forEach(c=>{const pts=Object.entries(ex.ports).filter(([p])=>V.comp[p]===c).map(([,xy])=>xy).concat(Object.entries(M.junctions||{}).filter(([n])=>V.comp[n]===c).map(([,j])=>[j.x,j.y]));
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);const x0=Math.min(...xs)-34,x1=Math.max(...xs)+34,y0=Math.min(...ys)-20,y1=Math.max(...ys)+(pts.length>2?100:56);
+  h+=`<rect class="patch" x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" rx="30"><title>Contradiction loop: these ports all lead round to each other, and include both values of a sentence.</title></rect>`;});
+ Object.entries(M.boxes||{}).forEach(([s,[x,y,w,hh]])=>{if(V.verdict[s]==='depends')h+=`<rect class="dtint" x="${x}" y="${y}" width="${w}" height="${hh}" rx="4"/>`;});
+ h+=ex.svg+(M.extra||'');
+ Object.entries(M.boxes||{}).forEach(([s,[x,y,w]])=>{const v=V.verdict[s];if(!v)return;const lab=VLABEL[v],bw=lab.length*7+18;const bx=x+w-8-bw;
+  h+=`<g class="badge ${v==='paradox'||v==='depends'?'bbad':'bgood'}"><title>${s}. ${VTIP[v]}${META[cur].boxes&&EX[cur].facts?' In this world.':''}</title><rect x="${bx}" y="${y-6}" width="${bw}" height="18" rx="9"/><text x="${bx+bw/2}" y="${y+7}" text-anchor="middle">${lab}</text></g>`;});
+ ex.arrows.forEach((a,i)=>{const c=V.cls[i];const m=c==='bad'?'mbad':c==='ok'?'mok':c==='blocked'?'medge':'mimp';const toJ=JN(id,a[1]);
+  const tip=JN(id,a[0])?(c==='blocked'?`Branch: ${words(a[1])}. Blocked: that port is closed.`:`Branch: ${words(a[1])}.`):toJ?(toJ.kind==='both'?`If ${words(a[0])}, every claim must hold.`:`If ${words(a[0])}, at least one claim must fail.`):`If ${words(a[0])}, then ${words(a[1])}.`;
+  const lab={bad:' Part of a contradiction loop.',ok:' Part of a self-supporting loop.',faint:' This decides nothing, so it is drawn faint.',solid:'',blocked:''}[c];
+  h+=`<g><title>${tip}${lab}</title><path d="${a[2]}" fill="none" stroke="transparent" stroke-width="14"/><path class="imp ${c}" id="ar${i}" d="${a[2]}" ${toJ?'':`marker-end="url(#${m})"`}/></g>`;});
+ Object.entries(M.junctions||{}).forEach(([n,j])=>{const bad=V.badComp.has(V.comp[n]);h+=`<g class="jn ${j.kind}${bad?' jbad':''}"><title>${j.kind==='both'?'Both junction: every branch must hold.':'One-of junction: at least one branch must hold. Blocked branches drop out; one left is forced.'}</title><circle cx="${j.x}" cy="${j.y}" r="5"/><text class="role and" x="${j.lx}" y="${j.y+4}" text-anchor="${j.anchor}">${j.kind==='both'?'both':'one of'}</text></g>`;});
+ Object.entries(ex.ports).forEach(([p,[x,y]])=>{const v=p.slice(-1);
+  if(isFact(p)){const c=closedP(p),w=v==='T'?56:90,lab=v==='T'?'holds':'doesn’t hold';h+=`<g class="port ${v}${c?' closed':''}" data-p="${p}" data-fact="1"><title>${v==='T'?'Holds':'Doesn’t hold'}: ${words(p)}. ${c?'Closed: the world rules this out.':'Open in this world.'}</title><rect x="${x-w/2}" y="${y-11}" width="${w}" height="22" rx="11"/>${c?`<path class="slash" d="M${x-w/2+3} ${y+10}L${x+w/2-3} ${y-10}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${lab}</text></g>`;return;}
+  const r=V.ruled.has(p);const tip=Cap(words(p))+'. '+(r?'Ruled out: following the arrows from here forces its opposite or a closed port.':'Not ruled out.')+' Tap to assume it.';
+  h+=`<g class="port ${v}${r?' ruled':''}" data-p="${p}" tabindex="0" role="button" aria-label="Assume ${words(p)}"><title>${tip}</title><circle cx="${x}" cy="${y}" r="12"/>${r?`<path class="slash" d="M${x-9} ${y+9}L${x+9} ${y-9}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${v}</text></g>`;});
  dia.setAttribute('viewBox',ex.vb);dia.innerHTML=h;
  dia.querySelectorAll('.port:not([data-fact])').forEach(g=>{const go=()=>{stopPlay();begin(g.dataset.p);};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};});
  const wt=document.getElementById('worldtext');if(wt)wt.textContent='World: snow is '+(W.snow?'falling':'not falling');
  const wb=document.getElementById('worldbtn');wb.hidden=!ex.facts;wb.textContent=W.snow?'Change the world: stop the snow':'Change the world: make it snow';
- document.getElementById('verdict').textContent=verdict(ex)+(ex.facts?' (In this world.)':'');
- begin(Object.keys(ex.ports)[0]);}
-function clear(){dia.querySelectorAll('.imp').forEach(a=>a.classList.remove('on'));dia.querySelectorAll('.port').forEach(g=>g.classList.remove('cur','seen'));}
-function mark(p,cls){const g=dia.querySelector(`.port[data-p="${p}"]`);if(g)g.classList.add(cls);}
-function begin(p){start=p;walk={frontier:[p],seen:new Set([p]),steps:0,loops:0};clear();mark(p,'cur');say.textContent='Assume '+words(p)+'. Follow the arrows to see what that forces.';}
-function step(){const ex=EX[cur];if(!walk)return;const nf=[],lines=[];
- walk.frontier.forEach(p=>{if(closedP(p))return;const os=outs(ex,p);os.forEach(([a,i])=>{document.getElementById('ar'+i).classList.add('on');lines.push('If '+words(p)+', then '+words(a[1])+'.');nf.push(a[1]);});});
+ const vs=V.sents.map(s=>s+': '+VLABEL[V.verdict[s]]).join(' · ');
+ document.getElementById('verdict').textContent='Verdict '+(ex.facts?'in this world':'')+' — '+vs+'.';
+ begin(Object.keys(ex.ports).find(p=>!isFact(p)));}
+function clear(){dia.querySelectorAll('.imp').forEach(a=>a.classList.remove('on'));dia.querySelectorAll('.port,.jn').forEach(g=>g.classList.remove('cur','seen'));}
+function mark(n,cls){const g=dia.querySelector(`.port[data-p="${n}"]`);if(g)g.classList.add(cls);}
+function begin(p){start=p;walk={frontier:[p],seen:new Set([p]),F:new Set([p]),loops:0};clear();mark(p,'cur');say.textContent='Assume '+words(p)+'. Follow the arrows to see what that forces.';}
+function step(){if(!walk)return;const id=cur,nf=[],lines=[];let blocked=false;
+ walk.frontier.forEach(n=>{if(closedP(n))return;const j=JN(id,n);
+  if(j&&j.kind==='oneof'){const st=oneofState(id,n,walk.F,start);st.os.forEach(([a,i])=>document.getElementById('ar'+i).classList.add('on'));
+   if(st.sat){lines.push('One of the options already holds, so nothing more is forced.');return;}
+   if(st.open.length===0){lines.push('Every option is blocked.');blocked=true;return;}
+   if(st.open.length===1){const t=st.open[0][0][1];lines.push('The only open option is that '+words(t)+'.');nf.push(t);return;}
+   lines.push('More than one option is open, so nothing more is forced.');return;}
+  outs(EX[id],n).forEach(([a,i])=>{document.getElementById('ar'+i).classList.add('on');const toJ=JN(id,a[1]);
+   if(toJ)lines.push('If '+words(n)+', then '+(toJ.kind==='both'?'every claim must hold':'at least one claim must fail')+'.');
+   else lines.push((JN(id,n)?'So ':'If '+words(n)+', then ')+words(a[1])+'.');nf.push(a[1]);});});
  dia.querySelectorAll('.port.cur').forEach(g=>{g.classList.remove('cur');g.classList.add('seen');});
- if(!nf.length){say.textContent=walk.done||('Nothing more is forced. '+summary());stopPlay();return;}
- const fresh=nf.filter(q=>!walk.seen.has(q));nf.forEach(q=>mark(q,'cur'));fresh.forEach(q=>walk.seen.add(q));walk.steps++;
+ if(!nf.length){say.textContent=(lines.join(' ')+' '+(blocked?Cap(words(start))+' is ruled out.':walk.done||summary())).trim();stopPlay();walk.frontier=[];return;}
+ const fresh=nf.filter(q=>!walk.seen.has(q));nf.forEach(q=>{mark(q,'cur');walk.F.add(q);});fresh.forEach(q=>walk.seen.add(q));
  let tail='';if(nf.includes(opp(start)))tail=' That contradicts the assumption that '+words(start)+'.';
  if(nf.some(closedP))tail=' That contradicts the world: that port is closed.';
- if(!fresh.length){walk.loops++;tail+=' Back at a port we already reached, so the reasoning goes round this loop forever.';}
+ if(!fresh.length){walk.loops++;tail+=' Back at a point already reached, so the reasoning goes round this loop forever.';}
  say.textContent=lines.join(' ')+tail;
  walk.frontier=fresh.length?fresh:(timer&&walk.loops<3?nf:[]);
  if(!walk.frontier.length){say.textContent+=' '+summary();walk.done=say.textContent;if(timer)stopPlay();}}
-function summary(){const ex=EX[cur];return ruled(ex,start)?words(start).replace(/^./,c=>c.toUpperCase())+' is ruled out.':words(start).replace(/^./,c=>c.toUpperCase())+' is not ruled out.';}
+function summary(){return V.ruled.has(start)?Cap(words(start))+' is ruled out.':Cap(words(start))+' is not ruled out.';}
 function stopPlay(){if(timer){clearInterval(timer);timer=null;}document.getElementById('play').textContent='Play';}
 document.getElementById('step').onclick=()=>{stopPlay();step();};
 document.getElementById('play').onclick=()=>{if(timer){stopPlay();return;}begin(start);document.getElementById('play').textContent='Pause';if(matchMedia('(prefers-reduced-motion: reduce)').matches){for(let i=0;i<4&&walk.frontier.length;i++)step();stopPlay();return;}timer=setInterval(step,1300);};
