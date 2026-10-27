@@ -10,6 +10,8 @@ This page defines the existing sentence component and its marks. The governing [
 
 The left column is the **language**: what can be said. The right column is the **worlds**: what is the case. **Satisfaction** connects them: given a sentence and a world, it says whether the sentence is true there. Everything defined from satisfaction sits below.
 
+The [standards mapping](standards-mapping.md) now distinguishes domain entities, symbols, interpretation, proof records, and implementation metadata explicitly. These are established logical distinctions. The earlier inventory of application components must not be read as a proposed new ontology.
+
 ## 1. Sorts: the kinds of object
 
 A **sort** is a kind of object that sentences can talk about. The implemented object language has two (these do not classify metadata such as worlds or proof records):
@@ -19,7 +21,7 @@ A **sort** is a kind of object that sentences can talk about. The implemented ob
 | **Thing** | Ordinary objects in a world | Snow, Wind, Socrates |
 | **Sentence** | The sentences themselves | S, S1, A, B, Q |
 
-Sentences being objects is what makes self-reference possible: a sentence can talk about another sentence, or about itself, only because sentences are among the things a sentence can be about.
+The registry makes sentences available as reference targets. A first-order language can also represent sentences or codes as domain entities, but declaring a Sentence sort alone supplies neither quotation/coding nor a truth interpretation. The finite Boolean profile resolves named references to candidate-value variables; a richer treatment must specify its encoding and truth theory.
 
 **Source:** many-sorted first-order logic (Enderton, *A Mathematical Introduction to Logic*).
 
@@ -37,7 +39,7 @@ These are the words whose meaning **changes from world to world**. Together they
 | **Predicate** (relation symbol) | A kind of claim, with a fixed number of slots | Falling (one slot); Loves (two); IsTrue (one) | Blue capsule |
 | **Role** | A named slot of a predicate, accepting one sort | Falling's "thing that falls"; IsTrue's "bearer" | Labelled arrow from the capsule to what fills the slot |
 
-**How a world gives them meaning:** each name stands for an object, and each predicate gets an **extension**, the set of ways of filling its slots that are true in that world.
+**How a world gives them meaning:** each name is interpreted as a domain entity, and each predicate symbol is interpreted as a relation. A name and its referent (the entity it denotes) are different objects; distinct names may denote the same entity. A variable occurrence instead depends on a binding and an assignment. Sentence-registry links are a third kind of reference. See [the explicit mapping](standards-mapping.md#reference-is-not-one-primitive).
 
 **Sources:** standard first-order model theory. Naming the slots follows Sowa's conceptual graphs (labelled arcs), Codd's relational model (named attributes) and Fillmore's thematic roles.
 
@@ -80,7 +82,7 @@ Both are layouts of the same abstract diagram and read back to the same formula.
 
 ## 5. Worlds and facts
 
-A **world** (a **model** or **structure**) fixes which objects exist for each sort, what each name stands for, and each predicate's extension. Each member of an extension is a **fact**. An ordinary classical world settles ordinary predicates. Sentence truth candidates are separate until consistency constraints are checked. Partial interpretations may leave claims unsettled.
+An ordinary **world** is represented by a **structure**; it is a model of a theory when it satisfies that theory's axioms. The structure fixes which objects exist for each sort, what each name stands for, and each predicate's extension. Each member of an extension is a **fact**. An ordinary classical world settles ordinary predicates. Sentence truth candidates are separate until consistency constraints are checked. Partial interpretations may leave claims unsettled.
 
 | Object | Our mark |
 | --- | --- |
@@ -112,12 +114,14 @@ The value of a whole sentence is worked out from the inside out, passing through
 | --- | --- | --- |
 | **Truth conditions** | The set of worlds in which the sentence is true | Shaded region of the grid |
 | **Equivalence** | Same truth conditions | ≡ link |
-| **Consequence** (validity) | The conclusion is true in every world where all the premises are | Premise worlds bordered |
+| **Consequence** (semantic entailment) | The conclusion is true in every world where all the premises are | Premise worlds bordered |
 | **Counter-model** | Premises true, conclusion false | A cell bordered red |
 
 "And" is the overlap of truth conditions; "or" is what they cover together. When there are too many possible worlds to draw (2⁶ = 64 for two people with Loves and Happy), the region is described by its condition and a few representative worlds are shown.
 
 **Sources:** Carnap (1947); Tarski (1936).
+
+**Proof versus consequence:** Γ ⊨ Q says every model of Γ satisfies Q. Γ ⊢ Q says there is a derivation in a specified proof calculus. An inference record encodes a step of such a derivation. Paths in a search can include abandoned branches and are not automatically proofs. These standard notions must remain separately represented; see the standards mapping.
 
 ## 8. The truth predicate, theories of truth, and logics
 
