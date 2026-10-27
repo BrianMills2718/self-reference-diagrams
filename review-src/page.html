@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Self-reference · Tutorial review</title>
+<style>
+:root{--bg:#f5f3ed;--card:#fffefa;--ink:#242c31;--quiet:#626b6e;--line:#8f9697;--ref:#286ca8;--cap:#e6f1fb;--capline:#185fa5;--capink:#0c447c;--hair:#d9ded9;--true:#157351;--false:#ac4923}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,sans-serif}main{max-width:1150px;margin:auto;padding:32px 28px 64px}header{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--hair);padding-bottom:18px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:var(--quiet);font-weight:700}h1{font:clamp(32px,4vw,49px)/1.1 Georgia,serif;max-width:770px;margin:28px 0 16px}h2{font-size:18px;margin:0 0 12px}p{max-width:70ch}button{font:inherit;border:1px solid var(--line);border-radius:7px;padding:9px 15px;background:var(--card);color:var(--ink);cursor:pointer}button:hover{background:#e9eeec}button:focus-visible{outline:3px solid var(--ref);outline-offset:3px}button[aria-pressed=true]{background:var(--ink);color:white;border-color:var(--ink)}nav{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0}.lede{font-size:19px;color:var(--quiet);margin-bottom:24px}.panes{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}.panel{padding:23px;background:var(--card);border:1px solid var(--hair);border-radius:12px;min-width:0}.dsvg,.lsvg{width:100%;height:auto;display:block}.dsvg{max-height:290px;min-height:170px}.lsvg{max-height:280px}.caption{font-size:14px;color:var(--quiet);margin:12px 0 0}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.explanation{margin-top:22px;padding:22px 26px;border-left:4px solid var(--ink);background:#e9eeec}.explanation h2{font:26px/1.2 Georgia,serif}table{width:100%;border-collapse:collapse;margin-top:14px;font-size:15px}th,td{text-align:left;padding:11px 7px;border-bottom:1px solid var(--hair)}.true{color:var(--true);font-weight:700}.false{color:var(--false);font-weight:700}.pill{border:1px solid var(--hair);border-radius:20px;padding:3px 10px;white-space:nowrap;font-size:13px}details{margin-top:20px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}footer{margin-top:28px;color:var(--quiet);font-size:14px} [hidden]{display:none!important}@media(max-width:720px){main{padding:20px 16px}.panes{grid-template-columns:1fr}.panel{padding:17px}header{flex-wrap:wrap}h1{font-size:34px}th,td{padding:9px 3px;font-size:13px}}
+</style></head><body><main>
+<header><span class="eyebrow">A visual language for self-reference</span><span class="pill">Tutorial review · 3 lessons · classical truth</span></header>
+<nav aria-label="Lessons"><button data-lesson="0">1 · The liar</button><button data-lesson="1">2 · The truth-teller</button><button data-lesson="2">3 · When the world decides</button></nav>
+<h1 id="title"></h1><p class="lede" id="sentence"></p>
+<div id="world" hidden><span class="eyebrow">Choose the world</span><div class="controls"><button id="snow">Snow is falling</button><button id="clear">Snow is not falling</button><button id="order">Reverse the two parts</button></div></div>
+<div class="panes"><section class="panel"><h2>Read the sentence</h2><div id="drawing"></div><p class="caption">Blue capsule: a claim. Blue arrow: a sentence reference. Dashed enclosure: “not”. A divider joins claims with “and”.</p><details><summary>Read back as a formula</summary><pre id="formula"></pre></details></section>
+<section class="panel"><h2 id="right-title">Follow the two candidate values</h2><div id="layers"></div><p id="hint" class="caption"></p><div id="candidates"></div></section></div>
+<section class="panel" style="margin-top:22px"><h2>Which values can agree with what S says?</h2><div class="controls" id="choices"><button data-answer="no-model">Neither value</button><button data-answer="either">Both, separately</button><button data-answer="false">False only</button></div><p id="feedback" aria-live="polite">Choose an answer to reveal the explanation.</p></section>
+<section class="explanation" id="explanation" hidden aria-live="polite"><h2 id="verdict"></h2><p id="reason"></p><p id="boundary" class="caption"></p></section>
+<footer>This preview asks one question: can the drawing explain the different outcomes? “Both” means two separate consistent assignments, never true and false simultaneously. These lessons use classical truth; other theories of truth require their own rules.</footer>
+<script>
+/* MODULES */
+</script><script>
+const area=(...items)=>({lines:[],items}),claim=(pred,kind,v)=>({t:'claim',pred,fill:[{kind,v}]}),not=a=>({t:'enc',area:a});
+let lesson=0,falling=true,reversed=false,result;
+const titles=['A sentence that overturns either answer.','A sentence that permits either answer.','The same sentence, two different worlds.'];
+const statements=['S says: “This sentence is not true.”','S says: “This sentence is true.”','S says: “Snow is falling, and this sentence is not true.”'];
+function redraw(){
+ const self=claim('IsTrue','sent','S'),negative=not(area(self)),parts=[claim('Falling','name','Snow'),negative];
+ if(reversed)parts.reverse();
+ const text=[{name:'S',area:lesson===0?area(negative):lesson===1?area(self):area(...parts)}];
+ result=solveClassical(text,{Falling:new Set(falling?['Snow']:[])});
+ if(result.status!=='complete')throw Error(result.reason);
+ document.getElementById('title').textContent=titles[lesson];
+ document.getElementById('sentence').textContent=lesson===2&&reversed?'S says: “This sentence is not true, and snow is falling.”':statements[lesson];
+ document.querySelectorAll('[data-lesson]').forEach(b=>b.setAttribute('aria-pressed',Number(b.dataset.lesson)===lesson));
+ document.getElementById('world').hidden=lesson!==2;
+ document.getElementById('snow').setAttribute('aria-pressed',falling);
+ document.getElementById('clear').setAttribute('aria-pressed',!falling);
+ document.getElementById('order').setAttribute('aria-pressed',reversed);
+ document.getElementById('drawing').replaceChildren(drawShapes(layout(text),{uid:'review',label:statements[lesson]}));
+ document.getElementById('formula').textContent=printText(readBack(layout(text)));
+ document.getElementById('layers').replaceChildren();
+ if(lesson!==2)document.getElementById('layers').appendChild(drawLayers(text,{label:lesson===0?'One connected cycle visits S true and S false':'Two separate cycles, one for each candidate value'}));
+ document.getElementById('right-title').textContent=lesson===2?'Test each candidate in this world':'Follow the two candidate values';
+ document.getElementById('hint').textContent=lesson===2?'Keep the world fixed. Substitute each candidate for IsTrue(S), then evaluate the whole sentence. Reversing the two parts must leave the answer unchanged.':'S appears twice: once as a true candidate and once as a false candidate. “Not” changes layers. Follow the connections, rather than counting visible crossings.';
+ const word=v=>`<span class="${v?'true':'false'}">${v?'True':'False'}</span>`;
+ document.getElementById('candidates').innerHTML='<table><caption>Does each candidate agree with the sentence?</caption><thead><tr><th scope="col">Suppose S is</th><th scope="col">S then says</th><th scope="col">Agrees?</th></tr></thead><tbody>'+result.candidates.map(r=>`<tr><td>${word(r.assignment.S)}</td><td>${word(r.values.S)}</td><td>${r.consistent?'Yes':'No'}</td></tr>`).join('')+'</tbody></table>';
+ document.getElementById('explanation').hidden=true;
+ document.getElementById('feedback').textContent='Choose an answer to reveal the explanation.';
+ document.querySelectorAll('[data-answer]').forEach(b=>b.setAttribute('aria-pressed','false'));
+}
+function reveal(answer){
+ const verdict=result.verdicts.S;
+ document.querySelectorAll('[data-answer]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.answer===answer));
+ document.getElementById('feedback').textContent=answer===verdict?'That agrees with both candidate checks.':'Compare the candidate checks: a value survives only when it agrees with what the sentence says.';
+ document.getElementById('verdict').textContent=verdict==='no-model'?'No consistent value.':verdict==='either'?'Either value is consistent.':'False is the only consistent value.';
+ document.getElementById('reason').textContent=lesson===0?'Suppose S is true: it says it is not true, so it comes out false. Suppose S is false: it says something true, so it comes out true. Neither candidate agrees. The connected cycle reaches both copies of S.':lesson===1?'Suppose S is true: it says something true. Suppose S is false: it says something false. Both candidates agree separately. The two cycles keep the candidates apart; the sentence does not select between them.':falling?'Snow is falling, so the first claim holds. What remains is the liar’s condition: S says it is not true. Neither candidate agrees.':'Snow is not falling, so the snow claim fails. An “and” sentence with a false part is false, whatever its other part says. The false candidate agrees; the true candidate does not.';
+ document.getElementById('boundary').textContent=lesson===2?'A loop through “and” needs the whole sentence checked. Pure-loop curve counting does not decide this case.':'This connection rule applies to a pure reference cycle. The figure-eight appearance is a layout choice; reaching opposite candidates is the decisive property.';
+ document.getElementById('explanation').hidden=false;
+}
+for(const b of document.querySelectorAll('[data-lesson]'))b.onclick=()=>{lesson=Number(b.dataset.lesson);redraw();};
+for(const b of document.querySelectorAll('[data-answer]'))b.onclick=()=>reveal(b.dataset.answer);
+ document.getElementById('snow').onclick=()=>{falling=true;redraw();};document.getElementById('clear').onclick=()=>{falling=false;redraw();};document.getElementById('order').onclick=()=>{reversed=!reversed;redraw();};
+redraw();
+</script></main></body></html>

@@ -4,7 +4,7 @@ Live, editable version: https://claude.ai/artifact/TDwPd5ZwysuhdLndL42We8 (a Cla
 
 ## 0. What this specification guarantees
 
-1. **Recoverability.** Any formula can be drawn, and the drawing read back gives exactly that formula.
+1. **Recoverability.** A supported formula in area normal form can be drawn and read back with its canonical variable names. Normalization does not preserve arbitrary original grouping or spelling. The program reads structured shape data; it does not parse pixels or arbitrary SVG files.
 2. **Extensibility.** A new construct is added by a fixed recipe (section 8) without disturbing anything already defined.
 
 Three layers are kept apart, as Dau does for Peirce's graphs and ISO Common Logic does for conceptual graphs:
@@ -93,7 +93,7 @@ Computed from (diagram, world or all worlds, logic): values of parts; verdicts; 
 
 Every node once on a **true layer** and once on a **false layer**; a value keeps its layer along edges and **crosses** at each "not". The arrows form **closed curves**.
 
-**Curve criterion.** For a *pure loop* (each sentence says (not)ᵏ IsTrue(next)), an even number of "not"s gives two separate curves (either value holds); an odd number gives one curve through both copies of each sentence, a figure 8 (no consistent value). This is the 2-SAT test drawn; the layers are the signed graph's double cover (Zaslavsky).
+**Curve criterion.** For a *pure loop* (each sentence says (not)ᵏ IsTrue(next)), an even number of "not"s gives two separate curves (either value holds); an odd number gives one curve through both copies of each sentence (no consistent value). A figure-eight appearance is a layout choice; connectivity between opposite value copies is the invariant. This is the 2-SAT test drawn; the layers are the signed graph's double cover (Zaslavsky).
 
 **Limit.** Through an "and", curves branch at junctions ("both", "one of"); the verdict is then read from which nodes can be chosen together (fixed points), not by counting curves.
 
@@ -112,7 +112,11 @@ A **derivation** is a sequence of abstract diagrams, one rule at one place per s
 
 (Peirce's rules: Roberts, Shin, Dau; lines of identity have matching rules.)
 
-**Evaluation** applies unfold and look up, simplifying with double cut; it **halts** at true or false (the sentence is **grounded**, Kripke). The liar returns to its first diagram after unfold, double cut, unfold: it cycles forever. For finite texts cycles are detectable; for languages that can talk about arithmetic, halting is undecidable (Turing).
+**Unfolding demonstration.** `evaluate` applies unfold and look up, simplifying with double cut. Its return describes this particular rewriting strategy: a true/false endpoint, a repeated drawing, an unsupported operation, or a step limit. It is not a complete semantic evaluator, and its termination is not a definition of groundedness. In particular, variable instantiation is unsupported and an early self-reference can starve a later conjunct.
+
+**Classical verdicts.** `src/semantics.js` supplies `solveClassical(text, world, options)`, a separate finite-model evaluator. It enumerates candidate truth assignments and retains exactly those satisfying all definitions simultaneously. Supported operators are conjunction, negation and existential quantification over a finite, nonempty domain of named things (the engine's five objects by default). The world must supply a fact set for every ordinary predicate used; IsTrue is assigned by the solver. Predicate roles, variable scope and sentence references are validated first.
+
+Only `status: complete` supplies verdicts: `true`, `false`, `either`, or `no-model`. “Either” means distinct consistent assignments, not simultaneous truth and falsity. “No-model” concerns the entire supplied system; it must not be interpreted as a proof that each independent sentence is intrinsically paradoxical. Assignment or work limits return `status: limit`; unsupported inputs return `status: unsupported`. Neither provides verdicts or partial candidate results. This is classical fixed-point semantics, not a Kripke or Gaifman implementation.
 
 **Derivations and curves.** For a pure loop, unfold steps per lap equal the length of the curve through the starting sentence.
 
@@ -140,3 +144,4 @@ Planned: or and if (from not and and); every (already drawn); identity; quantify
 ## Sources
 
 Dau (2003); Shin (2002); Roberts (1973); Sowa (1984); ISO/IEC 24707 Common Logic; Tarski (1933); Kripke (1975); Gaifman (1992); Gupta and Belnap (1993); Goguen and Burstall (1992); Beth (1955); Smullyan (1968); Turing (1936); Zaslavsky (signed graphs); Aspvall, Plass and Tarjan (1979); Moody (2009); Lawvere (1969) and Yanofsky (2003) for the unifying fixed-point view. Cited from memory; check before treating as final.
+
