@@ -40,7 +40,7 @@ button{font:inherit;padding:6px 14px;border-radius:8px;border:1px solid var(--li
 <p class="q">One drawing broken four ways. Each break violates one drawing rule, and the read-back refuses it and names the rule.</p>
 <div class="grid" id="bad"></div>
 <h2>The unfolding: evaluation as a derivation</h2>
-<p class="q">Each step applies one rule (unfold, look up, double cut) and is itself a drawing that reads back exactly. Evaluation halts when the sentence is reduced to true or false; if a drawing comes back that was seen before, it will cycle forever.</p>
+<p class="q">Each step applies one rule (unfold, look up, double cut) and is itself a drawing that reads back exactly. This unfolding demonstration stops when it reaches true or false, detects a repeated drawing, meets an unsupported operation, or reaches its step limit. A cycle or limit is not a semantic verdict. The tutorial review checks consistent assignments independently.</p>
 <div id="derivs"></div>
 <script>
 // ===== vocabulary =====
@@ -150,7 +150,8 @@ function evalDiagram(area,W,asg){ // Dau-style: an area is true if some choice o
  for(let k=0;k<total;k++){const a={...asg};let r=k;ids.forEach(id=>{a[id]=THINGS[r%THINGS.length];r=Math.floor(r/THINGS.length);});
   let ok=true;for(const it of area.items){if(it.t==='enc'){if(evalDiagram(it.area,W,a)){ok=false;break;}}else{if(!holds(W,it.pred,it.fill.map(f=>f.kind==='var'?a[f.v]:f.v))){ok=false;break;}}}
   if(ok)return true;}return false;}
-// ===== dynamics: evaluation as a derivation (unfold, look up, simplify), with cycle detection =====
+// ===== unfolding demonstration, not a semantic decision procedure =====
+// Use solveClassical in semantics.js for classical verdicts, including quantifiers.
 const clone=x=>JSON.parse(JSON.stringify(x));
 const isBot=it=>it.t==='enc'&&it.area.items.length===0&&it.area.lines.length===0;
 function simplify(area,log){let changed=true;while(changed){changed=false;
@@ -169,7 +170,7 @@ function evaluate(text,name,W,maxSteps){const defs=Object.fromEntries(text.map(d
     if(it.pred==='IsTrue'){const tgt=clone(defs[it.fill[0].v]);a.items.splice(i,1,...(tgt.lines.length?[{t:'enc',area:{lines:[],items:[{t:'enc',area:tgt}]}}]:tgt.items));steps.push({rule:`unfold IsTrue(${it.fill[0].v})`,area:null});done=true;}
     else if(it.fill.every(f=>f.kind==='name')){const h=holds(W,it.pred,it.fill.map(f=>f.v));a.items.splice(i,1,...(h?[]:[{t:'enc',area:{lines:[],items:[]}}]));steps.push({rule:`look up ${it.pred}(${it.fill.map(f=>f.v).join(', ')}): ${h?'holds':'does not hold'}`,area:null});done=true;}}};
   visit(area);steps[steps.length-1].area=clone(area);
-  if(!done)return {result:null,halts:false,steps,why:'stuck'};
+  if(!done)return {result:null,halts:false,steps,why:'unsupported'};
   const key=JSON.stringify(area);if(seen.has(key))return {result:null,halts:false,cycleFrom:seen.get(key),steps};seen.set(key,steps.length-1);}
  return {result:null,halts:false,steps,why:'step limit'};}
 //{genText,printText,layout,readBack,ReadErr,randWorld,evalFormula,evalDiagram,evaluate,rng,THINGS,PREDS};
@@ -285,7 +286,7 @@ function runAll(seed){const R=rng(seed);document.getElementById('seedinfo').text
   r.steps.forEach((s,i)=>{if(!s.area)return;const tt=text.map(d=>d.name===name?{name:d.name,area:s.area}:d);const sh=layout(tt);let ok2=false;try{ok2=printText(readBack(sh))===printText(tt);}catch(e){}stepN++;if(ok2)stepOK++;
    const st=document.createElement('div');st.className='step';st.innerHTML=`<div class="r">${i}. ${esc(s.rule)} <span class="tick ${ok2?'ok':'no'}">${ok2?'✓':'✗'}</span></div>`;st.appendChild(render(sh));strip.appendChild(st);});
   box.appendChild(strip);const v=document.createElement('p');v.className='verdict';v.style.color=r.halts?'var(--ok)':'var(--bad)';
-  v.textContent=r.halts?`Halts: ${name} is ${r.result?'true':'false'}.`:`Never halts: step ${r.steps.length-1} is the same drawing as step ${r.cycleFrom}, so it will cycle forever.`;box.appendChild(v);dv.appendChild(box);});
+  v.textContent=r.halts?`Halts: ${name} is ${r.result?'true':'false'}.`:r.cycleFrom!==undefined?`Unfolding repeats step ${r.cycleFrom}. This does not decide whether a consistent truth assignment exists.`:`Unfolding stopped: ${r.why}. No semantic verdict.`;box.appendChild(v);dv.appendChild(box);});
  window.__tries=tries;
  // graph form: round trip and broken pictures
  let gok=0;const gsample=[];for(let i=0;i<N;i++){const t=genText(R,1+Math.floor(R()*3));const f=printText(t);let b;try{b=printText(graphReadBack(graphLayout(t)));}catch(e){b='ERR';}if(b===f){gok++;if(gsample.length<6&&t.length<=2)gsample.push({t,f,b});}}

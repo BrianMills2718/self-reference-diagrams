@@ -127,7 +127,8 @@ function evalDiagram(area,W,asg){ // Dau-style: an area is true if some choice o
  for(let k=0;k<total;k++){const a={...asg};let r=k;ids.forEach(id=>{a[id]=THINGS[r%THINGS.length];r=Math.floor(r/THINGS.length);});
   let ok=true;for(const it of area.items){if(it.t==='enc'){if(evalDiagram(it.area,W,a)){ok=false;break;}}else{if(!holds(W,it.pred,it.fill.map(f=>f.kind==='var'?a[f.v]:f.v))){ok=false;break;}}}
   if(ok)return true;}return false;}
-// ===== dynamics: evaluation as a derivation (unfold, look up, simplify), with cycle detection =====
+// ===== unfolding demonstration, not a semantic decision procedure =====
+// Use solveClassical in semantics.js for classical verdicts, including quantifiers.
 const clone=x=>JSON.parse(JSON.stringify(x));
 const isBot=it=>it.t==='enc'&&it.area.items.length===0&&it.area.lines.length===0;
 function simplify(area,log){let changed=true;while(changed){changed=false;
@@ -146,7 +147,7 @@ function evaluate(text,name,W,maxSteps){const defs=Object.fromEntries(text.map(d
     if(it.pred==='IsTrue'){const tgt=clone(defs[it.fill[0].v]);a.items.splice(i,1,...(tgt.lines.length?[{t:'enc',area:{lines:[],items:[{t:'enc',area:tgt}]}}]:tgt.items));steps.push({rule:`unfold IsTrue(${it.fill[0].v})`,area:null});done=true;}
     else if(it.fill.every(f=>f.kind==='name')){const h=holds(W,it.pred,it.fill.map(f=>f.v));a.items.splice(i,1,...(h?[]:[{t:'enc',area:{lines:[],items:[]}}]));steps.push({rule:`look up ${it.pred}(${it.fill.map(f=>f.v).join(', ')}): ${h?'holds':'does not hold'}`,area:null});done=true;}}};
   visit(area);steps[steps.length-1].area=clone(area);
-  if(!done)return {result:null,halts:false,steps,why:'stuck'};
+  if(!done)return {result:null,halts:false,steps,why:'unsupported'};
   const key=JSON.stringify(area);if(seen.has(key))return {result:null,halts:false,cycleFrom:seen.get(key),steps};seen.set(key,steps.length-1);}
  return {result:null,halts:false,steps,why:'step limit'};}
 //{genText,printText,layout,readBack,ReadErr,randWorld,evalFormula,evalDiagram,evaluate,rng,THINGS,PREDS};

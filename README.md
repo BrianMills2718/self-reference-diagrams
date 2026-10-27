@@ -12,6 +12,7 @@ Live site: https://self-reference-diagrams.pages.dev
 | Page | What it is |
 | --- | --- |
 | `index.html` | Landing page |
+| `tutorial-review.html` | Three-lesson review preview: liar, truth-teller, and snow-dependent self-reference |
 | `shapes.html` | **The shapes of self-reference**: value layers for the liar, the truth-teller, disguised liars and a loop through an "and" |
 | `tutorial.html` | Thirteen-lesson interactive tutorial |
 | `roundtrip.html` | **Round-trip test**: random sentences drawn and read back in both layouts, broken drawings rejected, the figure-8 rule checked |
@@ -31,6 +32,8 @@ The design follows a written foundation and formal specification, in [`docs/foun
 ## Source and tests
 
 - `src/engine.js`: generator, Peirce layout, read-back, semantics (Tarski and diagram-based), evaluation as a derivation with cycle detection
+- `src/semantics.js`: bounded finite classical fixed-point evaluator, independent of unfolding
+- `review-src/`: review preview sources; rebuild with `python3 review-src/build.py`
 - `src/graph.js`: graph-form layout and read-back; value layers for pure loops
 - `src/layers.js`: implication graph and fixed points for loops through an "and"
 - `src/render.js`, `src/layers_render.js`: drawing in the visual grammar
@@ -55,3 +58,6 @@ Static files only, no build step:
 ```
 wrangler pages deploy . --project-name self-reference-diagrams
 ```
+
+
+The review preview uses only completed classical assignment checks for its verdicts. Open `tutorial-review.html` locally, select a lesson, test the two candidate values, and switch the snow world or conjunct order. The older full tutorial is not yet rebuilt.
