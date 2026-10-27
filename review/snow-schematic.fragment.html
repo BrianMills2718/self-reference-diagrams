@@ -1,0 +1,138 @@
+<div id="snow-reasoning-review">
+  <style>
+    #snow-reasoning-review .controls { display:flex; gap:12px; flex-wrap:wrap; align-items:end; }
+    #snow-reasoning-review .controls label { flex:1 1 180px; }
+    #snow-reasoning-review .actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:12px; }
+    #snow-reasoning-review svg { width:100%; display:block; }
+    #snow-reasoning-review svg text { fill:var(--foreground); font:12px sans-serif; }
+    #snow-reasoning-review .wire { fill:none; stroke:var(--border); stroke-width:1.5; }
+    #snow-reasoning-review .active-wire { stroke:var(--foreground); stroke-width:2; }
+    #snow-reasoning-review .terminal { fill:var(--background); stroke:var(--border); }
+    #snow-reasoning-review .relation { fill:var(--muted); stroke:var(--border); }
+    #snow-reasoning-review .active { stroke:var(--foreground); stroke-width:2; }
+    #snow-reasoning-review .true { fill:var(--green); }
+    #snow-reasoning-review .false { fill:var(--orange); }
+    #snow-reasoning-review .open { fill:var(--muted); }
+    #snow-reasoning-review .faint { opacity:0.35; }
+    #snow-reasoning-review .detail { min-height:3em; margin-top:8px; }
+  </style>
+  <h3>Snow, self-reference, and supposition</h3>
+  <div class="controls">
+    <label class="form-label">Supposition
+      <select class="form-select" id="snow-assumption">
+        <option value="SF">S is false</option><option value="ST">S is true</option>
+        <option value="pF">Snow is not falling</option><option value="pT">Snow is falling</option>
+        <option value="none">No supposition</option>
+        <optgroup label="Complete candidate cases">
+          <option value="FF">No snow; S false</option><option value="FT">No snow; S true</option>
+          <option value="TF">Snow; S false</option><option value="TT">Snow; S true</option>
+        </optgroup>
+      </select>
+    </label>
+    <label class="form-label">View
+      <select class="form-select" id="snow-view">
+        <option value="network">Whole network</option>
+        <option value="step">Current inference</option>
+        <option value="worlds">Compatible worlds · exact query</option>
+      </select>
+    </label>
+  </div>
+  <div class="actions" id="snow-actions">
+    <button class="btn" type="button" id="snow-back">Previous</button>
+    <button class="btn btn-primary" type="button" id="snow-next">Next consequence</button>
+    <button class="btn" type="button" id="snow-end">Show result</button>
+    <span class="text-small" id="snow-position"></span>
+  </div>
+  <div id="snow-drawing"></div>
+  <div class="detail" id="snow-detail" aria-live="polite"></div>
+  <script>
+/* REASONING_KERNEL */
+  </script>
+  <script>
+(() => {
+  const root=document.getElementById('snow-reasoning-review');
+  const el=id=>root.querySelector('#'+id);
+  const object=ReasoningObject.snow();
+  const names={p:'snowfall',S:'S',snow:'snow claim',reference:'reference to S',negative:'not S',body:'whole claim'};
+  const rules={'c-snow':'World / claim agreement','c-reference':'Reference to S','c-negative':'NOT','c-body':'AND','definition-S':'Sentence / body agreement'};
+  let trace,index=0;
+  const choice=()=>{
+    const v=el('snow-assumption').value;
+    const assumptions=v==='none'?[]:v[0]==='S'||v[0]==='p'?[{variable:v[0],value:v[1]==='T'}]:
+      [{variable:'p',value:v[0]==='T'},{variable:'S',value:v[1]==='T'}];
+    return {id:'context-'+v,assumptions};
+  };
+  const word=v=>v?'true':'false';
+  function reset(){trace=ReasoningObject.explore(object,choice());ReasoningObject.verify(object,trace);index=Math.max(0,trace.context.assumptions.length-1);draw();}
+  function draw(){
+    const mode=el('snow-view').value, w=Math.max(300,Math.round(root.getBoundingClientRect().width));
+    const left=Math.max(78,w*.24),right=w-left;
+    const current=trace.records[index];
+    const records=trace.records.slice(0,index+1),known=new Map(records.filter(r=>r.kind!=='conflict').map(r=>[r.variable,r]));
+    el('snow-actions').hidden=mode==='worlds';
+    el('snow-actions').style.display=mode==='worlds'?'none':'flex';
+    el('snow-back').disabled=index<=Math.max(0,trace.context.assumptions.length-1);
+    el('snow-next').disabled=index>=trace.records.length-1;
+    el('snow-end').disabled=index>=trace.records.length-1;
+    el('snow-position').textContent=trace.records.length?`${index+1} / ${trace.records.length} records`:'No local inference';
+    let svg='';
+    const text=(x,y,s,anchor='middle')=>`<text x="${x}" y="${y}" text-anchor="${anchor}">${s}</text>`;
+    const wire=(d,id)=>`<path class="wire ${current?.constraint===id?'active-wire':''}" d="${d}"/>`;
+    function variable(id,x,y,title){
+      const r=known.get(id), active=current?.variable===id || current?.premises?.some(p=>trace.records.find(t=>t.id===p)?.variable===id);
+      const dim=mode==='step'&&!active;
+      return `<g class="${dim?'faint':''}" data-variable="${id}"><rect class="terminal ${active?'active':''}" x="${x-66}" y="${y-29}" width="132" height="63" rx="4"/>`+
+        text(x,y-10,title)+`<circle cx="${x-55}" cy="${y+14}" r="5" class="${r?(r.value?'true':'false'):'open'}"/>`+
+        text(x+6,y+18,r?`${word(r.value)} · ${r.kind==='assumption'?'supposed':'derived'}`:'T or F · open')+'</g>';
+    }
+    function relation(id,x,y,label){return `<g data-constraint="${id}" class="${mode==='step'&&current?.constraint!==id?'faint':''}"><rect x="${x-43}" y="${y-15}" width="86" height="30" class="relation ${current?.constraint===id?'active':''}"/>${text(x,y+4,label)}</g>`;}
+    if(mode==='worlds'){
+      const projection=ReasoningObject.project(object,trace.context,['p']);
+      svg=text(w/2,28,'Worlds admitting a consistent extension');
+      for(const [i,p] of [false,true].entries()){
+        const y=85+i*108,g=projection.groups.find(g=>g.values.p===p);
+        svg+=`<rect x="24" y="${y-25}" width="${w-48}" height="82" class="terminal"/>`+
+          text(w/2,y,p?'W1 · Snow is falling':'W0 · Snow is not falling')+
+          text(w/2,y+24,g?`Admitted · witness S = ${word(g.witnesses[0].S)}`:'Excluded · no consistent extension');
+      }
+      svg+=text(w/2,285,'All sentence constraints retained');
+      el('snow-detail').textContent='Exact finite query under the selected supposition; independent of the displayed step count.';
+      el('snow-drawing').innerHTML=`<svg viewBox="0 0 ${w} 310" role="img" aria-label="Exact projection onto compatible snowfall worlds">${svg}</svg>`;
+      return;
+    }
+    svg+=wire(`M${left} 115 V215`,'c-snow');
+    svg+=wire(`M${right} 115 V215`,'c-reference');
+    svg+=wire(`M${right} 278 V305`,'c-negative');
+    svg+=wire(`M${right} 335 V361`,'c-negative');
+    svg+=wire(`M${left} 278 V440`,'c-body');
+    svg+=wire(`M${right-66} 390 H${left+26} V440`,'c-body');
+    svg+=wire(`M${left} 470 V511`,'c-body');
+    svg+=wire(`M${left+66} 540 H${right-43}`,'definition-S');
+    svg+=wire(`M${right+43} 540 H${w-8} V80 H${right+66}`,'definition-S');
+    svg+=text(left,35,'WORLD FACT');svg+=text(right,35,'SENTENCE VALUE');
+    svg+=variable('p',left,80,'Snow is falling');svg+=variable('S',right,80,'S · this sentence');
+    svg+=relation('c-snow',left,165,'AGREES');svg+=relation('c-reference',right,165,'REFERS');
+    svg+=variable('snow',left,244,'Snow claim');svg+=variable('reference',right,244,'IsTrue(S)');
+    svg+=relation('c-negative',right,320,'NOT');svg+=variable('negative',right,390,'Not IsTrue(S)');
+    svg+=relation('c-body',left,455,'AND');svg+=variable('body',left,540,'Whole claim');
+    svg+=relation('definition-S',right,540,'AGREES');
+    if(current?.kind==='conflict')svg+=text(w/2,604,'CONFLICT · no compatible assignment');
+    else svg+=text(w/2,604,index===trace.records.length-1&&trace.status==='complete-assignment'?'Consistent · every relation satisfied':(!trace.records.length||index===trace.records.length-1)?'Locally open · may require further search':'Connections constrain values in either direction');
+    el('snow-drawing').innerHTML=`<svg viewBox="0 0 ${w} 630" role="img" aria-label="Constraint schematic for Snow is falling and this sentence is not true">${svg}</svg>`;
+    if(!current)el('snow-detail').textContent='No supposition. All six values remain locally open.';
+    else if(current.kind==='assumption')el('snow-detail').textContent=`Suppose ${names[current.variable]} is ${word(current.value)}. No consequence has yet been asserted.`;
+    else {
+      const premises=current.premises.map(id=>trace.records.find(r=>r.id===id)).map(r=>`${names[r.variable]} = ${word(r.value)}`).join('; ');
+      el('snow-detail').textContent=`${rules[current.constraint]}: ${premises} ${current.kind==='conflict'?'cannot jointly satisfy this relation.':`forces ${names[current.variable]} = ${word(current.value)}.`}`;
+    }
+  }
+  el('snow-assumption').addEventListener('change',reset);
+  el('snow-view').addEventListener('change',draw);
+  el('snow-next').addEventListener('click',()=>{index=Math.min(index+1,trace.records.length-1);draw();});
+  el('snow-back').addEventListener('click',()=>{index=Math.max(trace.context.assumptions.length-1,index-1,0);draw();});
+  el('snow-end').addEventListener('click',()=>{index=Math.max(0,trace.records.length-1);draw();});
+  new ResizeObserver(draw).observe(root);
+  reset();
+})();
+  </script>
+</div>

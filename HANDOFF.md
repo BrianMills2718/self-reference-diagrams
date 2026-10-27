@@ -22,6 +22,8 @@ Priorities: soundness and explicit scope; recoverable structure; intelligible sc
 
 ## Implementation status
 
+After PR #4 merged, the experimental `src/reasoning-object.js` and `review/snow-schematic.fragment.html` were added for review. See [snow-prototype.md](docs/snow-prototype.md) for scope and validation. The six-variable snow example has a compiler, independent record verifier, finite solver, and exact projection with witnesses. The schematic is example-specific and its marks remain proposed; the general schema and rendering architecture are still open.
+
 - `src/engine.js`: vocabulary, generation, Peirce layout, structured read-back, semantics, bounded unfolding.
 - `src/graph.js`: graph layout/read-back, pure-loop layers, finite consistency checks.
 - `src/layers.js`: finite value constraints.
@@ -36,6 +38,8 @@ The general object schema, context-aware derivations, query-preserving views, an
 ## Work in review and conversation history
 
 PR #1 is merged. PR #2 (earlier tutorial) and PR #3 (example suite/view obligations) remain unmerged at this revision. This documentation change is based directly on main and imports neither.
+
+PR #4 was subsequently approved and merged as `07d54f0`. The snow prototype is based on that main commit, independently of PRs #2 and #3.
 
 Brian rejected a detached sentence/table presentation. The subsequent complete chart still looked too symbolic; he requested connected machinery and exploration. These experiments do not approve new gate marks.
 
