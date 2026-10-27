@@ -1,11 +1,13 @@
 # Formal specification of the diagram language
 
-Live, editable version: https://claude.ai/artifact/TDwPd5ZwysuhdLndL42We8 (a Claude Doc; this file is a copy made on 27 October 2026). Companion to [foundation.md](foundation.md).
+Historical external copy: https://claude.ai/artifact/TDwPd5ZwysuhdLndL42We8 . Later repository revisions may differ. Companion to [foundation.md](foundation.md).
 
-## 0. What this specification guarantees
+## 0. Scope and obligations
 
-1. **Recoverability.** Any formula can be drawn, and the drawing read back gives exactly that formula.
-2. **Extensibility.** A new construct is added by a fixed recipe (section 8) without disturbing anything already defined.
+The [project contract](reasoning-objects.md) governs the broader architecture. This document concerns the existing sentence component. The following are obligations, not machine-checked universal guarantees.
+
+1. **Recoverability.** Supported normalized syntax must survive drawing/read-back under a stated bound-variable naming convention.
+2. **Extensibility.** New constructs require section 8's obligations; the recipe alone does not prove preservation.
 
 Three layers are kept apart, as Dau does for Peirce's graphs and ISO Common Logic does for conceptual graphs:
 
@@ -13,7 +15,7 @@ Three layers are kept apart, as Dau does for Peirce's graphs and ISO Common Logi
 - an **abstract diagram**, the drawing's structure with positions removed;
 - a **picture**, one layout of an abstract diagram. There are two layouts: the Peirce drawing and the graph form.
 
-Values, worlds and arrows of reasoning are **annotations**, computed from an abstract diagram, a world and a logic; they never change the diagram. **Transformation rules** turn one abstract diagram into another: that is how the unfolding of entailment is drawn.
+The existing renderer treats values, worlds, and reasoning as annotations. In the target architecture these are linked components of a larger object. Hiding their display must not delete constraints. Transformation rules describe derivations; suppositions and exploration steps require separate types and contexts.
 
 ## 1. Abstract syntax
 
@@ -49,7 +51,7 @@ Grammar ("and" taken as a list of any length):
 
 Formula(D) reads area by area: an area with items i₁…iₖ and home lines ℓ₁…ℓₘ gives ∃x₁…∃xₘ (Formula(i₁) ∧ … ∧ Formula(iₖ)); an enclosure gives ¬( … ); a claim gives P(r: t, …); a box gives S := ….
 
-**Theorem.** For every φ in area normal form, Formula(Draw(φ)) = φ; for every well-formed D, Draw(Formula(D)) = D. Each translation clause undoes one formation rule, so the proof has one case per construct.
+**Structural proof obligation.** For every φ in area normal form, Formula(Draw(φ)) = φ; for every well-formed D, Draw(Formula(D)) = D. The intended proof has one case per construct. Exactness is relative to normalization and bound-name conventions. Random tests do not replace a general proof or establish total rejection of malformed geometry.
 
 ## 4. Concrete syntax and read-back
 
@@ -83,7 +85,7 @@ Read-back follows edges, never nesting. The read-back theorem holds for both lay
 
 A world gives objects per sort, an object per name and an extension per predicate (except IsTrue). Satisfaction is defined directly on abstract diagrams (Dau): an area is true when some choice of objects for its home lines makes every item true; an enclosure when its inner area is not true; a claim when its role-filling is in the extension. By the theorem in section 3 this agrees with Tarski on the formula.
 
-IsTrue's extension must agree with satisfaction; a **logic** says what "agree" means: classical fixed points (true, false, *either*, *paradox*), Kripke's least fixed point with Kleene tables (*neither*), Gaifman's rules (*gap*, jump rule), revision (settles or cycles). Each logic is an institution; diagrams never depend on the logic.
+IsTrue's extension must agree with satisfaction; a **logic** says what "agree" means: classical fixed points (Boolean assignments; *either* and *paradox* summarize multiple or absent assignments), Kripke's least fixed point with Kleene tables (*neither*), Gaifman's rules (*gap*, jump rule), revision (settles or cycles). An institution-style account requires signatures, models, satisfaction, and compatibility laws; these are not established merely by a logic selector.
 
 ## 6. Annotations
 
@@ -93,7 +95,7 @@ Computed from (diagram, world or all worlds, logic): values of parts; verdicts; 
 
 Every node once on a **true layer** and once on a **false layer**; a value keeps its layer along edges and **crosses** at each "not". The arrows form **closed curves**.
 
-**Curve criterion.** For a *pure loop* (each sentence says (not)ᵏ IsTrue(next)), an even number of "not"s gives two separate curves (either value holds); an odd number gives one curve through both copies of each sentence, a figure 8 (no consistent value). This is the 2-SAT test drawn; the layers are the signed graph's double cover (Zaslavsky).
+**Curve criterion.** For a *pure loop* (each sentence says (not)ᵏ IsTrue(next)), an even number of "not"s gives two separate curves (either value holds); an odd number gives one connected curve through both value copies (no consistent assignment). A figure-eight crossing is a layout choice. This is the 2-SAT test drawn; the layers are the signed graph's double cover (Zaslavsky).
 
 **Limit.** Through an "and", curves branch at junctions ("both", "one of"); the verdict is then read from which nodes can be chosen together (fixed points), not by counting curves.
 
@@ -112,19 +114,21 @@ A **derivation** is a sequence of abstract diagrams, one rule at one place per s
 
 (Peirce's rules: Roberts, Shin, Dau; lines of identity have matching rules.)
 
-**Evaluation** applies unfold and look up, simplifying with double cut; it **halts** at true or false (the sentence is **grounded**, Kripke). The liar returns to its first diagram after unfold, double cut, unfold: it cycles forever. For finite texts cycles are detectable; for languages that can talk about arithmetic, halting is undecidable (Turing).
+**Implemented evaluation** is bounded sequential unfolding with selected simplifications and cycle detection. It is not a complete semantic decision procedure. A limit is not paradox; an operational cycle is not generally proof of no fixed point. Finite sentence text alone does not guarantee a finite unfolding state space.
 
 **Derivations and curves.** For a pure loop, unfold steps per lap equal the length of the curve through the starting sentence.
 
-**Tableaux.** Branch on suppositions; a branch closes on an empty enclosure; all branches closed means no supposition survives (Beth, Smullyan).
+**Tableaux** (branching proof searches): retain scoped suppositions and close branches only with justified contradictions. Exhaustive sound closure can establish unsatisfiability; bounded or abandoned searches cannot. The general context-aware history representation remains proposed.
 
 ## 8. Extension protocol
 
 A new construct supplies, all at once: its grammar rule; formation rule; translation clause; drawing and read-back rules (both layouts); satisfaction clause for every logic; transformation rules if any; its mark in the foundation's list. Nothing else may change; the verification in section 9 must pass first.
 
-Planned: or and if (from not and and); every (already drawn); identity; quantifying over sentences; **Provable** and **Halts** predicates with one-way rules (for Gödel and Turing; see HANDOFF.md).
+Planned: or and if (from not and and); every (already drawn); identity; quantifying over sentences; **Provable** and **Halts** only with explicit arithmetic/program encodings and assumptions. Predicate names and one-way arrows alone do not establish those theorems.
 
-## 9. Verification (run `tests/run-all.sh`)
+## 9. Historical finite verification (run `tests/run-all.sh`)
+
+These earlier sample results do not certify the new architecture or general completeness. Read-back consumes structured geometry, not pixels.
 
 | Check | Result on 27 October 2026 |
 | --- | --- |

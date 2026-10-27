@@ -1,57 +1,49 @@
 # A visual language for self-reference
 
-Diagrams for self-referential sentences such as the liar ("This sentence is false"), built so that:
+The goal is a **machine-checkable substrate** (formal construction and reasoning rules) whose instances are **structured reasoning objects**: linked sentences, worlds, facts, candidate values, suppositions, derivations, and conflicts. Question-directed visual views should make small examples inspectable even when the complete space of possibilities is too large or infinite to enumerate.
 
-1. **every drawing reads back into exactly one formula**, checked by program on hundreds of random sentences, and
-2. **paradox has a visible shape**: drawn on a true layer and a false layer, the liar is one loop that crosses itself (a figure 8); the truth-teller is two separate loops.
+The sentence is one component of an object. Worlds are not permanently inputs; an investigation can ask which sentence assignments a world permits or which worlds permit an assignment. A reasoning history is not a possible world.
+
+## Current direction and status
+
+- [Project contract](docs/reasoning-objects.md): goals, terminology, formal kernel, view guarantees, and acceptance criteria.
+- [Inquiry graph and conversation trace](docs/inquiry-trace.md): how the requirements developed, including corrections and open questions.
+- [Machine-readable inquiry graph](docs/inquiry-graph.json): typed nodes, relations, and paraphrased conversational evidence.
+- [Handoff](HANDOFF.md): implementation status and next steps.
+- [Foundation](docs/foundation.md) and [specification](docs/specification.md): existing sentence grammar and its place within the larger target.
+
+**This architecture is a design commitment, not an implemented general solver or a completed formalization.** Current code implements sentence layouts, structured read-back, selected semantic checks, and finite loop examples. The tutorial predates the current direction. Tests on finite samples are evidence, not universal proofs.
+
+For pure signed reference cycles, an odd number of negations joins the true and false copies into one component; an even number gives two. A literal figure-eight crossing is a layout choice. This criterion does not by itself solve arbitrary conjunctions or quantify over programs.
+
+## Existing pages
 
 Live site: https://self-reference-diagrams.pages.dev
 
-## Pages
-
-| Page | What it is |
+| Page | Status and purpose |
 | --- | --- |
-| `index.html` | Landing page |
-| `shapes.html` | **The shapes of self-reference**: value layers for the liar, the truth-teller, disguised liars and a loop through an "and" |
-| `tutorial.html` | Thirteen-lesson interactive tutorial |
-| `roundtrip.html` | **Round-trip test**: random sentences drawn and read back in both layouts, broken drawings rejected, the figure-8 rule checked |
-| `gallery.html` | Every tutorial sentence drawn by the tested engine and read back |
-| `reference.html` | Interactive reference page (v0.2) |
-| `v0.1/` | The first guide, spec and stepper, archived |
+| `index.html` | Earlier landing page |
+| `shapes.html` | Existing value-layer illustrations |
+| `tutorial.html` | Earlier thirteen-lesson tutorial; not the new reasoning-object tutorial |
+| `roundtrip.html` | Structured layout/read-back checks |
+| `gallery.html` | Engine-drawn example sentences |
+| `reference.html` | Earlier v0.2 reference |
+| `v0.1/` | Archived first guide |
 
-## How it is built
+## Source and validation
 
-New here? Read [`HANDOFF.md`](HANDOFF.md) first.
+- `src/engine.js`: sentence generation, Peirce layout/read-back, semantic evaluation, and bounded unfolding.
+- `src/graph.js`: graph layout/read-back and pure-loop value layers.
+- `src/layers.js`: finite consistency machinery.
+- `src/render.js`, `src/layers_render.js`: existing visual grammar.
+- `tutorial-src/`: sources of the earlier tutorial; rebuild with `python3 tutorial-src/build.py`.
 
-The design follows a written foundation and formal specification, in [`docs/foundation.md`](docs/foundation.md) and [`docs/specification.md`](docs/specification.md):
+Run `bash tests/run-all.sh` (requires Node). Read-back consumes structured geometric data, not arbitrary pixels. A bounded unfolding failure is not a proof of inconsistency.
 
-- **Foundation**: the standard objects (sorts, names, predicates and roles, operators and truth values, sentences, worlds, satisfaction, truth conditions, the truth predicate, theories of truth) and the closed list of marks that draw them, one mark per object.
-- **Specification**: abstract syntax, formation rules, translation in both directions, two layouts (Peirce drawings and the graph form) with their read-back rules, semantics, computed annotations, transformation rules (Peirce's rules plus Tarski's T-schema), the value layers and the curve criterion, and the extension protocol.
+The proposed example suite in PR #3 and earlier tutorial experiment in PR #2 are separate, unmerged work as of this revision. This change is based directly on main and depends on neither.
 
-## Source and tests
+## Sources and deployment
 
-- `src/engine.js`: generator, Peirce layout, read-back, semantics (Tarski and diagram-based), evaluation as a derivation with cycle detection
-- `src/graph.js`: graph-form layout and read-back; value layers for pure loops
-- `src/layers.js`: implication graph and fixed points for loops through an "and"
-- `src/render.js`, `src/layers_render.js`: drawing in the visual grammar
-- `tutorial-src/`: sources of `tutorial.html`; rebuild with `python3 tutorial-src/build.py`
+The existing grammar draws on Peirce, Sowa, Tarski, and the sources recorded in the foundation. The new architectural synthesis and its unproved obligations are identified explicitly in the project contract.
 
-Run every check (needs Node):
-
-```
-tests/run-all.sh
-```
-
-Current results: Peirce round trip 400/400; semantics agreement on every random world; broken drawings rejected with the right rule; graph-form round trip 400/400; one curve exactly when there is no consistent value, 500/500 random loops.
-
-## Sources
-
-Peirce's existential graphs (Roberts, Shin, Dau); Sowa's conceptual graphs and ISO Common Logic; Tarski; Kripke 1975; Gaifman 1992; Gupta and Belnap 1993; Goguen and Burstall's institutions; Zaslavsky's signed graphs; Aspvall, Plass and Tarjan's 2-SAT; Moody's *Physics of Notations*.
-
-## Deploying
-
-Static files only, no build step:
-
-```
-wrangler pages deploy . --project-name self-reference-diagrams
-```
+Static deployment remains `wrangler pages deploy . --project-name self-reference-diagrams`. No deployment is part of this documentation revision.
