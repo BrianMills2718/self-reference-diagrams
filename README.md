@@ -23,6 +23,8 @@ Live site: https://self-reference-diagrams.pages.dev
 
 New here? Read [`HANDOFF.md`](HANDOFF.md) first.
 
+The next visual review is organized by the [named example suite](docs/example-suite.md): six teaching stages, scalable families, and expected classical results. The [formal obligations](docs/formal-obligations.md) define the proposed complete object and its filtered/projected views, with an explicit ledger of what is tested and what remains unproved. Fixtures live in `examples/catalog.js`; `tests/run-all.sh` includes their checks. This suite is independent of the unmerged tutorial preview and does not introduce new diagram marks.
+
 The design follows a written foundation and formal specification, in [`docs/foundation.md`](docs/foundation.md) and [`docs/specification.md`](docs/specification.md):
 
 - **Foundation**: the standard objects (sorts, names, predicates and roles, operators and truth values, sentences, worlds, satisfaction, truth conditions, the truth predicate, theories of truth) and the closed list of marks that draw them, one mark per object.
@@ -55,3 +57,4 @@ Static files only, no build step:
 ```
 wrangler pages deploy . --project-name self-reference-diagrams
 ```
+
