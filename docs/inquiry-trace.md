@@ -20,6 +20,7 @@ flowchart TD
   Q11 --> Q12["Checkable substrate; intractable instances"]
   Q12 --> Q14["Objects broader than sentences"]
   Q14 --> Q15["Repository alignment authorized"]
+  Q15 --> Q16["Merge and snow prototype authorized"]
 ```
 
 Arrows summarize conversational progression, not implication. The JSON includes typed relations and additional open obligations.
@@ -43,6 +44,7 @@ Arrows summarize conversational progression, not implication. The JSON includes 
 | Q13 | proposed | **Question-directed view contracts.** Assistant distinguished restriction, projection, collapse, and abstraction; warned that selecting a useful exact view may itself be difficult. |
 | Q14 | accepted | **An object is broader than a sentence.** User clarified that an instance may involve sentences, worlds, facts, suppositional pathways, and true/false values. Assistant adopted typed structured reasoning objects. |
 | Q15 | accepted | **Align repository and preserve inquiry trace.** User requested making the repository consistent with this direction and updating the inquiry graph trace. |
+| Q16 | accepted | **Merge and prepare the snow prototype.** User approved merging PR #4 and preparing an executable object and connected schematic for review. Unseen visual marks remain unapproved. |
 | O01 | open | **Specify executable schema and rule verification.** No general typed schema or context-aware inference checker is implemented by this documentation revision. |
 | O02 | open | **Review a connected schematic.** No new gate or pathway notation has been visually approved. |
 | O03 | open | **Prove view guarantees within declared scope.** Projection must preserve dependencies and supporting extensions; approximate summaries require explicit guarantees. |
@@ -63,3 +65,7 @@ Arrows summarize conversational progression, not implication. The JSON includes 
 The accepted direction is the [project contract](reasoning-objects.md). The exact schema, propagation rules, graphical marks, and view algorithms remain proposals. The next visual review concerns a connected schematic; documentation approval does not imply approval of those still-unseen marks.
 
 PR #2's earlier tutorial and PR #3's finite example suite are separate unmerged work. This trace does not treat them as approved or import their implementations.
+
+## Prototype follow-through
+
+PR #4 merged as `07d54f0`. The [finite snow prototype](snow-prototype.md) provides initial evidence toward O01 and O03. These general obligations remain open; O02 awaits Brian's review of the new schematic.

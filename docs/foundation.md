@@ -162,6 +162,12 @@ Every picture is built only from these marks, and each mark means the same objec
 
 **Rules:** existing processes use these marks with explicit step meanings; colour carries value only; captions name the marks used. Connected schematics and history views are design goals, but no new gate/pathway marks are approved or introduced by this revision. Propose their meanings here before implementation.
 
+### Proposed schematic for the snow-object review (not adopted)
+
+The next mock uses labelled variable terminals for world facts and sentence values, and labelled relation boxes for AND, NOT, and agreement. Undirected connections indicate participation in a constraint, not time or permanent input/output direction. A highlighted relation identifies the current inference step. Terminal labels distinguish “supposed”, “derived”, and “open”; conflict is textual, not a third truth value. A reference connection identifies the same named sentence. A world view hides expression terminals but retains full constraints and supporting assignments.
+
+These are provisional mappings for visual review, motivated by constraint incidence/factor graphs (source in reasoning-objects.md). They do not replace the existing sentence grammar, establish graphical read-back, or authorize a tutorial redesign. The executable kernel can be reviewed independently of these proposed marks.
+
 ## Sources
 
 Enderton; Tarski (1933, 1936); Robinson; Carnap (1947); Kleene (1952); Barwise and Perry (1983); Peirce; Sowa (1984); Codd (1970); Fillmore (1968); Kripke (1975); Gaifman (1992); Gupta and Belnap (1993); Goguen and Burstall (1992); Aspvall, Plass and Tarjan (1979); Moody (2009); Zaslavsky (signed graphs). Cited from memory; check against the originals before treating as final.

@@ -200,6 +200,16 @@
         "kind": "conversation_paraphrase",
         "text": "Strange loops require precise examples; arithmetic and halting need encodings and assumptions beyond predicate labels."
       }
+    },
+    {
+      "id": "Q16",
+      "type": "authorization",
+      "status": "accepted",
+      "title": "Merge contract and prepare executable snow-object review",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "After the assistant proposed merging PR #4, defining a typed snow object, checking its inferences, and presenting a connected schematic, the user approved. This authorizes preparation; it does not approve the still-unseen visual marks."
+      }
     }
   ],
   "edges": [
@@ -292,6 +302,16 @@
       "from": "Q04",
       "to": "O04",
       "relation": "motivates"
+    },
+    {
+      "from": "Q15",
+      "to": "Q16",
+      "relation": "followed_by"
+    },
+    {
+      "from": "Q16",
+      "to": "O02",
+      "relation": "requires"
     }
   ]
 }

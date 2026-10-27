@@ -32,6 +32,8 @@ Live site: https://self-reference-diagrams.pages.dev
 
 ## Source and validation
 
+An experimental [snow-object kernel and review schematic](docs/snow-prototype.md) now supplies typed finite objects, locally checkable inference records, exact finite queries, and witness-preserving projections. It is separate from the live tutorial and awaits visual review; it does not complete the general substrate.
+
 - `src/engine.js`: sentence generation, Peirce layout/read-back, semantic evaluation, and bounded unfolding.
 - `src/graph.js`: graph layout/read-back and pure-loop value layers.
 - `src/layers.js`: finite consistency machinery.
