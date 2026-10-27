@@ -1,0 +1,268 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The shapes of self-reference: value layers</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#22211e;--quiet:#6b6a64;--line:#8f8d85;--hair:#e4e2da;--ok:#0f6e56;--bad:#a32d2d;--ref:#2f7fd0;--cap:#e6f1fb;--capline:#185fa5;--capink:#0c447c;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1c1a;--card:#262624;--ink:#ecebe6;--quiet:#a8a69e;--line:#8a887f;--hair:#3a3935;--ok:#5dcaa5;--bad:#f09595;--ref:#85b7eb;--cap:#0c2d4d;--capline:#85b7eb;--capink:#cfe3f7;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1c1a;--card:#262624;--ink:#ecebe6;--quiet:#a8a69e;--line:#8a887f;--hair:#3a3935;--ok:#5dcaa5;--bad:#f09595;--ref:#85b7eb;--cap:#0c2d4d;--capline:#85b7eb;--capink:#cfe3f7;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:24px 20px 60px}h1{font-size:26px;margin:0 0 6px}p{max-width:80ch}.q{color:var(--quiet)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(500px,1fr));gap:16px;margin-top:16px}@media (max-width:600px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:14px;overflow:hidden}
+.card h2{font-size:17px;margin:0 0 2px}.say{color:var(--quiet);margin:0 0 6px;font-size:14.5px}
+.lsvg{width:100%;height:auto;display:block}.dsvg{width:100%;height:auto;display:block;max-height:220px;margin-top:6px}
+.verdict{font-weight:600;margin:8px 0 0}.f{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;color:var(--quiet);margin:6px 0 0}
+.ok{color:var(--ok)}.no{color:var(--bad)}
+</style></head><body><main>
+<h1>The shapes of self-reference</h1>
+<p>Each text below is drawn on a <b>true layer</b> and a <b>false layer</b>: every sentence appears once on each. A value keeps its layer, except where it passes a <b>“not”</b>, where it crosses to the other layer. All of it is computed by the tested engine from the sentences themselves.</p>
+<p>For a simple loop, read the verdict from the shape: <b>one closed curve through both copies of a sentence (a figure 8) means no value can hold; two separate curves mean either value holds.</b> When a loop passes through an “and”, the curves branch at a junction, and the verdict is which nodes can be chosen together (outlined thickly).</p>
+<div class="grid" id="g"></div>
+<script>
+// ===== vocabulary =====
+const SORTS=['thing','sentence'];
+const PREDS={Man:[['thing that is a man','thing']],Mortal:[['mortal thing','thing']],Falling:[['thing that falls','thing']],Blowing:[['thing that blows','thing']],Happy:[['happy one','thing']],Loves:[['lover','thing'],['loved','thing']],IsTrue:[['bearer','sentence']]};
+const THINGS=['Snow','Wind','Romeo','Juliet','Socrates'];
+const VARN=['x','y','z','u','v','w','p','q'];
+// ===== seeded random =====
+function rng(seed){let s=seed>>>0||1;return ()=>{s^=s<<13;s>>>=0;s^=s>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+// ===== generator: texts in area normal form =====
+// area = {lines:[{id,sort}], items:[item]} ; item = {t:'claim',pred,fill:[{kind:'name'|'sent'|'var',v}]} | {t:'enc',area}
+function genText(R,nSent){const names=Array.from({length:nSent},(_,i)=>'S'+(i+1));let lid=0;
+ function genArea(depth,scope){const area={lines:[],items:[]};const nl=depth>0&&R()<0.4?1+(R()<0.25?1:0):0;
+  for(let i=0;i<nl;i++)area.lines.push({id:lid++,sort:'thing'});
+  const sc=scope.concat(area.lines);const n=1+Math.floor(R()*(depth>1?3:2));
+  for(let i=0;i<n;i++){if(depth>0&&R()<0.35)area.items.push({t:'enc',area:genArea(depth-1,sc)});else area.items.push(genClaim(sc));}
+  area.lines.forEach(l=>{if(!uses(area,l.id)){const p=R()<0.5?'Happy':'Falling';area.items.push({t:'claim',pred:p,fill:[{kind:'var',v:l.id}]});}});
+  return area;}
+ function genClaim(sc){const ps=Object.keys(PREDS);
+  return genClaimP(ps.filter(q=>q!=='Man'&&q!=='Mortal'),sc);}
+ function genClaimP(ps0,sc){const pred=ps0[Math.floor(R()*ps0.length)];
+  return {t:'claim',pred,fill:PREDS[pred].map(([r,s])=>{if(s==='sentence')return {kind:'sent',v:names[Math.floor(R()*names.length)]};const vs=sc.filter(l=>l.sort==='thing');if(vs.length&&R()<0.55)return {kind:'var',v:vs[Math.floor(R()*vs.length)].id};return {kind:'name',v:THINGS.slice(0,4)[Math.floor(R()*4)]};})};}
+ return names.map(n=>({name:n,area:genArea(2,[])}));}
+function uses(area,id){return area.items.some(it=>it.t==='claim'?it.fill.some(f=>f.kind==='var'&&f.v===id):uses(it.area,id));}
+// ===== printing a text (canonical variable names by preorder of introduction) =====
+function printText(text){let k=0;return text.map(d=>{const vm={};const pa=area=>{area.lines.forEach(l=>{vm[l.id]=VARN[k++]||('v'+k);});
+  const body=area.items.length===0?'⊤':area.items.map(it=>it.t==='claim'?`${it.pred}(${PREDS[it.pred].map(([r],i)=>`${r}: ${it.fill[i].kind==='var'?vm[it.fill[i].v]:it.fill[i].v}`).join(', ')})`:`¬(${pa(it.area)})`).join(' ∧ ');
+  return area.lines.length?area.lines.map(l=>'∃'+vm[l.id]).join(' ')+` (${body})`:body;};k=0;return `${d.name} := ${pa(d.area)}`;}).join('\n');}
+// ===== layout: abstract diagram -> picture (shapes with positions), following rules D1-D6 =====
+function layout(text){const shapes={boxes:[],encs:[],caps:[],things:[],roleArrows:[],refArrows:[],lines:[],dividers:[]};let cid=0;
+ const PAD=14,GAP=12,TRUNK=14;
+ function capW(p){return Math.max(70,p.length*8+22);}
+ function measureItem(it){if(it.t==='claim'){const nn=it.fill.filter(f=>f.kind==='name').length;const tw=Math.max(0,...it.fill.filter(f=>f.kind==='name').map(f=>f.v.length*8+20));
+   const hasRef=it.fill.some(f=>f.kind==='sent');return {w:capW(it.pred)+(nn?70+tw:0)+(hasRef?90:0),h:Math.max(28,nn*32)};}
+  const m=measureArea(it.area);return {w:m.w+2*PAD,h:m.h+2*PAD+12};}
+ function measureArea(area){const g=area.lines.length*TRUNK+(area.lines.length?8:0);const ms=area.items.map(measureItem);
+  return {w:g+Math.max(40,...ms.map(m=>m.w))+4,h:Math.max(24,ms.reduce((s,m)=>s+m.h,0)+GAP*Math.max(0,ms.length-1))};}
+ const pending=[];
+ function placeArea(area,x,y,w,h,scopeLines,negs,boxName){negs=negs||0;const g=area.lines.length*TRUNK+(area.lines.length?8:0);const trunks={};
+  area.lines.forEach((l,i)=>{trunks[l.id]={x:x+4+i*TRUNK,y0:y,y1:y+h,branches:[]};});
+  const sc=Object.assign({},scopeLines,trunks);let cy=y;
+  area.items.forEach(it=>{const m=measureItem(it);
+   if(it.t==='claim'){const id='c'+(cid++);const cw=capW(it.pred);const cx=x+g;const capY=cy+(m.h-28)/2;
+    shapes.caps.push({id,pred:it.pred,x:cx,y:capY,w:cw,h:28});let ni=0;const vRoles=it.fill.map((f,i)=>f.kind==='var'?i:-1).filter(i=>i>=0);
+    it.fill.forEach((f,i)=>{const role=PREDS[it.pred][i][0];
+     if(f.kind==='name'){const tw=f.v.length*8+20;const ty=cy+ni*32;const tx=cx+cw+70;shapes.things.push({name:f.v,x:tx,y:ty+2,w:tw,h:24});shapes.roleArrows.push({cap:id,role,from:[cx+cw,capY+14],to:[tx,ty+14]});ni++;}
+     else if(f.kind==='sent'){pending.push({cap:id,role,from:[cx+cw,capY+14],target:f.v,neg:negs%2===1,inBox:boxName});}
+     else{const off=vRoles.length>1?(vRoles.indexOf(i)-0.5)*12:0;const ay=capY+14+off;sc[f.v].branches.push({cap:id,role,at:[cx,ay]});}});}
+   else{const ex=x+g,ew=m.w,eh=m.h;shapes.encs.push({x:ex,y:cy,w:ew,h:eh});placeArea(it.area,ex+PAD,cy+PAD+12,ew-2*PAD,eh-2*PAD-12,sc,negs+1,boxName);}
+   const last=it===area.items[area.items.length-1];if(!last)shapes.dividers.push({x1:x+g,x2:x+w,y:cy+m.h+GAP/2});cy+=m.h+GAP;});
+  area.lines.forEach(l=>{const t=trunks[l.id];const pts=[[t.x,t.y0+4],[t.x,Math.max(t.y0+8,...t.branches.map(b=>b.at[1]))]];
+   shapes.lines.push({pts:[...pts,...t.branches.flatMap(b=>[[t.x,b.at[1]],b.at])],trunk:pts,branches:t.branches.map(b=>({from:[t.x,b.at[1]],to:b.at})),attach:t.branches.map(b=>({cap:b.cap,role:b.role,at:b.at}))});});}
+ let bx=10;const boxPos={};
+ text.forEach(d=>{const m=measureArea(d.area);const w=m.w+2*PAD,h=m.h+2*PAD+20;boxPos[d.name]={x:bx,y:60,w,h};shapes.boxes.push({name:d.name,x:bx,y:60,w,h});placeArea(d.area,bx+PAD,60+PAD+20,m.w,m.h,{},0,d.name);bx+=w+70;});
+ pending.forEach(p=>{const b=boxPos[p.target];const self=p.target===p.inBox;shapes.refArrows.push({cap:p.cap,role:p.role,from:p.from,neg:p.neg,self,target:p.target,to:self?[b.x+b.w,p.from[1]]:[b.x+b.w/2+((p.from[0]%7)-3)*4,b.y]});});
+ shapes.W=bx;shapes.H=Math.max(...shapes.boxes.map(b=>b.y+b.h))+20;return shapes;}
+// ===== read-back: picture -> abstract diagram, from geometry only =====
+const inside=(a,b)=>a.x>=b.x-0.5&&a.y>=b.y-0.5&&a.x+a.w<=b.x+b.w+0.5&&a.y+a.h<=b.y+b.h+0.5;
+const ptIn=(p,b)=>p[0]>=b.x-0.5&&p[0]<=b.x+b.w+0.5&&p[1]>=b.y-0.5&&p[1]<=b.y+b.h+0.5;
+const onOutline=(p,b)=>ptIn(p,b)&&(Math.abs(p[0]-b.x)<1.5||Math.abs(p[0]-b.x-b.w)<1.5||Math.abs(p[1]-b.y)<1.5||Math.abs(p[1]-b.y-b.h)<1.5);
+const disjoint=(a,b)=>a.x+a.w<=b.x||b.x+b.w<=a.x||a.y+a.h<=b.y||b.y+b.h<=a.y;
+class ReadErr extends Error{constructor(rule,msg){super(msg);this.rule=rule;}}
+function readBack(sh){const C=[...sh.boxes.map(b=>({...b,kind:'box'})),...sh.encs.map(e=>({...e,kind:'enc'}))];
+ for(let i=0;i<C.length;i++)for(let j=i+1;j<C.length;j++){const a=C[i],b=C[j];if(!(inside(a,b)||inside(b,a)||disjoint(a,b)))throw new ReadErr('D1','two outlines cross');}
+ const smallest=(r,excl)=>C.filter(c=>c!==excl&&inside(r,c)).sort((p,q)=>p.w*p.h-q.w*q.h)[0];
+ C.forEach(c=>{c.parent=c.kind==='box'?null:smallest(c,c);if(c.kind==='enc'&&!c.parent)throw new ReadErr('D1','an enclosure outside every sentence box');});
+ sh.boxes.forEach(b=>{if(C.some(c=>c.kind==='enc'&&inside(b,c)))throw new ReadErr('D5','a sentence box inside an enclosure');});
+ const boxOf=c=>c.kind==='box'?c:boxOf(c.parent);
+ const caps=sh.caps.map(k=>({...k,area:smallest(k,null)}));
+ caps.forEach(k=>{if(!k.area)throw new ReadErr('D1','a claim outside every sentence box');});
+ // roles
+ const fill={};caps.forEach(k=>fill[k.id]={});
+ sh.roleArrows.forEach(a=>{const t=sh.things.find(t=>onOutline(a.to,t));if(!t)throw new ReadErr('D3',`role arrow "${a.role}" does not end on a thing box`);fill[a.cap][a.role]={kind:'name',v:t.name,sort:'thing'};});
+ sh.refArrows.forEach(a=>{const b=sh.boxes.find(b=>onOutline(a.to,b));if(!b)throw new ReadErr('D3',`reference arrow "${a.role}" does not end on a sentence box`);fill[a.cap][a.role]={kind:'sent',v:b.name,sort:'sentence'};});
+ const lines=sh.lines.map((l,i)=>{const homes=l.pts.map(p=>C.filter(c=>ptIn(p,{x:c.x,y:c.y,w:c.w,h:c.h})).sort((p,q)=>p.w*p.h-q.w*q.h)[0]).filter(Boolean);
+  const depth=c=>c.parent?1+depth(c.parent):0;const home=homes.sort((a,b)=>depth(a)-depth(b))[0];if(!home)throw new ReadErr('D4','a heavy line outside every box');
+  l.attach.forEach(a=>{const k=caps.find(k=>k.id===a.cap);if(!k||!(Math.abs(a.at[0]-k.x)<1.5&&a.at[1]>=k.y&&a.at[1]<=k.y+k.h))throw new ReadErr('D4','a heavy line does not meet its claim at the claim\u2019s edge');fill[a.cap][a.role]={kind:'var',v:'L'+i,sort:'thing'};});
+  if(!l.attach.length)throw new ReadErr('D4','an idle heavy line');return {id:'L'+i,home,x:l.trunk[0][0]};});
+ // build areas
+ const areaOf=c=>{const items=[...caps.filter(k=>k.area===c).map(k=>({cy:k.y+k.h/2,x:k.x,h:k.h,it:k,t:'claim'})),...C.filter(e=>e.kind==='enc'&&e.parent===c).map(e=>({cy:e.y+e.h/2,x:e.x,h:e.h,it:e,t:'enc'}))];
+  items.sort((a,b)=>Math.abs(a.cy-b.cy)<Math.min(a.h,b.h)/2?a.x-b.x:a.cy-b.cy);
+  return {lines:lines.filter(l=>l.home===c).sort((a,b)=>a.x-b.x).map(l=>({id:l.id,sort:'thing'})),
+   items:items.map(o=>{if(o.t==='enc')return {t:'enc',area:areaOf(o.it)};const k=o.it;const roles=PREDS[k.pred];if(!roles)throw new ReadErr('D3','unknown predicate '+k.pred);
+    return {t:'claim',pred:k.pred,fill:roles.map(([r,s])=>{const f=fill[k.id][r];if(!f)throw new ReadErr('D3',`role "${r}" of ${k.pred} is not filled`);if(f.sort!==s)throw new ReadErr('D3',`role "${r}" needs a ${s}`);return {kind:f.kind,v:f.v};})};})};};
+ const text=sh.boxes.slice().sort((a,b)=>a.x-b.x).map(b=>({name:b.name,area:areaOf(C.find(c=>c.kind==='box'&&c.name===b.name))}));
+ // scope check (section 1, rule 2): a line's home must contain each claim it fills
+ const contains=(outer,inner)=>{for(let c=inner;c;c=c.parent)if(c===outer)return true;return false;};
+ lines.forEach(l=>Object.entries(fill).forEach(([cap,rs])=>Object.values(rs).forEach(f=>{if(f.kind==='var'&&f.v===l.id){const k=caps.find(k=>k.id===cap);if(!contains(l.home,k.area))throw new ReadErr('D4','a heavy line fills a claim outside its home area');}})));
+ return text;}
+// ===== semantics: on the formula (Tarski) and on the diagram (area by area), independently =====
+function randWorld(R,sentNames){const ext={};['Falling','Blowing','Happy'].forEach(p=>ext[p]=new Set(THINGS.filter(()=>R()<0.5)));ext.Loves=new Set();THINGS.forEach(a=>THINGS.forEach(b=>{if(R()<0.3)ext.Loves.add(a+'|'+b);}));ext.IsTrue=new Set(sentNames.filter(()=>R()<0.5));return ext;}
+const holds=(W,pred,args)=>W[pred].has(args.join('|'));
+function evalFormula(area,W,env){ // Tarski, by recursion on the formula: ∃ over home lines, then ∧ of items
+ const go=(i,e)=>{if(i===area.lines.length)return area.items.every(it=>it.t==='claim'?holds(W,it.pred,it.fill.map(f=>f.kind==='var'?e[f.v]:f.v)):!evalFormula(it.area,W,e));return THINGS.some(d=>go(i+1,{...e,[area.lines[i].id]:d}));};return go(0,env);}
+function evalDiagram(area,W,asg){ // Dau-style: an area is true if some choice of objects for its home lines makes every item true
+ const ids=area.lines.map(l=>l.id);const n=ids.length;const total=Math.pow(THINGS.length,n);
+ for(let k=0;k<total;k++){const a={...asg};let r=k;ids.forEach(id=>{a[id]=THINGS[r%THINGS.length];r=Math.floor(r/THINGS.length);});
+  let ok=true;for(const it of area.items){if(it.t==='enc'){if(evalDiagram(it.area,W,a)){ok=false;break;}}else{if(!holds(W,it.pred,it.fill.map(f=>f.kind==='var'?a[f.v]:f.v))){ok=false;break;}}}
+  if(ok)return true;}return false;}
+// ===== dynamics: evaluation as a derivation (unfold, look up, simplify), with cycle detection =====
+const clone=x=>JSON.parse(JSON.stringify(x));
+const isBot=it=>it.t==='enc'&&it.area.items.length===0&&it.area.lines.length===0;
+function simplify(area,log){let changed=true;while(changed){changed=false;
+  for(const it of area.items)if(it.t==='enc'){if(simplify(it.area,log))changed=true;}
+  if(area.items.some(isBot)&&area.items.length>1){area.items=[{t:'enc',area:{lines:[],items:[]}}];log.push('an empty \u201cnot\u201d makes its area false');changed=true;}
+  const i=area.items.findIndex(it=>it.t==='enc'&&it.area.lines.length===0&&it.area.items.length===1&&it.area.items[0].t==='enc'&&!isBot(it.area.items[0]));
+  if(i>=0){const inner=area.items[i].area.items[0].area;area.items.splice(i,1,...inner.items);area.lines.push(...inner.lines);log.push('double cut: two \u201cnot\u201ds with nothing between them are removed');changed=true;continue;}
+  const j=area.items.findIndex(it=>it.t==='enc'&&it.area.items.length===1&&isBot(it.area.items[0]));
+  if(j>=0){area.items.splice(j,1);log.push('double cut: a \u201cnot\u201d around an empty \u201cnot\u201d is removed');changed=true;}}
+ return false;}
+function evaluate(text,name,W,maxSteps){const defs=Object.fromEntries(text.map(d=>[d.name,d.area]));let area=clone(defs[name]);const steps=[{rule:'start',area:clone(area)}];const seen=new Map([[JSON.stringify(area),0]]);
+ for(let s=0;s<maxSteps;s++){const log=[];simplify(area,log);if(log.length)steps.push({rule:log[0],area:clone(area)});
+  if(area.items.length===0)return {result:true,halts:true,steps};
+  if(area.items.length===1&&isBot(area.items[0]))return {result:false,halts:true,steps};
+  let done=false;const visit=a=>{for(let i=0;i<a.items.length&&!done;i++){const it=a.items[i];if(it.t==='enc'){visit(it.area);continue;}
+    if(it.pred==='IsTrue'){const tgt=clone(defs[it.fill[0].v]);a.items.splice(i,1,...(tgt.lines.length?[{t:'enc',area:{lines:[],items:[{t:'enc',area:tgt}]}}]:tgt.items));steps.push({rule:`unfold IsTrue(${it.fill[0].v})`,area:null});done=true;}
+    else if(it.fill.every(f=>f.kind==='name')){const h=holds(W,it.pred,it.fill.map(f=>f.v));a.items.splice(i,1,...(h?[]:[{t:'enc',area:{lines:[],items:[]}}]));steps.push({rule:`look up ${it.pred}(${it.fill.map(f=>f.v).join(', ')}): ${h?'holds':'does not hold'}`,area:null});done=true;}}};
+  visit(area);steps[steps.length-1].area=clone(area);
+  if(!done)return {result:null,halts:false,steps,why:'stuck'};
+  const key=JSON.stringify(area);if(seen.has(key))return {result:null,halts:false,cycleFrom:seen.get(key),steps};seen.set(key,steps.length-1);}
+ return {result:null,halts:false,steps,why:'step limit'};}
+//{genText,printText,layout,readBack,ReadErr,randWorld,evalFormula,evalDiagram,evaluate,rng,THINGS,PREDS};
+
+// ===== layout 2: the graph form. Every link is an edge: "says" (sentence to its parts), "inside" (a "not" to its parts),
+// "home" (where a "something" sits), role edges (claim to what fills each role). =====
+function graphLayout(text){const G={nodes:[],edges:[]};let nid=0;const COLW=150,ROWH=46;let row=0;const sentNode={};
+ const add=(kind,label,col)=>{const id='n'+(nid++);const w=kind==='sent'?46:kind==='not'?48:kind==='var'?60:kind==='thing'?Math.max(56,label.length*8+18):Math.max(70,label.length*8+22);
+  const n={id,kind,label,x:20+col*COLW,y:20+row*ROWH,w,h:30};G.nodes.push(n);return n;};
+ const edge=(a,b,kind,label)=>G.edges.push({kind,label,from:[a.x+a.w,a.y+a.h/2],to:[b.x,b.y+b.h/2]});
+ const pendingRefs=[];
+ const placeArea=(parent,area,col,kindEdge,vmap)=>{area.lines.forEach(l=>{const v=add('var','something',col);vmap[l.id]=v;edge(parent,v,'home','home');row++;});
+  area.items.forEach(it=>{if(it.t==='enc'){const n=add('not','not',col);edge(parent,n,kindEdge);row++;placeArea(n,it.area,col+1,'inside',Object.assign({},vmap));}
+   else{const c=add('claim',it.pred,col);edge(parent,c,kindEdge);const r0=row;row++;
+    it.fill.forEach((f,i)=>{const role=PREDS[it.pred][i][0];if(f.kind==='name'){const keep=row;row=r0+i;const t=add('thing',f.v,col+1);row=Math.max(keep,row+1);edge(c,t,'role',role);}
+     else if(f.kind==='var'){const v=vmap[f.v];G.edges.push({kind:'role',label:role,from:[c.x,c.y+c.h/2+4],to:[v.x+v.w,v.y+v.h/2+(i?6:-6)],back:true});}
+     else pendingRefs.push({c,role,target:f.v});});}});};
+ text.forEach(d=>{const s=add('sent',d.name,0);sentNode[d.name]=s;row++;placeArea(s,d.area,1,'says',{});row++;});
+ pendingRefs.forEach(p=>{const s=sentNode[p.target];G.edges.push({kind:'role',label:p.role,ref:true,from:[p.c.x+p.c.w,p.c.y+p.c.h/2],to:[s.x+s.w/2,s.y+s.h]});});
+ G.W=Math.max(...G.nodes.map(n=>n.x+n.w))+30;G.H=Math.max(...G.nodes.map(n=>n.y+n.h))+30;return G;}
+// ===== read-back for the graph form: follow the edges; nothing is read from nesting =====
+function graphReadBack(G){const at=p=>G.nodes.filter(n=>onOutline(p,n));
+ const E=G.edges.map(e=>{const a=at(e.from),b=at(e.to);if(a.length!==1||b.length!==1)throw new ReadErr('G1',`an edge does not run from one node's outline to another's`);return {...e,a:a[0],b:b[0]};});
+ const parentOf={};E.filter(e=>e.kind==='says'||e.kind==='inside'||e.kind==='home').forEach(e=>{if(parentOf[e.b.id])throw new ReadErr('G2','a node has two parents');parentOf[e.b.id]=e.a;});
+ G.nodes.forEach(n=>{if(n.kind!=='sent'&&n.kind!=='thing'&&!parentOf[n.id])throw new ReadErr('G2',`a "${n.label}" node hangs loose`);});
+ const kids=(n,kinds)=>E.filter(e=>e.a===n&&kinds.includes(e.kind)).map(e=>e.b).sort((p,q)=>p.y-q.y||p.x-q.x);
+ const inScope=(v,c)=>{const home=parentOf[v.id];for(let n=parentOf[c.id];n;n=parentOf[n.id])if(n===home)return true;return false;};
+ const area=n=>({lines:kids(n,['home']).map(v=>({id:v.id,sort:'thing'})),items:kids(n,['says','inside']).filter(m=>m.kind!=='var').map(m=>{
+   if(m.kind==='not')return {t:'enc',area:area(m)};if(m.kind!=='claim')throw new ReadErr('G2','a sentence or thing cannot be part of a sentence');
+   const rs=E.filter(e=>e.kind==='role'&&e.a===m);const roles=PREDS[m.label];
+   return {t:'claim',pred:m.label,fill:roles.map(([r,s])=>{const e=rs.find(e=>e.label===r);if(!e)throw new ReadErr('G3',`role "${r}" of ${m.label} is not filled`);const t=e.b;
+    if(t.kind==='var'){if(!inScope(t,m))throw new ReadErr('G4','a "something" fills a claim outside its home');return {kind:'var',v:t.id};}
+    if(s==='sentence'){if(t.kind!=='sent')throw new ReadErr('G3',`role "${r}" needs a sentence`);return {kind:'sent',v:t.label};}
+    if(t.kind!=='thing')throw new ReadErr('G3',`role "${r}" needs a thing`);return {kind:'name',v:t.label};})};})});
+ return G.nodes.filter(n=>n.kind==='sent').sort((p,q)=>p.y-q.y).map(s=>({name:s.label,area:area(s)}));}
+// ===== value layers: the implication graph drawn on a true layer and a false layer =====
+// For a "pure loop" text (each sentence says (not)^k IsTrue(next)), each node (sentence, value) has exactly one successor,
+// so the layers fall apart into closed curves. This counts them.
+function valueLayers(text){const name=text.map(d=>d.name);const step={};
+ text.forEach(d=>{let a=d.area,k=0;while(a.items.length===1&&a.items[0].t==='enc'){k++;a=a.items[0].area;}const c=a.items[0];step[d.name]={to:c.fill[0].v,flip:k%2===1};});
+ const succ=(s,v)=>[step[s].to,step[s].flip?!v:v];const seen=new Set();const curves=[];
+ name.forEach(s=>[true,false].forEach(v=>{const k=s+v;if(seen.has(k))return;const cur=[];let x=[s,v];while(!seen.has(x[0]+x[1])){seen.add(x[0]+x[1]);cur.push(x);x=succ(x[0],x[1]);}curves.push(cur);}));
+ return curves;}
+function pureLoop(R,n){const names=Array.from({length:n},(_,i)=>'S'+(i+1));return names.map((s,i)=>{let a={lines:[],items:[{t:'claim',pred:'IsTrue',fill:[{kind:'sent',v:names[(i+1)%n]}]}]};const k=Math.floor(R()*3);for(let j=0;j<k;j++)a={lines:[],items:[{t:'enc',area:a}]};return {name:s,area:a};});}
+function hasConsistentValue(text){const n=text.length;const names=text.map(d=>d.name);
+ for(let m=0;m<(1<<n);m++){const W={Falling:new Set(),Blowing:new Set(),Happy:new Set(),Loves:new Set(),Man:new Set(),Mortal:new Set(),IsTrue:new Set(names.filter((_,i)=>m>>i&1))};
+  if(text.every((d,i)=>evalFormula(d.area,W,{})===!!(m>>i&1)))return true;}return false;}
+//{graphLayout,graphReadBack,valueLayers,pureLoop,hasConsistentValue};
+
+// ===== value layers for texts whose sentences are "and"s of (not)^k IsTrue(...) claims =====
+// literal = {to, val}: "the sentence `to` has value `val`"
+function literalsOf(area){let a=area,k=0;const out=[];const walk=(a,k)=>{a.items.forEach(it=>{if(it.t==='enc'){walk(it.area,k+1);}else out.push({to:it.fill[0].v,neg:k%2===1});});};
+ // only conjunctions of (not)^k IsTrue(..), where each "not" encloses exactly one item
+ const ok=(a)=>a.lines.length===0&&a.items.every(it=>it.t==='claim'?it.pred==='IsTrue':(it.area.items.length===1&&ok(it.area)));if(!ok(area))return null;walk(area,0);return out;}
+function implication(text){const names=text.map(d=>d.name);const L=Object.fromEntries(text.map(d=>[d.name,literalsOf(d.area)]));if(names.some(n=>!L[n]))return null;
+ // supposing S true: every literal must hold ("both"); supposing S false: at least one must fail ("one of")
+ const out={};names.forEach(n=>{const ls=L[n];out[n+'T']={kind:ls.length>1?'both':'one',to:ls.map(l=>l.to+(l.neg?'F':'T'))};out[n+'F']={kind:ls.length>1?'oneof':'one',to:ls.map(l=>l.to+(l.neg?'T':'F'))};});
+ return {names,out,pure:names.every(n=>L[n].length===1)};}
+function fixedPoints(text){const n=text.length,names=text.map(d=>d.name),fps=[];
+ for(let m=0;m<(1<<n);m++){const W={Falling:new Set(),Blowing:new Set(),Happy:new Set(),Loves:new Set(),Man:new Set(),Mortal:new Set(),IsTrue:new Set(names.filter((_,i)=>m>>i&1))};
+  if(text.every((d,i)=>evalFormula(d.area,W,{})===!!(m>>i&1)))fps.push(Object.fromEntries(names.map((nm,i)=>[nm,!!(m>>i&1)])));}return fps;}
+//{implication,fixedPoints,literalsOf};
+
+// ===== presentation renderer: draws the engine's shapes in the visual grammar (decorations are ignored by the read-back) =====
+const SVGNS='http://www.w3.org/2000/svg';
+function sel(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function stext(p,x,y,txt,a){const t=sel('text',Object.assign({x,y,fill:'var(--ink)','font-size':13},a||{}),p);t.textContent=txt;return t;}
+function drawShapes(sh,opts){opts=opts||{};const W=Math.max(sh.W,...sh.encs.map(e=>e.x+e.w+20),...sh.boxes.map(b=>b.x+b.w+20)),H=sh.H+10;const cross=sh.refArrows.filter(a=>!a.self);const y0=Math.min(...sh.boxes.map(b=>b.y),...cross.map((a,i)=>a.to[1]-34-16*i))-8;
+ const s=sel('svg',{viewBox:`0 ${y0} ${W} ${H-y0}`,role:'img','aria-label':opts.label||'A sentence drawn in the diagram language',class:'dsvg'});
+ const d=sel('defs',{},s);[['ar','var(--line)'],['rf','var(--ref)']].forEach(([id,c])=>{const m=sel('marker',{id:id+(opts.uid||''),viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'},d);sel('path',{d:'M0 0L10 5L0 10z',fill:c},m);});
+ const u=opts.uid||'';
+ sh.boxes.forEach(b=>{sel('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:5,fill:'none',stroke:'var(--line)','stroke-width':1.5},s);stext(s,b.x+10,b.y+19,b.name,{'font-size':15,'font-weight':700});stext(s,b.x+16+b.name.length*10,b.y+18,'sentence',{'font-size':11,fill:'var(--quiet)'});});
+ sh.encs.forEach(e=>{sel('rect',{x:e.x,y:e.y,width:e.w,height:e.h,rx:13,fill:'none',stroke:'var(--line)','stroke-width':1.4,'stroke-dasharray':'6 4'},s);stext(s,e.x+9,e.y+15,'not',{'font-size':11.5,'font-weight':700,fill:'var(--quiet)'});});
+ (sh.dividers||[]).forEach(v=>{sel('path',{d:`M${v.x1} ${v.y}H${v.x2-6}`,stroke:'var(--line)','stroke-width':1,'stroke-dasharray':'4 4'},s);const g=sel('g',{},s);sel('rect',{x:v.x1+4,y:v.y-9,width:30,height:18,rx:9,fill:'var(--card)',stroke:'var(--line)','stroke-width':1},g);stext(g,v.x1+19,v.y+4,'and',{'font-size':10.5,'text-anchor':'middle',fill:'var(--quiet)'});});
+ sh.lines.forEach((l,i)=>{sel('path',{d:`M${l.trunk[0][0]} ${l.trunk[0][1]}V${l.trunk[1][1]}`,stroke:'var(--ink)','stroke-width':4,fill:'none','stroke-linecap':'round'},s);l.branches.forEach(b=>sel('path',{d:`M${b.from[0]} ${b.from[1]}H${b.to[0]}`,stroke:'var(--ink)','stroke-width':3,fill:'none'},s));
+  l.attach.forEach(at=>{const c=sh.caps.find(k=>k.id===at.cap);stext(s,c.x+4,c.y-4,at.role+' · thing',{'font-size':9.5,fill:'var(--quiet)','font-style':'italic'});});});
+ sh.caps.forEach(c=>{sel('rect',{x:c.x,y:c.y,width:c.w,height:c.h,rx:14,fill:'var(--cap)',stroke:'var(--capline)','stroke-width':1.3},s);stext(s,c.x+c.w/2,c.y+18,c.pred,{'font-size':13,fill:'var(--capink)','text-anchor':'middle'});});
+ sh.things.forEach(t=>{sel('rect',{x:t.x,y:t.y,width:t.w,height:t.h,rx:5,fill:'none',stroke:'var(--line)','stroke-width':1.3},s);stext(s,t.x+t.w/2,t.y+16,t.name,{'font-size':12.5,'text-anchor':'middle'});});
+ sh.roleArrows.forEach(a=>{sel('path',{d:`M${a.from[0]} ${a.from[1]}L${a.to[0]} ${a.to[1]}`,stroke:'var(--line)','stroke-width':1.3,fill:'none','marker-end':`url(#ar${u})`},s);const mx=(a.from[0]+a.to[0])/2,my=(a.from[1]+a.to[1])/2;stext(s,mx,my-5,a.role,{'font-size':10.5,fill:'var(--quiet)','text-anchor':'middle'});stext(s,mx,my+12,'thing',{'font-size':9.5,fill:'var(--quiet)','text-anchor':'middle','font-style':'italic'});});
+ sh.refArrows.forEach(a=>{if(a.self){sel('path',{d:`M${a.from[0]} ${a.from[1]}H${a.to[0]}`,stroke:'var(--ref)','stroke-width':2,fill:'none','marker-end':`url(#rf${u})`},s);const mx=(a.from[0]+a.to[0])/2+10;stext(s,mx,a.from[1]-6,a.role+': '+a.target+' itself',{'font-size':10.5,fill:'var(--quiet)','text-anchor':'middle'});stext(s,mx,a.from[1]+13,'sentence',{'font-size':9.5,fill:'var(--quiet)','text-anchor':'middle','font-style':'italic'});}
+  else{const i=cross.indexOf(a);const lane=a.to[1]-22-16*i;const mx=a.from[0]+24+8*i;sel('path',{d:`M${a.from[0]} ${a.from[1]}H${mx}V${lane}H${a.to[0]}V${a.to[1]}`,stroke:'var(--ref)','stroke-width':2,fill:'none','marker-end':`url(#rf${u})`},s);stext(s,(mx+a.to[0])/2,lane-4,`${a.role}: ${a.target} · sentence`,{'font-size':10.5,fill:'var(--quiet)','text-anchor':'middle'});}
+  if(a.neg){const g=sel('g',{},s);sel('circle',{cx:a.from[0]+17,cy:a.from[1],r:8,fill:'var(--card)',stroke:'var(--line)','stroke-width':1.2},g);stext(g,a.from[0]+17,a.from[1]+4,'\u2212',{'font-size':12,'font-weight':700,'text-anchor':'middle'});}});
+ return s;}
+
+// ===== drawing value layers: sentences in a row, true layer above, false layer below; a crossing at each "not" =====
+function drawLayers(text,opt){opt=opt||{};const imp=implication(text);const names=imp.names;const n=names.length;const T='#1D9E75',F='#D85A30';
+ const X=i=>120+i*150,YT=90,YF=210,Y=v=>v?YT:YF;const W=X(n-1)+110,H=300;
+ const s=sel('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':opt.label||'Value layers',class:'lsvg'});
+ const lt=stext(s,14,YT-58,'true layer',{'font-size':12,fill:T,'font-weight':700});const lf=stext(s,14,YF+70,'false layer',{'font-size':12,fill:F,'font-weight':700});
+ const pos=k=>[X(names.indexOf(k.slice(0,-1))),Y(k.endsWith('T'))];
+ const notMark=(x,y)=>{sel('rect',{x:x-17,y:y-11,width:34,height:22,rx:8,fill:'var(--card)',stroke:'var(--line)','stroke-width':1.2,'stroke-dasharray':'4 3'},s);stext(s,x,y+4,'not',{'font-size':10.5,'font-weight':700,fill:'var(--quiet)','text-anchor':'middle'});};
+ const marks=[];
+ const halves=(P0,P1,P2,P3)=>{const m=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];const Q1=m(P0,P1),H=m(P1,P2),R2=m(P2,P3),Q2=m(Q1,H),R1=m(H,R2),M=m(Q2,R1);
+  return [`M${P0[0]} ${P0[1]}C${Q1[0]} ${Q1[1]} ${Q2[0]} ${Q2[1]} ${M[0]} ${M[1]}`,`M${M[0]} ${M[1]}C${R1[0]} ${R1[1]} ${R2[0]} ${R2[1]} ${P3[0]} ${P3[1]}`,M];};
+ const route=(from,to,vFrom,vTo,lane)=>{const [ax,ay]=from,[bx,by]=to;const flip=vFrom!==vTo;const cA=vFrom?T:F,cB=vTo?T:F;
+  if(bx>ax){const mx=(ax+bx)/2;const [d1,d2,M]=halves([ax+16,ay],[mx,ay],[mx,by],[bx-16,by]);if(!flip)return [[d1,cA],[d2,cA]];marks.push(M);return [[d1,cA],[d2,cB]];}
+  // wrap-around: right, round the outside of the target's layer, in from the left; split at the "not" only when the value flips
+  const rx=X(n-1)+60+lane*16,outer=vTo?YT-44-lane*12:YF+44+lane*12,lx=X(0)-58-lane*12,r=12;const up=outer<ay?-1:1,dn=by<outer?-1:1;const my=(YT+YF)/2;
+  const tail=`Q${rx} ${outer} ${rx-r} ${outer}H${lx+r}Q${lx} ${outer} ${lx} ${outer+dn*r}V${by-dn*r}Q${lx} ${by} ${lx+r} ${by}H${bx-16}`;
+  if(!flip)return [[`M${ax+16} ${ay}H${rx-r}Q${rx} ${ay} ${rx} ${ay+up*r}V${outer-up*r}`+tail,cA]];
+  marks.push([rx,my]);return [[`M${ax+16} ${ay}H${rx-r}Q${rx} ${ay} ${rx} ${ay+up*r}V${my}`,cA],[`M${rx} ${my}V${outer-up*r}`+tail,cB]];};
+ let lane=0;
+ Object.entries(imp.out).forEach(([k,e])=>{const from=pos(k),vFrom=k.endsWith('T');
+  if(e.to.length===1){const tk=e.to[0];const to=pos(tk);const wrap=to[0]<=from[0];route(from,to,vFrom,tk.endsWith('T'),wrap?lane++:0).forEach(([d,c])=>sel('path',{d,fill:'none',stroke:c,'stroke-width':3.2,opacity:0.9},s));}
+  else{const jx=from[0]+42,jy=from[1]+(vFrom?24:-24);sel('path',{d:`M${from[0]} ${from[1]+(vFrom?14:-14)}L${jx} ${jy}`,stroke:vFrom?T:F,'stroke-width':3,fill:'none'},s);
+   sel('circle',{cx:jx,cy:jy,r:6,fill:e.kind==='both'?(vFrom?T:F):'var(--card)',stroke:vFrom?T:F,'stroke-width':2},s);stext(s,jx+9,jy+(vFrom?14:-6),e.kind==='both'?'both':'one of',{'font-size':10,fill:'var(--quiet)'});
+   e.to.forEach(tk=>{const to=pos(tk);const self=to[0]===from[0]&&to[1]===from[1];const flip=vFrom!==tk.endsWith('T');
+    const d=self?`M${jx} ${jy}C${jx+50} ${jy} ${to[0]+50} ${to[1]} ${to[0]+16} ${to[1]}`:`M${jx} ${jy}C${(jx+to[0])/2} ${jy} ${(jx+to[0])/2} ${to[1]} ${to[0]+(to[0]<jx?16:-16)} ${to[1]}`;
+    const mx=(jx+to[0])/2;const end=to[0]+(to[0]<jx?16:-16);const [h1,h2,M]=halves([jx,jy],[mx,jy],[mx,to[1]],[end,to[1]]);if(flip&&!self)marks.push(M);const d1=self?d:h1,d2=h2;sel('path',{d:d1,fill:'none',stroke:vFrom?T:F,'stroke-width':2.4,opacity:0.85},s);if(!self)sel('path',{d:d2,fill:'none',stroke:tk.endsWith('T')?T:F,'stroke-width':2.4,opacity:0.85},s);});}});
+ const merged=[];marks.forEach(m=>{if(!merged.some(q=>Math.abs(q[0]-m[0])<40&&Math.abs(q[1]-m[1])<30))merged.push(m);});merged.forEach(([x,y])=>notMark(x,y));
+ const fps=opt.fps||[];
+ names.forEach((nm,i)=>[true,false].forEach(v=>{const chosen=fps.length===1&&fps[0][nm]===v;sel('circle',{cx:X(i),cy:Y(v),r:16,fill:'var(--card)',stroke:v?T:F,'stroke-width':chosen?5:2},s);stext(s,X(i),Y(v)+4,nm,{'font-size':12,'font-weight':700,'text-anchor':'middle'});}));
+ return s;}
+
+const A=(...items)=>({lines:[],items}),C=v=>({t:'claim',pred:'IsTrue',fill:[{kind:'sent',v}]}),N=a=>({t:'enc',area:a});
+const EX=[
+ ['The liar','“This sentence is false.”',[{name:'S',area:A(N(A(C('S'))))}]],
+ ['The truth-teller','“This sentence is true.”',[{name:'S',area:A(C('S'))}]],
+ ['The liar in disguise','A: “B is false.” B: “A is true.”',[{name:'A',area:A(N(A(C('B'))))},{name:'B',area:A(C('A'))}]],
+ ['Two “not”s cancel','A: “B is false.” B: “C is false.” C: “A is true.”',[{name:'A',area:A(N(A(C('B'))))},{name:'B',area:A(N(A(C('C'))))},{name:'C',area:A(C('A'))}]],
+ ['A longer liar','Four sentences, one “not” on the loop.',[{name:'A',area:A(C('B'))},{name:'B',area:A(C('C'))},{name:'C',area:A(C('D'))},{name:'D',area:A(N(A(C('A'))))}]],
+ ['A loop through an “and”','S: “Q is false.” Q: “Q is true, and S is true.”',[{name:'S',area:A(N(A(C('Q'))))},{name:'Q',area:A(C('Q'),C('S'))}]]];
+const g=document.getElementById('g');
+EX.forEach(([title,say,text],i)=>{const imp=implication(text);const fps=fixedPoints(text);const c=document.createElement('div');c.className='card';
+ c.innerHTML=`<h2>${title}</h2><p class="say">${say}</p>`;c.appendChild(drawLayers(text,{fps,label:title}));
+ let verdict;if(imp.pure){const cv=valueLayers(text);verdict=cv.length===1?`One closed curve: no value can hold. A paradox.`:`${cv.length} separate curves: either value holds.`;}
+ else verdict=fps.length===0?'The branches leave no consistent choice: a paradox.':fps.length===1?`The branches allow exactly one choice: ${Object.entries(fps[0]).map(([k,v])=>k+' '+(v?'true':'false')).join(', ')}.`:`The branches allow ${fps.length} choices.`;
+ const check=imp.pure?((valueLayers(text).length===1)===(fps.length===0)):true;
+ const v=document.createElement('p');v.className='verdict';v.innerHTML=`${verdict} <span class="${check?'ok':'no'}">${check?'✓ matches the search for consistent values':'✗'}</span>`;c.appendChild(v);
+ const f=document.createElement('div');f.className='f';f.textContent=printText(text);c.appendChild(f);g.appendChild(c);});
+</script></main></body></html>

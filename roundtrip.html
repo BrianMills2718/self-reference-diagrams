@@ -1,0 +1,296 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Round-trip test: drawings read back exactly</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--ink:#22211e;--quiet:#6b6a64;--line:#b4b2a9;--hair:#e4e2da;--ok:#0f6e56;--bad:#a32d2d;--ref:#378add;--cap:#e6f1fb;--capline:#185fa5;--capink:#0c447c;--T:#1D9E75;--F:#D85A30;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1c1a;--card:#262624;--ink:#ecebe6;--quiet:#a8a69e;--line:#6f6d66;--hair:#3a3935;--ok:#5dcaa5;--bad:#f09595;--ref:#85b7eb;--cap:#0c2d4d;--capline:#85b7eb;--capink:#cfe3f7;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1c1a;--card:#262624;--ink:#ecebe6;--quiet:#a8a69e;--line:#6f6d66;--hair:#3a3935;--ok:#5dcaa5;--bad:#f09595;--ref:#85b7eb;--cap:#0c2d4d;--capline:#85b7eb;--capink:#cfe3f7;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1240px;margin:0 auto;padding:24px 20px 60px}
+h1{font-size:26px;margin:0 0 6px}h2{font-size:20px;margin:30px 0 8px}
+p{max-width:80ch}.q{color:var(--quiet)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}
+.chk{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:12px 14px}
+.chk b{display:block;font-size:22px}.chk.ok b{color:var(--ok)}.chk.no b{color:var(--bad)}
+.chk span{font-size:14px;color:var(--quiet)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:12px;overflow:hidden}
+.card svg{width:100%;height:auto;display:block;background:var(--card)}
+.f{font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word;margin:6px 0 0}
+.f .k{color:var(--quiet);font-family:system-ui,sans-serif}
+.tick{font-weight:700}.tick.ok{color:var(--ok)}.tick.no{color:var(--bad)}
+button{font:inherit;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.strip{display:flex;gap:10px;overflow-x:auto;align-items:flex-start;padding-bottom:6px}
+.step{flex:0 0 auto;width:250px}.step .r{font-size:13px;color:var(--quiet);min-height:2.8em}
+.verdict{font-weight:600;margin:6px 0 0}
+</style></head><body><main>
+<h1>Round-trip test: every drawing reads back exactly, in both layouts</h1>
+<p>This page checks the <a href="https://claude.ai/artifact/TDwPd5ZwysuhdLndL42We8">formal specification</a> by program. It generates random sentences, draws each one following the drawing rules, then reads the drawing back <b>from the positions of its shapes alone</b>: what is inside which outline, where each arrow ends, where each heavy line runs. A ✓ means the read-back is exactly the original formula.</p>
+<p><button id="again">Test a new random batch</button> <span class="q" id="seedinfo"></span></p>
+<div class="sum" id="sum"></div>
+<h2>A sample of the random sentences</h2>
+<p class="q">Each card: the drawing, the formula it was drawn from, and the formula read back from the drawing.</p>
+<div class="grid" id="gallery"></div>
+<h2>The same sentences as graphs</h2>
+<p class="q">The second layout: every link is an edge, so loops are closed paths. Read back by following edges, never nesting.</p>
+<div class="grid" id="graphs"></div>
+<h2>Value layers on random loops: the figure 8</h2>
+<p class="q">Each random loop of sentences, drawn on a true layer (top) and a false layer (bottom). A value crosses layers at each “not”. One closed curve through both copies (a figure 8) should mean no consistent value; two separate curves should mean either value holds. Each card checks that against a brute-force search for consistent values.</p>
+<div class="grid" id="layers"></div>
+<h2>Deliberately broken drawings are rejected</h2>
+<p class="q">One drawing broken four ways. Each break violates one drawing rule, and the read-back refuses it and names the rule.</p>
+<div class="grid" id="bad"></div>
+<h2>The unfolding: evaluation as a derivation</h2>
+<p class="q">Each step applies one rule (unfold, look up, double cut) and is itself a drawing that reads back exactly. Evaluation halts when the sentence is reduced to true or false; if a drawing comes back that was seen before, it will cycle forever.</p>
+<div id="derivs"></div>
+<script>
+// ===== vocabulary =====
+const SORTS=['thing','sentence'];
+const PREDS={Man:[['thing that is a man','thing']],Mortal:[['mortal thing','thing']],Falling:[['thing that falls','thing']],Blowing:[['thing that blows','thing']],Happy:[['happy one','thing']],Loves:[['lover','thing'],['loved','thing']],IsTrue:[['bearer','sentence']]};
+const THINGS=['Snow','Wind','Romeo','Juliet','Socrates'];
+const VARN=['x','y','z','u','v','w','p','q'];
+// ===== seeded random =====
+function rng(seed){let s=seed>>>0||1;return ()=>{s^=s<<13;s>>>=0;s^=s>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+// ===== generator: texts in area normal form =====
+// area = {lines:[{id,sort}], items:[item]} ; item = {t:'claim',pred,fill:[{kind:'name'|'sent'|'var',v}]} | {t:'enc',area}
+function genText(R,nSent){const names=Array.from({length:nSent},(_,i)=>'S'+(i+1));let lid=0;
+ function genArea(depth,scope){const area={lines:[],items:[]};const nl=depth>0&&R()<0.4?1+(R()<0.25?1:0):0;
+  for(let i=0;i<nl;i++)area.lines.push({id:lid++,sort:'thing'});
+  const sc=scope.concat(area.lines);const n=1+Math.floor(R()*(depth>1?3:2));
+  for(let i=0;i<n;i++){if(depth>0&&R()<0.35)area.items.push({t:'enc',area:genArea(depth-1,sc)});else area.items.push(genClaim(sc));}
+  area.lines.forEach(l=>{if(!uses(area,l.id)){const p=R()<0.5?'Happy':'Falling';area.items.push({t:'claim',pred:p,fill:[{kind:'var',v:l.id}]});}});
+  return area;}
+ function genClaim(sc){const ps=Object.keys(PREDS);
+  return genClaimP(ps.filter(q=>q!=='Man'&&q!=='Mortal'),sc);}
+ function genClaimP(ps0,sc){const pred=ps0[Math.floor(R()*ps0.length)];
+  return {t:'claim',pred,fill:PREDS[pred].map(([r,s])=>{if(s==='sentence')return {kind:'sent',v:names[Math.floor(R()*names.length)]};const vs=sc.filter(l=>l.sort==='thing');if(vs.length&&R()<0.55)return {kind:'var',v:vs[Math.floor(R()*vs.length)].id};return {kind:'name',v:THINGS.slice(0,4)[Math.floor(R()*4)]};})};}
+ return names.map(n=>({name:n,area:genArea(2,[])}));}
+function uses(area,id){return area.items.some(it=>it.t==='claim'?it.fill.some(f=>f.kind==='var'&&f.v===id):uses(it.area,id));}
+// ===== printing a text (canonical variable names by preorder of introduction) =====
+function printText(text){let k=0;return text.map(d=>{const vm={};const pa=area=>{area.lines.forEach(l=>{vm[l.id]=VARN[k++]||('v'+k);});
+  const body=area.items.length===0?'⊤':area.items.map(it=>it.t==='claim'?`${it.pred}(${PREDS[it.pred].map(([r],i)=>`${r}: ${it.fill[i].kind==='var'?vm[it.fill[i].v]:it.fill[i].v}`).join(', ')})`:`¬(${pa(it.area)})`).join(' ∧ ');
+  return area.lines.length?area.lines.map(l=>'∃'+vm[l.id]).join(' ')+` (${body})`:body;};k=0;return `${d.name} := ${pa(d.area)}`;}).join('\n');}
+// ===== layout: abstract diagram -> picture (shapes with positions), following rules D1-D6 =====
+function layout(text){const shapes={boxes:[],encs:[],caps:[],things:[],roleArrows:[],refArrows:[],lines:[],dividers:[]};let cid=0;
+ const PAD=14,GAP=12,TRUNK=14;
+ function capW(p){return Math.max(70,p.length*8+22);}
+ function measureItem(it){if(it.t==='claim'){const nn=it.fill.filter(f=>f.kind==='name').length;const tw=Math.max(0,...it.fill.filter(f=>f.kind==='name').map(f=>f.v.length*8+20));
+   const hasRef=it.fill.some(f=>f.kind==='sent');return {w:capW(it.pred)+(nn?70+tw:0)+(hasRef?90:0),h:Math.max(28,nn*32)};}
+  const m=measureArea(it.area);return {w:m.w+2*PAD,h:m.h+2*PAD+12};}
+ function measureArea(area){const g=area.lines.length*TRUNK+(area.lines.length?8:0);const ms=area.items.map(measureItem);
+  return {w:g+Math.max(40,...ms.map(m=>m.w))+4,h:Math.max(24,ms.reduce((s,m)=>s+m.h,0)+GAP*Math.max(0,ms.length-1))};}
+ const pending=[];
+ function placeArea(area,x,y,w,h,scopeLines,negs,boxName){negs=negs||0;const g=area.lines.length*TRUNK+(area.lines.length?8:0);const trunks={};
+  area.lines.forEach((l,i)=>{trunks[l.id]={x:x+4+i*TRUNK,y0:y,y1:y+h,branches:[]};});
+  const sc=Object.assign({},scopeLines,trunks);let cy=y;
+  area.items.forEach(it=>{const m=measureItem(it);
+   if(it.t==='claim'){const id='c'+(cid++);const cw=capW(it.pred);const cx=x+g;const capY=cy+(m.h-28)/2;
+    shapes.caps.push({id,pred:it.pred,x:cx,y:capY,w:cw,h:28});let ni=0;const vRoles=it.fill.map((f,i)=>f.kind==='var'?i:-1).filter(i=>i>=0);
+    it.fill.forEach((f,i)=>{const role=PREDS[it.pred][i][0];
+     if(f.kind==='name'){const tw=f.v.length*8+20;const ty=cy+ni*32;const tx=cx+cw+70;shapes.things.push({name:f.v,x:tx,y:ty+2,w:tw,h:24});shapes.roleArrows.push({cap:id,role,from:[cx+cw,capY+14],to:[tx,ty+14]});ni++;}
+     else if(f.kind==='sent'){pending.push({cap:id,role,from:[cx+cw,capY+14],target:f.v,neg:negs%2===1,inBox:boxName});}
+     else{const off=vRoles.length>1?(vRoles.indexOf(i)-0.5)*12:0;const ay=capY+14+off;sc[f.v].branches.push({cap:id,role,at:[cx,ay]});}});}
+   else{const ex=x+g,ew=m.w,eh=m.h;shapes.encs.push({x:ex,y:cy,w:ew,h:eh});placeArea(it.area,ex+PAD,cy+PAD+12,ew-2*PAD,eh-2*PAD-12,sc,negs+1,boxName);}
+   const last=it===area.items[area.items.length-1];if(!last)shapes.dividers.push({x1:x+g,x2:x+w,y:cy+m.h+GAP/2});cy+=m.h+GAP;});
+  area.lines.forEach(l=>{const t=trunks[l.id];const pts=[[t.x,t.y0+4],[t.x,Math.max(t.y0+8,...t.branches.map(b=>b.at[1]))]];
+   shapes.lines.push({pts:[...pts,...t.branches.flatMap(b=>[[t.x,b.at[1]],b.at])],trunk:pts,branches:t.branches.map(b=>({from:[t.x,b.at[1]],to:b.at})),attach:t.branches.map(b=>({cap:b.cap,role:b.role,at:b.at}))});});}
+ let bx=10;const boxPos={};
+ text.forEach(d=>{const m=measureArea(d.area);const w=m.w+2*PAD,h=m.h+2*PAD+20;boxPos[d.name]={x:bx,y:60,w,h};shapes.boxes.push({name:d.name,x:bx,y:60,w,h});placeArea(d.area,bx+PAD,60+PAD+20,m.w,m.h,{},0,d.name);bx+=w+70;});
+ pending.forEach(p=>{const b=boxPos[p.target];const self=p.target===p.inBox;shapes.refArrows.push({cap:p.cap,role:p.role,from:p.from,neg:p.neg,self,target:p.target,to:self?[b.x+b.w,p.from[1]]:[b.x+b.w/2+((p.from[0]%7)-3)*4,b.y]});});
+ shapes.W=bx;shapes.H=Math.max(...shapes.boxes.map(b=>b.y+b.h))+20;return shapes;}
+// ===== read-back: picture -> abstract diagram, from geometry only =====
+const inside=(a,b)=>a.x>=b.x-0.5&&a.y>=b.y-0.5&&a.x+a.w<=b.x+b.w+0.5&&a.y+a.h<=b.y+b.h+0.5;
+const ptIn=(p,b)=>p[0]>=b.x-0.5&&p[0]<=b.x+b.w+0.5&&p[1]>=b.y-0.5&&p[1]<=b.y+b.h+0.5;
+const onOutline=(p,b)=>ptIn(p,b)&&(Math.abs(p[0]-b.x)<1.5||Math.abs(p[0]-b.x-b.w)<1.5||Math.abs(p[1]-b.y)<1.5||Math.abs(p[1]-b.y-b.h)<1.5);
+const disjoint=(a,b)=>a.x+a.w<=b.x||b.x+b.w<=a.x||a.y+a.h<=b.y||b.y+b.h<=a.y;
+class ReadErr extends Error{constructor(rule,msg){super(msg);this.rule=rule;}}
+function readBack(sh){const C=[...sh.boxes.map(b=>({...b,kind:'box'})),...sh.encs.map(e=>({...e,kind:'enc'}))];
+ for(let i=0;i<C.length;i++)for(let j=i+1;j<C.length;j++){const a=C[i],b=C[j];if(!(inside(a,b)||inside(b,a)||disjoint(a,b)))throw new ReadErr('D1','two outlines cross');}
+ const smallest=(r,excl)=>C.filter(c=>c!==excl&&inside(r,c)).sort((p,q)=>p.w*p.h-q.w*q.h)[0];
+ C.forEach(c=>{c.parent=c.kind==='box'?null:smallest(c,c);if(c.kind==='enc'&&!c.parent)throw new ReadErr('D1','an enclosure outside every sentence box');});
+ sh.boxes.forEach(b=>{if(C.some(c=>c.kind==='enc'&&inside(b,c)))throw new ReadErr('D5','a sentence box inside an enclosure');});
+ const boxOf=c=>c.kind==='box'?c:boxOf(c.parent);
+ const caps=sh.caps.map(k=>({...k,area:smallest(k,null)}));
+ caps.forEach(k=>{if(!k.area)throw new ReadErr('D1','a claim outside every sentence box');});
+ // roles
+ const fill={};caps.forEach(k=>fill[k.id]={});
+ sh.roleArrows.forEach(a=>{const t=sh.things.find(t=>onOutline(a.to,t));if(!t)throw new ReadErr('D3',`role arrow "${a.role}" does not end on a thing box`);fill[a.cap][a.role]={kind:'name',v:t.name,sort:'thing'};});
+ sh.refArrows.forEach(a=>{const b=sh.boxes.find(b=>onOutline(a.to,b));if(!b)throw new ReadErr('D3',`reference arrow "${a.role}" does not end on a sentence box`);fill[a.cap][a.role]={kind:'sent',v:b.name,sort:'sentence'};});
+ const lines=sh.lines.map((l,i)=>{const homes=l.pts.map(p=>C.filter(c=>ptIn(p,{x:c.x,y:c.y,w:c.w,h:c.h})).sort((p,q)=>p.w*p.h-q.w*q.h)[0]).filter(Boolean);
+  const depth=c=>c.parent?1+depth(c.parent):0;const home=homes.sort((a,b)=>depth(a)-depth(b))[0];if(!home)throw new ReadErr('D4','a heavy line outside every box');
+  l.attach.forEach(a=>{const k=caps.find(k=>k.id===a.cap);if(!k||!(Math.abs(a.at[0]-k.x)<1.5&&a.at[1]>=k.y&&a.at[1]<=k.y+k.h))throw new ReadErr('D4','a heavy line does not meet its claim at the claim\u2019s edge');fill[a.cap][a.role]={kind:'var',v:'L'+i,sort:'thing'};});
+  if(!l.attach.length)throw new ReadErr('D4','an idle heavy line');return {id:'L'+i,home,x:l.trunk[0][0]};});
+ // build areas
+ const areaOf=c=>{const items=[...caps.filter(k=>k.area===c).map(k=>({cy:k.y+k.h/2,x:k.x,h:k.h,it:k,t:'claim'})),...C.filter(e=>e.kind==='enc'&&e.parent===c).map(e=>({cy:e.y+e.h/2,x:e.x,h:e.h,it:e,t:'enc'}))];
+  items.sort((a,b)=>Math.abs(a.cy-b.cy)<Math.min(a.h,b.h)/2?a.x-b.x:a.cy-b.cy);
+  return {lines:lines.filter(l=>l.home===c).sort((a,b)=>a.x-b.x).map(l=>({id:l.id,sort:'thing'})),
+   items:items.map(o=>{if(o.t==='enc')return {t:'enc',area:areaOf(o.it)};const k=o.it;const roles=PREDS[k.pred];if(!roles)throw new ReadErr('D3','unknown predicate '+k.pred);
+    return {t:'claim',pred:k.pred,fill:roles.map(([r,s])=>{const f=fill[k.id][r];if(!f)throw new ReadErr('D3',`role "${r}" of ${k.pred} is not filled`);if(f.sort!==s)throw new ReadErr('D3',`role "${r}" needs a ${s}`);return {kind:f.kind,v:f.v};})};})};};
+ const text=sh.boxes.slice().sort((a,b)=>a.x-b.x).map(b=>({name:b.name,area:areaOf(C.find(c=>c.kind==='box'&&c.name===b.name))}));
+ // scope check (section 1, rule 2): a line's home must contain each claim it fills
+ const contains=(outer,inner)=>{for(let c=inner;c;c=c.parent)if(c===outer)return true;return false;};
+ lines.forEach(l=>Object.entries(fill).forEach(([cap,rs])=>Object.values(rs).forEach(f=>{if(f.kind==='var'&&f.v===l.id){const k=caps.find(k=>k.id===cap);if(!contains(l.home,k.area))throw new ReadErr('D4','a heavy line fills a claim outside its home area');}})));
+ return text;}
+// ===== semantics: on the formula (Tarski) and on the diagram (area by area), independently =====
+function randWorld(R,sentNames){const ext={};['Falling','Blowing','Happy'].forEach(p=>ext[p]=new Set(THINGS.filter(()=>R()<0.5)));ext.Loves=new Set();THINGS.forEach(a=>THINGS.forEach(b=>{if(R()<0.3)ext.Loves.add(a+'|'+b);}));ext.IsTrue=new Set(sentNames.filter(()=>R()<0.5));return ext;}
+const holds=(W,pred,args)=>W[pred].has(args.join('|'));
+function evalFormula(area,W,env){ // Tarski, by recursion on the formula: ∃ over home lines, then ∧ of items
+ const go=(i,e)=>{if(i===area.lines.length)return area.items.every(it=>it.t==='claim'?holds(W,it.pred,it.fill.map(f=>f.kind==='var'?e[f.v]:f.v)):!evalFormula(it.area,W,e));return THINGS.some(d=>go(i+1,{...e,[area.lines[i].id]:d}));};return go(0,env);}
+function evalDiagram(area,W,asg){ // Dau-style: an area is true if some choice of objects for its home lines makes every item true
+ const ids=area.lines.map(l=>l.id);const n=ids.length;const total=Math.pow(THINGS.length,n);
+ for(let k=0;k<total;k++){const a={...asg};let r=k;ids.forEach(id=>{a[id]=THINGS[r%THINGS.length];r=Math.floor(r/THINGS.length);});
+  let ok=true;for(const it of area.items){if(it.t==='enc'){if(evalDiagram(it.area,W,a)){ok=false;break;}}else{if(!holds(W,it.pred,it.fill.map(f=>f.kind==='var'?a[f.v]:f.v))){ok=false;break;}}}
+  if(ok)return true;}return false;}
+// ===== dynamics: evaluation as a derivation (unfold, look up, simplify), with cycle detection =====
+const clone=x=>JSON.parse(JSON.stringify(x));
+const isBot=it=>it.t==='enc'&&it.area.items.length===0&&it.area.lines.length===0;
+function simplify(area,log){let changed=true;while(changed){changed=false;
+  for(const it of area.items)if(it.t==='enc'){if(simplify(it.area,log))changed=true;}
+  if(area.items.some(isBot)&&area.items.length>1){area.items=[{t:'enc',area:{lines:[],items:[]}}];log.push('an empty \u201cnot\u201d makes its area false');changed=true;}
+  const i=area.items.findIndex(it=>it.t==='enc'&&it.area.lines.length===0&&it.area.items.length===1&&it.area.items[0].t==='enc'&&!isBot(it.area.items[0]));
+  if(i>=0){const inner=area.items[i].area.items[0].area;area.items.splice(i,1,...inner.items);area.lines.push(...inner.lines);log.push('double cut: two \u201cnot\u201ds with nothing between them are removed');changed=true;continue;}
+  const j=area.items.findIndex(it=>it.t==='enc'&&it.area.items.length===1&&isBot(it.area.items[0]));
+  if(j>=0){area.items.splice(j,1);log.push('double cut: a \u201cnot\u201d around an empty \u201cnot\u201d is removed');changed=true;}}
+ return false;}
+function evaluate(text,name,W,maxSteps){const defs=Object.fromEntries(text.map(d=>[d.name,d.area]));let area=clone(defs[name]);const steps=[{rule:'start',area:clone(area)}];const seen=new Map([[JSON.stringify(area),0]]);
+ for(let s=0;s<maxSteps;s++){const log=[];simplify(area,log);if(log.length)steps.push({rule:log[0],area:clone(area)});
+  if(area.items.length===0)return {result:true,halts:true,steps};
+  if(area.items.length===1&&isBot(area.items[0]))return {result:false,halts:true,steps};
+  let done=false;const visit=a=>{for(let i=0;i<a.items.length&&!done;i++){const it=a.items[i];if(it.t==='enc'){visit(it.area);continue;}
+    if(it.pred==='IsTrue'){const tgt=clone(defs[it.fill[0].v]);a.items.splice(i,1,...(tgt.lines.length?[{t:'enc',area:{lines:[],items:[{t:'enc',area:tgt}]}}]:tgt.items));steps.push({rule:`unfold IsTrue(${it.fill[0].v})`,area:null});done=true;}
+    else if(it.fill.every(f=>f.kind==='name')){const h=holds(W,it.pred,it.fill.map(f=>f.v));a.items.splice(i,1,...(h?[]:[{t:'enc',area:{lines:[],items:[]}}]));steps.push({rule:`look up ${it.pred}(${it.fill.map(f=>f.v).join(', ')}): ${h?'holds':'does not hold'}`,area:null});done=true;}}};
+  visit(area);steps[steps.length-1].area=clone(area);
+  if(!done)return {result:null,halts:false,steps,why:'stuck'};
+  const key=JSON.stringify(area);if(seen.has(key))return {result:null,halts:false,cycleFrom:seen.get(key),steps};seen.set(key,steps.length-1);}
+ return {result:null,halts:false,steps,why:'step limit'};}
+//{genText,printText,layout,readBack,ReadErr,randWorld,evalFormula,evalDiagram,evaluate,rng,THINGS,PREDS};
+
+// ===== layout 2: the graph form. Every link is an edge: "says" (sentence to its parts), "inside" (a "not" to its parts),
+// "home" (where a "something" sits), role edges (claim to what fills each role). =====
+function graphLayout(text){const G={nodes:[],edges:[]};let nid=0;const COLW=150,ROWH=46;let row=0;const sentNode={};
+ const add=(kind,label,col)=>{const id='n'+(nid++);const w=kind==='sent'?46:kind==='not'?48:kind==='var'?60:kind==='thing'?Math.max(56,label.length*8+18):Math.max(70,label.length*8+22);
+  const n={id,kind,label,x:20+col*COLW,y:20+row*ROWH,w,h:30};G.nodes.push(n);return n;};
+ const edge=(a,b,kind,label)=>G.edges.push({kind,label,from:[a.x+a.w,a.y+a.h/2],to:[b.x,b.y+b.h/2]});
+ const pendingRefs=[];
+ const placeArea=(parent,area,col,kindEdge,vmap)=>{area.lines.forEach(l=>{const v=add('var','something',col);vmap[l.id]=v;edge(parent,v,'home','home');row++;});
+  area.items.forEach(it=>{if(it.t==='enc'){const n=add('not','not',col);edge(parent,n,kindEdge);row++;placeArea(n,it.area,col+1,'inside',Object.assign({},vmap));}
+   else{const c=add('claim',it.pred,col);edge(parent,c,kindEdge);const r0=row;row++;
+    it.fill.forEach((f,i)=>{const role=PREDS[it.pred][i][0];if(f.kind==='name'){const keep=row;row=r0+i;const t=add('thing',f.v,col+1);row=Math.max(keep,row+1);edge(c,t,'role',role);}
+     else if(f.kind==='var'){const v=vmap[f.v];G.edges.push({kind:'role',label:role,from:[c.x,c.y+c.h/2+4],to:[v.x+v.w,v.y+v.h/2+(i?6:-6)],back:true});}
+     else pendingRefs.push({c,role,target:f.v});});}});};
+ text.forEach(d=>{const s=add('sent',d.name,0);sentNode[d.name]=s;row++;placeArea(s,d.area,1,'says',{});row++;});
+ pendingRefs.forEach(p=>{const s=sentNode[p.target];G.edges.push({kind:'role',label:p.role,ref:true,from:[p.c.x+p.c.w,p.c.y+p.c.h/2],to:[s.x+s.w/2,s.y+s.h]});});
+ G.W=Math.max(...G.nodes.map(n=>n.x+n.w))+30;G.H=Math.max(...G.nodes.map(n=>n.y+n.h))+30;return G;}
+// ===== read-back for the graph form: follow the edges; nothing is read from nesting =====
+function graphReadBack(G){const at=p=>G.nodes.filter(n=>onOutline(p,n));
+ const E=G.edges.map(e=>{const a=at(e.from),b=at(e.to);if(a.length!==1||b.length!==1)throw new ReadErr('G1',`an edge does not run from one node's outline to another's`);return {...e,a:a[0],b:b[0]};});
+ const parentOf={};E.filter(e=>e.kind==='says'||e.kind==='inside'||e.kind==='home').forEach(e=>{if(parentOf[e.b.id])throw new ReadErr('G2','a node has two parents');parentOf[e.b.id]=e.a;});
+ G.nodes.forEach(n=>{if(n.kind!=='sent'&&n.kind!=='thing'&&!parentOf[n.id])throw new ReadErr('G2',`a "${n.label}" node hangs loose`);});
+ const kids=(n,kinds)=>E.filter(e=>e.a===n&&kinds.includes(e.kind)).map(e=>e.b).sort((p,q)=>p.y-q.y||p.x-q.x);
+ const inScope=(v,c)=>{const home=parentOf[v.id];for(let n=parentOf[c.id];n;n=parentOf[n.id])if(n===home)return true;return false;};
+ const area=n=>({lines:kids(n,['home']).map(v=>({id:v.id,sort:'thing'})),items:kids(n,['says','inside']).filter(m=>m.kind!=='var').map(m=>{
+   if(m.kind==='not')return {t:'enc',area:area(m)};if(m.kind!=='claim')throw new ReadErr('G2','a sentence or thing cannot be part of a sentence');
+   const rs=E.filter(e=>e.kind==='role'&&e.a===m);const roles=PREDS[m.label];
+   return {t:'claim',pred:m.label,fill:roles.map(([r,s])=>{const e=rs.find(e=>e.label===r);if(!e)throw new ReadErr('G3',`role "${r}" of ${m.label} is not filled`);const t=e.b;
+    if(t.kind==='var'){if(!inScope(t,m))throw new ReadErr('G4','a "something" fills a claim outside its home');return {kind:'var',v:t.id};}
+    if(s==='sentence'){if(t.kind!=='sent')throw new ReadErr('G3',`role "${r}" needs a sentence`);return {kind:'sent',v:t.label};}
+    if(t.kind!=='thing')throw new ReadErr('G3',`role "${r}" needs a thing`);return {kind:'name',v:t.label};})};})});
+ return G.nodes.filter(n=>n.kind==='sent').sort((p,q)=>p.y-q.y).map(s=>({name:s.label,area:area(s)}));}
+// ===== value layers: the implication graph drawn on a true layer and a false layer =====
+// For a "pure loop" text (each sentence says (not)^k IsTrue(next)), each node (sentence, value) has exactly one successor,
+// so the layers fall apart into closed curves. This counts them.
+function valueLayers(text){const name=text.map(d=>d.name);const step={};
+ text.forEach(d=>{let a=d.area,k=0;while(a.items.length===1&&a.items[0].t==='enc'){k++;a=a.items[0].area;}const c=a.items[0];step[d.name]={to:c.fill[0].v,flip:k%2===1};});
+ const succ=(s,v)=>[step[s].to,step[s].flip?!v:v];const seen=new Set();const curves=[];
+ name.forEach(s=>[true,false].forEach(v=>{const k=s+v;if(seen.has(k))return;const cur=[];let x=[s,v];while(!seen.has(x[0]+x[1])){seen.add(x[0]+x[1]);cur.push(x);x=succ(x[0],x[1]);}curves.push(cur);}));
+ return curves;}
+function pureLoop(R,n){const names=Array.from({length:n},(_,i)=>'S'+(i+1));return names.map((s,i)=>{let a={lines:[],items:[{t:'claim',pred:'IsTrue',fill:[{kind:'sent',v:names[(i+1)%n]}]}]};const k=Math.floor(R()*3);for(let j=0;j<k;j++)a={lines:[],items:[{t:'enc',area:a}]};return {name:s,area:a};});}
+function hasConsistentValue(text){const n=text.length;const names=text.map(d=>d.name);
+ for(let m=0;m<(1<<n);m++){const W={Falling:new Set(),Blowing:new Set(),Happy:new Set(),Loves:new Set(),Man:new Set(),Mortal:new Set(),IsTrue:new Set(names.filter((_,i)=>m>>i&1))};
+  if(text.every((d,i)=>evalFormula(d.area,W,{})===!!(m>>i&1)))return true;}return false;}
+//{graphLayout,graphReadBack,valueLayers,pureLoop,hasConsistentValue};
+
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function render(sh,opts){opts=opts||{};const W=Math.max(sh.W,...sh.encs.map(e=>e.x+e.w+20)),H=sh.H;const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'A drawn sentence'});
+ const d=el('defs',{},s);[['ar','var(--line)'],['rf','var(--ref)']].forEach(([id,c])=>{const m=el('marker',{id,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'},d);el('path',{d:'M0 0L10 5L0 10z',fill:c},m);});
+ sh.boxes.forEach(b=>{el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:4,fill:'none',stroke:'var(--line)','stroke-width':1.4},s);const t=el('text',{x:b.x+8,y:b.y+17,'font-size':14,'font-weight':700,fill:'var(--ink)'},s);t.textContent=b.name;});
+ sh.encs.forEach(e=>{el('rect',{x:e.x,y:e.y,width:e.w,height:e.h,rx:12,fill:'none',stroke:'var(--line)','stroke-width':1.3,'stroke-dasharray':'5 4'},s);const t=el('text',{x:e.x+8,y:e.y+14,'font-size':11,'font-weight':700,fill:'var(--quiet)'},s);t.textContent='not';});
+ sh.lines.forEach(l=>{el('path',{d:`M${l.trunk[0][0]} ${l.trunk[0][1]}V${l.trunk[1][1]}`,stroke:'var(--ink)','stroke-width':4,fill:'none','stroke-linecap':'round'},s);l.branches.forEach(b=>el('path',{d:`M${b.from[0]} ${b.from[1]}H${b.to[0]}`,stroke:'var(--ink)','stroke-width':3,fill:'none'},s));});
+ sh.caps.forEach(c=>{el('rect',{x:c.x,y:c.y,width:c.w,height:c.h,rx:14,fill:'var(--cap)',stroke:'var(--capline)','stroke-width':1.2},s);const t=el('text',{x:c.x+c.w/2,y:c.y+18,'font-size':12.5,fill:'var(--capink)','text-anchor':'middle'},s);t.textContent=c.pred;});
+ sh.things.forEach(t=>{el('rect',{x:t.x,y:t.y,width:t.w,height:t.h,rx:5,fill:'none',stroke:'var(--line)','stroke-width':1.2},s);const x=el('text',{x:t.x+t.w/2,y:t.y+16,'font-size':12,fill:'var(--ink)','text-anchor':'middle'},s);x.textContent=t.name;});
+ sh.roleArrows.forEach(a=>{el('path',{d:`M${a.from[0]} ${a.from[1]}L${a.to[0]} ${a.to[1]}`,stroke:'var(--line)','stroke-width':1.2,fill:'none','marker-end':'url(#ar)'},s);const t=el('text',{x:(a.from[0]+a.to[0])/2,y:Math.min(a.from[1],a.to[1])-4,'font-size':10,fill:'var(--quiet)','text-anchor':'middle'},s);t.textContent=a.role;});
+ sh.refArrows.forEach(a=>{const mx=a.from[0]+20;el('path',{d:`M${a.from[0]} ${a.from[1]}H${mx}V${a.to[1]-20}H${a.to[0]}V${a.to[1]}`,stroke:'var(--ref)','stroke-width':1.8,fill:'none','marker-end':'url(#rf)'},s);});
+ if(opts.highlight){const h=opts.highlight;el('rect',{x:h.x,y:h.y,width:h.w,height:h.h,fill:'none',stroke:'var(--bad)','stroke-width':3,rx:6},s);}
+ return s;}
+// sentence boxes start at y=60 to leave room for reference arrows above them
+
+function renderGraph(G){const W=G.W,H=G.H;const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'A sentence in graph form'});const d=el('defs',{},s);[['ga','var(--line)'],['gr','var(--ref)']].forEach(([id,c])=>{const m=el('marker',{id,viewBox:'0 0 10 10',refX:9,refY:5,markerWidth:6,markerHeight:6,orient:'auto-start-reverse'},d);el('path',{d:'M0 0L10 5L0 10z',fill:c},m);});
+ G.edges.forEach(e=>{const ref=e.ref;const path=ref?`M${e.from[0]} ${e.from[1]}H${e.from[0]+16}V${Math.min(e.from[1],e.to[1])-18}H${e.to[0]}V${e.to[1]}`:e.back?`M${e.from[0]} ${e.from[1]}H${e.from[0]-10}L${e.to[0]+8} ${e.to[1]}H${e.to[0]}`:`M${e.from[0]} ${e.from[1]}C${e.from[0]+30} ${e.from[1]} ${e.to[0]-30} ${e.to[1]} ${e.to[0]} ${e.to[1]}`;
+  el('path',{d:path,fill:'none',stroke:ref?'var(--ref)':'var(--line)','stroke-width':ref?1.8:1.2,'marker-end':`url(#${ref?'gr':'ga'})`},s);
+  if(e.label){const t=el('text',{x:ref?e.from[0]+20:(e.from[0]+e.to[0])/2,y:ref?Math.min(e.from[1],e.to[1])-22:(e.from[1]+e.to[1])/2-4,'font-size':9.5,fill:'var(--quiet)','text-anchor':ref?'start':'middle'},s);t.textContent=e.label;}});
+ G.nodes.forEach(n=>{const st=n.kind==='claim'?{fill:'var(--cap)',stroke:'var(--capline)',rx:14}:n.kind==='not'?{fill:'none',stroke:'var(--line)',rx:10,'stroke-dasharray':'5 4'}:n.kind==='sent'?{fill:'none',stroke:'var(--ink)',rx:4,'stroke-width':1.6}:{fill:'none',stroke:'var(--line)',rx:5};
+  el('rect',Object.assign({x:n.x,y:n.y,width:n.w,height:n.h,'stroke-width':1.2},st),s);const t=el('text',{x:n.x+n.w/2,y:n.y+19,'font-size':12,'font-weight':n.kind==='sent'||n.kind==='not'?700:400,fill:n.kind==='claim'?'var(--capink)':n.kind==='not'?'var(--quiet)':'var(--ink)','text-anchor':'middle'},s);t.textContent=n.label;});return s;}
+function renderLayers(text,curves){const n=text.length;const W=Math.max(260,120+n*110),H=210;const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Value layers'});
+ const X=i=>70+i*110,Y=v=>v?50:150;const T='#1D9E75',F='#D85A30';const names=text.map(d=>d.name);
+ const lt=el('text',{x:6,y:20,'font-size':11,fill:T},s);lt.textContent='true layer';const lf=el('text',{x:6,y:H-6,'font-size':11,fill:F},s);lf.textContent='false layer';
+ curves.forEach((cur,ci)=>{cur.forEach((nd,k)=>{const nx=cur[(k+1)%cur.length];const a=[X(names.indexOf(nd[0])),Y(nd[1])],b=[X(names.indexOf(nx[0])),Y(nx[1])];
+   const wrap=b[0]<=a[0];const bend=wrap?(nd[1]?-60:60)*(1+0.25*ci):0;
+   const dpath=wrap?`M${a[0]+14} ${a[1]}C${a[0]+70} ${a[1]+bend} ${b[0]-70} ${b[1]+bend} ${b[0]-14} ${b[1]}`:`M${a[0]+14} ${a[1]}C${(a[0]+b[0])/2} ${a[1]} ${(a[0]+b[0])/2} ${b[1]} ${b[0]-14} ${b[1]}`;
+   el('path',{d:dpath,fill:'none',stroke:nd[1]?T:F,'stroke-width':3,opacity:0.85},s);});});
+ names.forEach((nm,i)=>[true,false].forEach(v=>{el('circle',{cx:X(i),cy:Y(v),r:14,fill:'var(--card)',stroke:v?T:F,'stroke-width':2},s);const t=el('text',{x:X(i),y:Y(v)+4,'font-size':11,'font-weight':700,fill:'var(--ink)','text-anchor':'middle'},s);t.textContent=nm;}));
+ return s;}
+
+function card(sh,lines,okv){const c=document.createElement('div');c.className='card';c.appendChild(render(sh));const f=document.createElement('div');f.className='f';f.innerHTML=lines;c.appendChild(f);return c;}
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function runAll(seed){const R=rng(seed);document.getElementById('seedinfo').textContent=`batch ${seed}`;
+ const N=400;let ok=0,semOK=0,semN=0;const sample=[];const fails=[];
+ for(let i=0;i<N;i++){const t=genText(R,1+Math.floor(R()*3));const f=printText(t);const sh=layout(t);let back,err=null;try{back=printText(readBack(sh));}catch(e){err=e;}
+  const good=!err&&back===f;if(good)ok++;else fails.push({t,f,back,err});if(sample.length<18&&good)sample.push({sh,f,back});
+  if(good){const rb=readBack(sh);for(let w=0;w<10;w++){const W=randWorld(R,t.map(d=>d.name));t.forEach((d,j)=>{semN++;if(evalFormula(d.area,W,{})===evalDiagram(rb[j].area,W,{}))semOK++;});}}}
+ // broken drawings
+ const tries={D1:[0,0],D3:[0,0],D4:[0,0],D5:[0,0]};const badCards=[];let showT=null;
+ for(let i=0;i<300;i++){const t=genText(R,2);const sh=layout(t);const ruleSet=[['D1',s=>{const e=s.encs[0];if(!e)return null;const b=s.boxes.find(b=>e.x>=b.x&&e.x<=b.x+b.w);e.x=b.x+b.w-10;return {x:e.x-4,y:e.y-4,w:e.w+8,h:e.h+8};},'An enclosure is moved so its outline crosses its sentence box.'],
+   ['D3',s=>{const a=s.roleArrows[0];if(!a)return null;a.to=[a.to[0],22];return {x:a.to[0]-14,y:8,w:28,h:28};},'A role arrow now ends in empty space, not on a thing box.'],
+   ['D4',s=>{const l=s.lines[0];if(!l)return null;const at=l.attach[0].at;l.attach[0].at=[at[0]-14,at[1]];l.branches[0].to=[at[0]-14,at[1]];return {x:at[0]-26,y:at[1]-12,w:28,h:24};},'A heavy line stops short of the claim it should meet.'],
+   ['D5',s=>{const e=s.encs[0];if(!e)return null;s.boxes.push({name:'S9',x:e.x+2,y:e.y+2,w:6,h:6});return {x:e.x-4,y:e.y-4,w:20,h:20};},'A sentence box is placed inside an enclosure.']];
+  ruleSet.forEach(([rule,mut,desc])=>{const s=JSON.parse(JSON.stringify(sh));const hl=mut(s);if(!hl)return;tries[rule][0]++;let caught=null;try{readBack(s);}catch(e){caught=e;}if(caught&&caught.rule===rule)tries[rule][1]++;
+   if(!showT&&sh.encs.length&&sh.roleArrows.length&&sh.lines.length){} if(badCards.length<4&&!badCards.some(b=>b.rule===rule)&&sh.encs.length&&sh.roleArrows.length&&sh.lines.length)badCards.push({rule,desc,s,hl,caught});});}
+ // termination examples
+ const A=(...items)=>({lines:[],items}),C=(p,...f)=>({t:'claim',pred:p,fill:f}),N_=a=>({t:'enc',area:a}),nm=v=>({kind:'name',v}),st=v=>({kind:'sent',v});
+ const EX=[['The liar','S',[{name:'S',area:A(N_(A(C('IsTrue',st('S')))))}],'snow'],['The truth-teller','S',[{name:'S',area:A(C('IsTrue',st('S')))}],'snow'],
+  ['S2 says S1 is true; S1 says snow is falling','S2',[{name:'S1',area:A(C('Falling',nm('Snow')))},{name:'S2',area:A(C('IsTrue',st('S1')))}],'snow'],
+  ['Snow is falling, and this is false (snowing)','S',[{name:'S',area:A(C('Falling',nm('Snow')),N_(A(C('IsTrue',st('S')))))}],'snow'],
+  ['Snow is falling, and this is false (no snow)','S',[{name:'S',area:A(C('Falling',nm('Snow')),N_(A(C('IsTrue',st('S')))))}],'none'],
+  ['A says B is false; B says A is true','A',[{name:'A',area:A(N_(A(C('IsTrue',st('B')))))},{name:'B',area:A(C('IsTrue',st('A')))}],'snow']];
+ const base={Falling:new Set(['Snow']),Blowing:new Set(),Happy:new Set(),Loves:new Set(),IsTrue:new Set()};
+ let stepN=0,stepOK=0,termOK=0;const expected=[false,false,true,false,true,false];const dv=document.getElementById('derivs');dv.innerHTML='';
+ EX.forEach(([title,name,text,w],k)=>{const W=w==='snow'?base:{...base,Falling:new Set()};const r=evaluate(text,name,W,40);if(r.halts===expected[k])termOK++;
+  const box=document.createElement('div');box.className='card';box.style.marginBottom='14px';box.innerHTML=`<b>${esc(title)}</b> <span class="q">evaluating ${name}${w==='none'?', in a world with no snow':', in a world where snow is falling'}</span>`;
+  const strip=document.createElement('div');strip.className='strip';
+  r.steps.forEach((s,i)=>{if(!s.area)return;const tt=text.map(d=>d.name===name?{name:d.name,area:s.area}:d);const sh=layout(tt);let ok2=false;try{ok2=printText(readBack(sh))===printText(tt);}catch(e){}stepN++;if(ok2)stepOK++;
+   const st=document.createElement('div');st.className='step';st.innerHTML=`<div class="r">${i}. ${esc(s.rule)} <span class="tick ${ok2?'ok':'no'}">${ok2?'✓':'✗'}</span></div>`;st.appendChild(render(sh));strip.appendChild(st);});
+  box.appendChild(strip);const v=document.createElement('p');v.className='verdict';v.style.color=r.halts?'var(--ok)':'var(--bad)';
+  v.textContent=r.halts?`Halts: ${name} is ${r.result?'true':'false'}.`:`Never halts: step ${r.steps.length-1} is the same drawing as step ${r.cycleFrom}, so it will cycle forever.`;box.appendChild(v);dv.appendChild(box);});
+ window.__tries=tries;
+ // graph form: round trip and broken pictures
+ let gok=0;const gsample=[];for(let i=0;i<N;i++){const t=genText(R,1+Math.floor(R()*3));const f=printText(t);let b;try{b=printText(graphReadBack(graphLayout(t)));}catch(e){b='ERR';}if(b===f){gok++;if(gsample.length<6&&t.length<=2)gsample.push({t,f,b});}}
+ let gb=0,gbN=0;for(let i=0;i<200;i++){const t=genText(R,2);const G=graphLayout(t);const g1=JSON.parse(JSON.stringify(G));g1.edges[0].to=[-500,-500];gbN++;try{graphReadBack(g1);}catch(e){if(e.rule==='G1')gb++;}}
+ const gg=document.getElementById('graphs');gg.innerHTML='';gsample.forEach(x=>{const c=document.createElement('div');c.className='card';c.appendChild(renderGraph(graphLayout(x.t)));const f=document.createElement('div');f.className='f';f.innerHTML=`<span class="k">read back by following edges</span>\n${esc(x.b)}  <span class="tick ok">✓ identical</span>`;c.appendChild(f);gg.appendChild(c);});
+ // value layers on random pure loops
+ let cok=0,lok=0;const M=500;const lsample=[];const W0={Falling:new Set(),Blowing:new Set(),Happy:new Set(),Loves:new Set(),Man:new Set(),Mortal:new Set(),IsTrue:new Set()};
+ for(let i=0;i<M;i++){const n=1+Math.floor(R()*4);const t=pureLoop(R,n);const cv=valueLayers(t);const one=cv.length===1;const cons=hasConsistentValue(t);if(one===!cons)cok++;
+  const r=evaluate(t,t[0].name,W0,200);const unf=r.steps.filter(s=>s.rule.startsWith('unfold')).length;const cl=cv.find(c=>c.some(x=>x[0]===t[0].name)).length;if(!r.halts&&r.cycleFrom===0&&unf===cl)lok++;
+  if(lsample.length<6&&(lsample.filter(x=>x.one).length<3?one:!one))lsample.push({t,cv,one,cons});}
+ const lg=document.getElementById('layers');lg.innerHTML='';lsample.forEach(x=>{const c=document.createElement('div');c.className='card';c.appendChild(renderLayers(x.t,x.cv));const f=document.createElement('div');f.className='f';
+  f.innerHTML=`${esc(printText(x.t))}\n<span class="k">${x.one?'one closed curve (a figure 8): predicts no consistent value':'two separate curves: predicts either value holds'}</span>\nbrute-force search: ${x.cons?'a consistent value exists':'no consistent value'} <span class="tick ${x.one===!x.cons?'ok':'no'}">${x.one===!x.cons?'✓ agrees':'✗'}</span>`;c.appendChild(f);lg.appendChild(c);});
+ window.__extra={gok,gb,gbN,cok,lok,M};
+
+ // summary
+ const sum=document.getElementById('sum');const chk=(okv,big,txt)=>`<div class="chk ${okv?'ok':'no'}"><b>${big}</b><span>${txt}</span></div>`;
+ const badTot=Object.values(tries).reduce((a,b)=>a+b[0],0),badOK=Object.values(tries).reduce((a,b)=>a+b[1],0);
+ sum.innerHTML=chk(ok===N,`${ok} / ${N}`,'random sentences read back exactly from their drawings')+chk(semOK===semN,`${semOK} / ${semN}`,'checks where the drawing and the formula give the same truth value in a random world')+chk(badOK===badTot,`${badOK} / ${badTot}`,'deliberately broken drawings rejected, with the broken rule named')+chk(stepOK===stepN&&termOK===EX.length,`${stepOK} / ${stepN}`,`derivation steps that read back exactly; ${termOK} of ${EX.length} examples halt or cycle as expected`)+chk(gok===N&&gb===gbN,`${gok} / ${N}`,`sentences read back exactly from the graph form; ${gb} of ${gbN} broken graphs rejected`)+chk(cok===M,`${cok} / ${M}`,'random loops where the curve count predicts the verdict (one curve: no consistent value)')+chk(lok===M,`${lok} / ${M}`,'looping derivations whose lap length equals the curve length');
+ const g=document.getElementById('gallery');g.innerHTML='';sample.forEach(x=>g.appendChild(card(x.sh,`<span class="k">drawn from</span>\n${esc(x.f)}\n<span class="k">read back</span>\n${esc(x.back)}  <span class="tick ok">✓ identical</span>`)));
+ fails.slice(0,6).forEach(x=>g.appendChild(card(layout(x.t),`<span class="k">drawn from</span>\n${esc(x.f)}\n<span class="k">read back</span>\n${esc(x.err?'refused: '+x.err.message:x.back)}  <span class="tick no">✗</span>`)));
+ const b=document.getElementById('bad');b.innerHTML='';badCards.forEach(x=>{const c=document.createElement('div');c.className='card';c.appendChild(render(x.s,{highlight:x.hl}));const f=document.createElement('div');f.className='f';f.innerHTML=`<span class="k">${esc(x.desc)}</span>\nread-back: ${x.caught?`refused, rule ${x.caught.rule}: ${esc(x.caught.message)}`:'not refused'} <span class="tick ${x.caught&&x.caught.rule===x.rule?'ok':'no'}">${x.caught&&x.caught.rule===x.rule?'✓':'✗'}</span>`;c.appendChild(f);b.appendChild(c);});}
+let seed=12345;runAll(seed);document.getElementById('again').onclick=()=>{seed=Math.floor(Math.random()*1e6)+1;runAll(seed);};
+</script></main></body></html>

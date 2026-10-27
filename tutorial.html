@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reading self-reference diagrams: a tutorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FBFBFA;--card:#FFFFFF;--ink:#1B1F24;--quiet:#5D6670;--line:#8A939C;--hair:#D9DDE1;--cap:#E6EDF7;--capline:#1F3F75;--capink:#1F3F75;--cut:#C93A32;--ref:#2F6FC4;--node:#F1F3F5;--fix:#2E7D4F;--fixbg:#E3F2E8;--cyc:#C2392F;--T:#2E7D4F;--F:#C46A1C;--ok:#2E7D4F;--bad:#C2392F;--op:#6B4FB8;--q:#1F8A80;--imp:#B03A7A;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121518;--card:#191D21;--ink:#E7EAED;--quiet:#9AA3AC;--line:#7D8790;--hair:#323941;--cap:#1F2F4D;--capline:#8FB0E6;--capink:#D7E3F7;--cut:#F07A70;--ref:#6EA6F0;--node:#232A31;--fix:#6CC795;--fixbg:#1C3226;--cyc:#F07A70;--T:#6CC795;--F:#F0A15C;--ok:#6CC795;--bad:#F07A70;--op:#A995E8;--q:#5CC8BD;--imp:#EC7FB0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121518;--card:#191D21;--ink:#E7EAED;--quiet:#9AA3AC;--line:#7D8790;--hair:#323941;--cap:#1F2F4D;--capline:#8FB0E6;--capink:#D7E3F7;--cut:#F07A70;--ref:#6EA6F0;--node:#232A31;--fix:#6CC795;--fixbg:#1C3226;--cyc:#F07A70;--T:#6CC795;--F:#F0A15C;--ok:#6CC795;--bad:#F07A70;--op:#A995E8;--q:#5CC8BD;--imp:#EC7FB0;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,sans-serif;font-size:17px;line-height:1.55}
+main{max-width:1040px;margin:0 auto;padding:36px 20px 64px}
+h1{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:30px;line-height:1.2;margin:0 0 10px}
+h2{font-family:"Source Serif 4",Georgia,serif;font-weight:500;font-size:21px;margin:0 0 2px}
+.lede{color:var(--quiet);max-width:74ch;margin:0 0 8px}
+.key{display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--quiet);font-size:15px;margin:14px 0 28px}
+.key svg{vertical-align:middle;margin-right:6px}
+section{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:20px 22px;margin:0 0 18px}
+.said{margin:0 0 14px;color:var(--quiet)}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;align-items:start}
+.grid.wide{grid-template-columns:minmax(0,1fr)}
+.grid.wide .states svg{max-width:420px}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:860px){.pair{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:780px){.grid{grid-template-columns:minmax(0,1fr)}}
+h3{font-size:14px;font-weight:600;color:var(--quiet);margin:0 0 6px}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:"Source Sans 3",system-ui,sans-serif;fill:var(--ink)}
+.forms{margin:12px 0 0;font-size:15.5px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px}
+.forms .k{color:var(--quiet)}
+.forms code{font-family:"Source Sans 3",system-ui,sans-serif;font-size:15.5px;overflow-wrap:anywhere}
+.ok{color:var(--ok);font-weight:600}.no{color:var(--bad);font-weight:600}
+.verdicts{margin:10px 0 0;font-size:15.5px}
+.notice{margin:14px 0 0;padding:10px 14px;border-left:3px solid var(--ref);background:color-mix(in srgb,var(--ref) 7%,transparent);font-size:16px}
+.world{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 0;font-size:15px;color:var(--quiet)}
+.hint{font-size:14px;color:var(--quiet);margin:6px 0 0}
+button{font:inherit;font-size:14.5px;padding:5px 12px;border-radius:7px;border:1px solid var(--hair);background:var(--card);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--line)}
+button:focus-visible,.st:focus-visible{outline:2px solid var(--ref);outline-offset:2px}
+.gedge{stroke:var(--line);stroke-width:1.3}
+.gref{fill:none;stroke:var(--ref);stroke-width:1.8}
+.gvar{fill:none;stroke:var(--q);stroke-width:1.6;stroke-dasharray:5 4}
+.glab{font-size:12px;fill:var(--quiet)!important}
+.greft{fill:var(--ref)!important}.gvart{fill:var(--q)!important}
+.gtype{font-size:11px;fill:var(--quiet)!important;letter-spacing:.02em}
+.gname{font-size:14px}
+.gnode{stroke-width:1.3}
+.g-sentence{fill:var(--node);stroke:var(--line);stroke-width:1.6}
+.g-sentence.T{stroke:var(--T);stroke-width:3}.g-sentence.F{stroke:var(--F);stroke-width:3}.g-sentence.chg{stroke-dasharray:6 4}
+.g-and{fill:color-mix(in srgb,var(--op) 14%,var(--card));stroke:var(--op)}
+.g-not{fill:color-mix(in srgb,var(--cut) 10%,var(--card));stroke:var(--cut)}
+.g-ex{fill:color-mix(in srgb,var(--q) 12%,var(--card));stroke:var(--q)}
+.g-pred{fill:var(--cap);stroke:var(--capline)}
+.g-pred.vT{fill:color-mix(in srgb,var(--T) 28%,var(--card));stroke:var(--T);stroke-width:2}
+.g-pred.vF{fill:color-mix(in srgb,var(--F) 28%,var(--card));stroke:var(--F);stroke-width:2}
+.g-thing{fill:none;stroke:var(--line)}
+.views{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 20px;font-size:15px;color:var(--quiet)}
+.views button[aria-pressed="true"]{border-color:var(--ref);box-shadow:inset 0 0 0 1px var(--ref)}
+.block{margin:0 0 14px}
+.worldp{fill:color-mix(in srgb,var(--line) 10%,var(--card));stroke:var(--line);stroke-width:1.2}
+.worldt{font-size:13.5px;font-weight:600}
+.factb{fill:var(--card);stroke:var(--line);stroke-width:1.2}
+.factt{font-size:13px}
+.refa.onloop{stroke-width:3.2}
+.sgn{stroke-width:1.4}.sgn.pos{fill:var(--card);stroke:var(--ref)}.sgn.neg{fill:var(--card);stroke:var(--cut)}
+.sgnt{font-size:12px;font-weight:700}
+.loops{margin:8px 0 0;font-size:15px;color:var(--quiet)}
+.port.tv.not circle{fill:var(--card)!important;stroke:var(--line)!important;stroke-dasharray:3 3}.port.tv.not text{fill:var(--quiet)!important}
+.port.tv.has circle{stroke-width:3}
+.tvnote{font-size:12px;fill:var(--quiet)!important;font-style:italic}
+.theory{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px;font-size:15px;color:var(--quiet)}
+.theory button[aria-pressed="true"]{border-color:var(--fix);box-shadow:inset 0 0 0 1px var(--fix)}
+#tdesc{flex-basis:100%;font-size:14.5px}
+.motion{margin:12px 0 0;padding:12px 14px;border:1px solid var(--hair);border-radius:10px;background:var(--card)}
+.motion .mhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:15px;font-weight:600}
+.motion p{margin:8px 0 0;font-size:15.5px}
+.mstrip{margin:8px 0 0}.mrow{display:flex;gap:4px;align-items:center;margin:3px 0;font-size:14px}.mrow span:first-child{width:22px;color:var(--quiet)}
+.chip{width:22px;height:20px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.chip.cT{background:color-mix(in srgb,var(--T) 22%,var(--card));color:var(--T)}.chip.cF{background:color-mix(in srgb,var(--F) 22%,var(--card));color:var(--F)}
+.bx.gapbox{stroke:var(--cut);stroke-width:3;stroke-dasharray:8 5}
+.tok{fill:var(--ref)}
+@media (prefers-reduced-motion:reduce){.tok{display:none}}
+.valid{margin:14px 0 0}.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:8px 0 0}
+.wcell svg{max-width:220px}.wbg{fill:var(--card);stroke:var(--hair);stroke-width:2}.wbg.wprem{stroke:var(--ok);stroke-width:3}.wbg.wcounter{stroke:var(--bad);stroke-width:3.5}
+.eul{fill:color-mix(in srgb,var(--cap) 60%,transparent);stroke:var(--capline);stroke-width:1.3;fill-opacity:.6}.eult{font-size:12px;fill:var(--capink)!important;font-weight:600}
+.sdot{fill:var(--ink)}.sname{font-size:11px}
+.wchips{margin:4px 0 0;display:flex;gap:4px;flex-wrap:wrap}.wchips .chip{width:auto;padding:0 6px}.wcap{font-size:13.5px;color:var(--quiet);margin:2px 0 0}.vline{margin:10px 0 0;font-size:16px}
+.tether{fill:none;stroke:var(--line);stroke-width:1;stroke-dasharray:2 3;opacity:.8}
+.imp{fill:none;stroke:var(--imp);stroke-width:1.6}
+.imp.faint{opacity:.3}.imp.bad{stroke:var(--cyc);stroke-width:2.8}.imp.ok{stroke:var(--fix);stroke-dasharray:5 3;stroke-width:2}.imp.blocked{stroke:var(--line);stroke-dasharray:3 3;opacity:.8}
+.imp.forced{stroke-width:3.4;opacity:1}
+.mk-solid,.mk-faint{fill:var(--imp)}.mk-bad{fill:var(--cyc)}.mk-ok{fill:var(--fix)}.mk-blocked{fill:var(--line)}
+.jn{stroke:var(--imp);stroke-width:2}.jn.both{fill:var(--imp)}.jn.oneof{fill:var(--card)}.jn.jbad{stroke:var(--cyc)}.jn.both.jbad{fill:var(--cyc)}
+.port{cursor:pointer}.port circle{stroke-width:1.6}
+.port.sent.T circle{fill:color-mix(in srgb,var(--T) 18%,var(--card));stroke:var(--T)}
+.port.sent.F circle{fill:color-mix(in srgb,var(--F) 18%,var(--card));stroke:var(--F)}
+.port.fact circle{fill:var(--cap);stroke:var(--capline)}
+.port.ruled circle{fill:color-mix(in srgb,var(--line) 25%,var(--card))!important;stroke:var(--line)!important}
+.port.fo circle{stroke:var(--ref)!important;stroke-width:3.5!important}
+.port text{font-size:11.5px;font-weight:600}.port.ruled text{fill:var(--quiet)!important}
+.slash{stroke:var(--line);stroke-width:1.4}
+.check2{margin:4px 0 0}
+.bx{fill:none;stroke:var(--line);stroke-width:1.5}
+.bx.T{stroke:var(--T);stroke-width:3}.bx.F{stroke:var(--F);stroke-width:3}.bx.chg{stroke-dasharray:7 5}
+.tag{font-weight:600;font-size:15px}
+.badge{stroke-width:1.3}.bgood{fill:var(--fixbg);stroke:var(--fix)}.bbad{fill:color-mix(in srgb,var(--cyc) 14%,var(--card));stroke:var(--cyc)}
+.badget{font-size:12.5px;font-weight:600}
+.bpend{fill:var(--card);stroke:var(--line);stroke-dasharray:4 3}
+.why{margin:12px 0 0}
+.ptype{font-size:10.5px;fill:var(--quiet)!important;letter-spacing:.02em}
+.cap{fill:var(--cap);stroke:var(--capline);stroke-width:1.25}
+.cap.vT{fill:color-mix(in srgb,var(--T) 28%,var(--card));stroke:var(--T);stroke-width:2}
+.cap.vF{fill:color-mix(in srgb,var(--F) 28%,var(--card));stroke:var(--F);stroke-width:2}
+.explain{margin:10px 0 0;padding:10px 14px;background:var(--node);border-radius:8px;font-size:15.5px}
+.explain p{margin:4px 0}
+.capt{fill:var(--capink)!important;font-size:14px}
+.ent{fill:none;stroke:var(--line);stroke-width:1.25}
+.enc{fill:color-mix(in srgb,var(--cut) 5%,transparent);stroke:var(--cut);stroke-width:1.25;stroke-dasharray:5 4}
+.enct{fill:var(--cut)!important;font-size:12px;font-weight:600}
+.role{fill:var(--quiet)!important;font-size:12px}
+.arr{fill:none;stroke:var(--line);stroke-width:1.3}
+.refa{fill:none;stroke:var(--ref);stroke-width:1.8}
+.loi{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+.st{cursor:pointer}
+.st rect{stroke-width:1.2}
+.st.sel rect{stroke:var(--ref)!important;stroke-width:3!important}
+.wrect{fill:color-mix(in srgb,var(--line) 9%,var(--card));stroke:var(--line);stroke-width:1.3}
+.wpanel{cursor:pointer}.wpanel.focus .wrect{stroke:var(--ref);stroke-width:2.6}
+.wpanel:focus-visible .wrect{stroke:var(--ref);stroke-width:3}
+.wtitle{font-weight:600;font-size:14px}.wdesc{font-size:12.5px;fill:var(--quiet)!important}
+.fcap{fill:var(--cap);stroke:var(--capline);stroke-width:1.2}.fcapt{fill:var(--capink)!important;font-size:13px}
+.farr{stroke:var(--line);stroke-width:1.2;fill:none}.frole{font-size:11px;fill:var(--quiet)!important}
+.fthing{fill:var(--card);stroke:var(--line);stroke-width:1.2}
+.frow.absent .fcap,.frow.absent .farr{stroke-dasharray:4 3;opacity:.5}.frow.absent .fcapt{opacity:.5}.fabs{font-size:11.5px;font-style:italic;fill:var(--quiet)!important}
+.barend{stroke-width:2.6}
+.tline{fill:none;stroke-width:3}.tline.tT{stroke:var(--T)}.tline.tF{stroke:var(--F)}.tline.tE{stroke:var(--line);stroke-dasharray:6 4}.tline.tX{stroke:var(--cyc);stroke-dasharray:6 4}
+.tchip{stroke-width:1.2}.tchip.tT{fill:color-mix(in srgb,var(--T) 16%,var(--card));stroke:var(--T)}.tchip.tF{fill:color-mix(in srgb,var(--F) 16%,var(--card));stroke:var(--F)}.tchip.tE{fill:var(--card);stroke:var(--line)}.tchip.tX{fill:color-mix(in srgb,var(--cyc) 12%,var(--card));stroke:var(--cyc)}
+.tchipt{font-size:12px;font-weight:600}
+.world button[aria-pressed="true"]{border-color:var(--ref);box-shadow:inset 0 0 0 1px var(--ref)}
+.reqlab{font-size:11.5px;font-style:italic;fill:var(--imp)!important}
+.stepnav{display:flex;gap:8px;margin:12px 0 4px}
+.stepnav .primary{border-color:var(--ref);box-shadow:inset 0 0 0 1px var(--ref);font-weight:600}
+.stepmarks{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0 10px;font-size:14.5px;color:var(--quiet)}
+.stepmarks span{margin-right:4px;font-weight:600}
+.smark{width:16px;height:16px;padding:0;border-radius:50%;border:1.5px solid var(--line);background:var(--card)}
+.smark.done{background:color-mix(in srgb,var(--ref) 35%,var(--card));border-color:var(--ref)}
+.smark.cur{background:var(--ref);border-color:var(--ref)}
+.showall{margin-left:10px;font-size:13.5px;padding:4px 10px}
+.stephint{margin:4px 0 8px;padding:8px 12px;border-radius:8px;background:color-mix(in srgb,var(--ref) 8%,transparent);font-size:15px}
+.bignav{display:flex;align-items:center;gap:12px;margin:10px 0 6px}
+.bignav .big{font-size:16.5px;padding:10px 22px;font-weight:600;border-color:var(--ref);box-shadow:inset 0 0 0 1.5px var(--ref)}
+.donemsg{color:var(--ok);font-weight:600}
+.fneg{fill:color-mix(in srgb,var(--cut) 6%,transparent);stroke:var(--cut);stroke-width:1.25;stroke-dasharray:5 4}
+.fnegt{font-size:11.5px;font-weight:600;fill:var(--cut)!important}
+.rmark circle{stroke-width:1.4}.rmark.ok circle{fill:var(--card);stroke:var(--ok)}.rmark.bad circle{fill:var(--card);stroke:var(--bad)}
+.rmark text{font-size:11px;font-weight:700}.rmark.ok text{fill:var(--ok)!important}.rmark.bad text{fill:var(--bad)!important}
+.cellr{fill:var(--card);stroke:var(--hair);stroke-width:1.3}
+.cell.inT .cellr{fill:color-mix(in srgb,var(--T) 10%,var(--card));stroke:var(--T);stroke-width:2}
+.cell.inF .cellr{fill:color-mix(in srgb,var(--F) 10%,var(--card));stroke:var(--F);stroke-width:2}
+.regT{fill:none;stroke:var(--T);stroke-width:3}.regF{fill:none;stroke:var(--F);stroke-width:3}
+.colh,.rowh{font-size:13px;font-weight:600;fill:var(--quiet)!important}.spacet{font-size:13px;fill:var(--quiet)!important;font-style:italic}
+.fthingt{font-size:12.5px}
+.rchip.cT2{fill:color-mix(in srgb,var(--T) 14%,var(--card));stroke:var(--T);stroke-width:1.4}.rchip.cF2{fill:color-mix(in srgb,var(--F) 14%,var(--card));stroke:var(--F);stroke-width:1.4}
+.chipt{font-size:12.5px;font-weight:600}
+.lead{stroke:var(--T);stroke-width:1.2;stroke-dasharray:3 3;fill:none}
+.wpt circle{fill:var(--ref)}.wpt text{font-size:12px;font-weight:600;fill:var(--ref)!important}
+
+.cell.inN .cellr{fill:color-mix(in srgb,var(--line) 14%,var(--card));stroke:var(--line);stroke-width:2;stroke-dasharray:6 4}
+.rchip.cN2{fill:color-mix(in srgb,var(--line) 14%,var(--card));stroke:var(--line);stroke-width:1.4;stroke-dasharray:5 3}
+.unset{font-size:12px;font-style:italic;fill:var(--quiet)!important}
+.logic{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px;padding:10px 14px;border:1px solid var(--hair);border-radius:10px;background:var(--card);font-size:15px}
+.logic button[aria-pressed="true"]{border-color:var(--fix);box-shadow:inset 0 0 0 1.5px var(--fix);font-weight:600}
+#logicdesc{flex-basis:100%;color:var(--quiet);font-size:14px}
+.cell.inB .cellr{fill:color-mix(in srgb,var(--T) 8%,var(--card));stroke:var(--T);stroke-width:2}.cellr2{fill:none;stroke:var(--F);stroke-width:2}
+.cell.prem .cellr{stroke:var(--T);stroke-width:3}.cell.counter .cellr{stroke:var(--bad);stroke-width:3.5;fill:color-mix(in srgb,var(--bad) 7%,var(--card))}
+.rchip.cB2{fill:color-mix(in srgb,var(--T) 10%,var(--card));stroke:var(--F);stroke-width:1.4}.rchip.cX2{fill:color-mix(in srgb,var(--bad) 10%,var(--card));stroke:var(--bad);stroke-width:1.4}
+.cstat{font-size:12px;font-weight:600;fill:var(--ink)!important}
+.tgt{fill:none;stroke:var(--imp);stroke-width:1.6;stroke-dasharray:6 4}
+.tgtall{fill:none;stroke:var(--imp);stroke-width:1.6;stroke-dasharray:6 4}
+.tgtl{font-size:12px;font-style:italic;fill:var(--imp)!important;font-weight:600}
+.empty{fill:var(--card);stroke:var(--bad);stroke-width:1.6;stroke-dasharray:5 4}.emptyt{font-size:12.5px;fill:var(--bad)!important;font-weight:600}
+.key{font-size:13px;fill:var(--quiet)!important}.kT{fill:var(--T)!important;font-weight:700}.kF{fill:var(--F)!important;font-weight:700}.kN{fill:var(--line)!important;font-weight:700}.kX{fill:var(--bad)!important;font-weight:700}
+
+.tgtset{fill:color-mix(in srgb,var(--ref) 6%,transparent);stroke:var(--ref);stroke-width:2;stroke-dasharray:7 4}.setl{font-size:12.5px;font-style:italic;font-weight:700;fill:var(--ref)!important}
+
+main{max-width:1500px!important}
+.lgrid{display:grid;grid-template-columns:minmax(320px,0.85fr) minmax(0,1.5fr);gap:30px;align-items:start}
+.lt .ltext{max-width:none!important}
+.lf{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow-y:auto}
+.lf svg.fit{display:block;width:100%;height:auto;max-height:calc(100vh - 60px)}
+@media (max-width:980px){.lgrid{grid-template-columns:minmax(0,1fr)}.lf{position:static;max-height:none}.lf svg.fit{max-height:none}}
+.lede{max-width:none!important}
+
+h1{font-size:24px!important;margin:0 0 4px!important}
+.lede{font-size:15px;margin:0 0 10px!important}
+.logic{margin:0 0 8px!important;padding:6px 12px!important}
+.lnav{margin:0 0 10px!important}
+#lesson{scroll-margin-top:6px;padding:14px 18px!important}
+.lf svg.fit{max-height:calc(100vh - 40px)!important}
+.lt h2{margin:2px 0 4px}
+.stephint{margin:2px 0 6px!important}
+
+#navbar #navback{width:170px;min-width:0}
+#navbar .big{width:210px;min-width:0}
+#navinfo{width:380px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:600px){#navinfo{display:none}#navbar #navback{width:140px}#navbar .big{width:170px}}
+
+#navbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(6px);border-top:1px solid var(--hair)}
+#navbar .big{font-size:16.5px;padding:10px 0;font-weight:600;border-color:var(--ref);box-shadow:inset 0 0 0 1.5px var(--ref)}
+#navinfo{color:var(--quiet);font-size:14px;text-align:center}
+body{padding-bottom:80px}
+.lf{max-height:calc(100vh - 90px)!important}
+.lf svg.fit{max-height:calc(100vh - 110px)!important}
+@media (max-width:600px){#navbar{gap:10px}}
+
+.eqv{stroke:var(--line);stroke-width:1.6;fill:none}.eqvc{fill:var(--card);stroke:var(--line);stroke-width:1.4}.eqvt{font-size:15px;font-weight:700}.eqvl{font-size:11px;font-style:italic;fill:var(--quiet)!important}
+
+.empty.emptyn{stroke:var(--line)}.emptyt.emptynt{fill:var(--quiet)!important}
+.fbox{fill:none;stroke-width:4}.fbox.fT{stroke:var(--T)}.fbox.fF{stroke:var(--F)}
+.fchip rect{stroke-width:1.5}.fchip.fT rect{fill:color-mix(in srgb,var(--T) 16%,var(--card));stroke:var(--T)}.fchip.fF rect{fill:color-mix(in srgb,var(--F) 16%,var(--card));stroke:var(--F)}
+.fchip text{font-size:13px;font-weight:700}
+.ftok.fT{fill:var(--T)}.ftok.fF{fill:var(--F)}
+.fenc{fill:color-mix(in srgb,var(--cut) 10%,transparent);stroke:var(--cut);stroke-width:3.5}
+.flowctl{display:flex;gap:10px;align-items:center;margin:10px 0 6px}.flowctl .primary{border-color:var(--ref);box-shadow:inset 0 0 0 1.5px var(--ref);font-weight:600}.fpass{color:var(--quiet);font-size:14px}
+.fmsg{margin:6px 0 8px;font-size:15.5px;min-height:3.2em}
+@media (prefers-reduced-motion:reduce){.ftok{display:none}}
+
+.farrow{font-size:18px;font-weight:700;fill:var(--quiet)!important}
+.fpath{fill:none;stroke:none}
+.ftok{stroke:var(--card);stroke-width:2.5}
+.fwire{fill:none;stroke:var(--line);stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.25}
+.ffill{fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;opacity:.85}.ffill.fT{stroke:var(--T)}.ffill.fF{stroke:var(--F)}
+.fwire.flowdash{stroke:var(--card);stroke-width:2.2;opacity:.9;stroke-dasharray:4 10;animation:fmarch 0.9s linear infinite}
+@keyframes fmarch{to{stroke-dashoffset:-14}}
+@media (prefers-reduced-motion:reduce){.fwire.flowdash{animation:none}}
+.fenc{fill:color-mix(in srgb,var(--cut) 12%,transparent);stroke:var(--cut);stroke-width:3.5;transition:opacity .25s}
+
+.fwire{stroke-width:9!important}.ffill{stroke-width:9!important}
+.ftrace{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 4px}
+.tchipx{padding:4px 12px;border-radius:13px;font-size:14px;font-weight:700;border:1.5px solid var(--line);background:var(--card)}
+.tchipx.fT{border-color:var(--T);background:color-mix(in srgb,var(--T) 16%,var(--card))}.tchipx.fF{border-color:var(--F);background:color-mix(in srgb,var(--F) 16%,var(--card))}
+.tchipx.off{border-color:var(--hair);background:var(--card);color:var(--quiet);font-weight:500}
+.farrowx{color:var(--quiet);font-weight:700}
+
+.fwire.flowdash{stroke-width:1.6!important;opacity:.7!important;stroke-dasharray:3 9!important}
+.froute{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 5;opacity:.7}
+.fhid{fill:none;stroke:none}
+.fdot circle{stroke:var(--card);stroke-width:2.5}.fdot.fT circle{fill:var(--T)}.fdot.fF circle{fill:var(--F)}
+.fdot text{font-size:13px;font-weight:800;fill:#fff!important}
+.port{transition:opacity .3s}
+
+.fenc{transition:opacity .2s}
+
+.lnav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+#dots{display:flex;gap:6px;flex-wrap:wrap}
+#dots button{width:34px;height:34px;padding:0;border-radius:50%}
+#dots button[aria-current="step"]{border-color:var(--ref);box-shadow:inset 0 0 0 2px var(--ref)}
+#dots button.done{background:color-mix(in srgb,var(--ok) 16%,var(--card))}
+.lpart{color:var(--quiet);font-size:14.5px;margin:0 0 2px}
+.ltext{max-width:72ch;margin:8px 0}
+.tryit{margin:14px 0 0;padding:10px 14px;border-left:3px solid var(--ref);background:color-mix(in srgb,var(--ref) 7%,transparent)}
+.quiz{margin:14px 0 0;padding:12px 14px;border:1px solid var(--hair);border-radius:10px}
+.quiz p{margin:0 0 8px}.qopts{display:flex;flex-wrap:wrap;gap:8px}
+.qopts button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card))}
+.qopts button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}
+.qfb{margin:10px 0 0}.qfb.ok{color:var(--ok)}.qfb.no{color:var(--bad)}
+.readback{color:var(--quiet);font-size:14.5px;margin:10px 0 0}
+.pager{display:flex;justify-content:space-between;margin:22px 0 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Reading self-reference diagrams: a step-by-step tutorial</h1>
+<p class="lede">Thirteen short lessons, from one sentence about the weather up to paradoxes, other logics and valid arguments. Every lesson uses the same few marks: a <b>sentence</b> box; its two suppositions, <b>T</b> (suppose it is true) and <b>F</b> (suppose it is false); and the <b>possible worlds</b>, where each supposition leads to a region. When sentences talk about other sentences, arrows show how one supposition leads to another.</p>
+<div class="logic" id="logic" role="group" aria-label="Which logic">Logic: <button data-l="classical">Classical</button><button data-l="kripke">Three-valued (Kleene and Kripke)</button><button data-l="gaifman">Gaifman</button><span id="logicdesc"></span></div>
+<div class="lnav"><div id="dots" role="navigation" aria-label="Lessons"></div></div>
+<section id="lesson" aria-live="polite"></section>
+<div id="navbar" role="navigation" aria-label="Step navigation"><button id="navback">← Back a step</button><span id="navinfo"></span><button id="navnext" class="primary big">Next step →</button></div>
+
+</main>
+<script>
+
+// ---------- drawings: geometry plus labels only ----------
+const R=(x,y,w,h)=>({x,y,w,h});
+const EX=[
+{id:'snow',title:'1 · Snow is falling',said:'S: “Snow is falling.”',vb:[0,0,330,110],
+ boxes:[{n:'S',r:R(10,10,300,90)}],caps:[{id:'c1',p:'Falling',r:R(30,46,84,28)}],ents:[{n:'Snow',r:R(214,46,64,28)}],encs:[],lines:[],
+ arrows:[{from:'c1',role:'thing that falls',to:[214,60],lab:[164,52]}],
+ sym:'S := Falling(thing that falls: Snow)',note:'No arrow leads back into a sentence, so there is no loop: one green state.'},
+{id:'truth',title:'2 · This sentence is true',said:'S: “This sentence is true.”',vb:[0,0,330,110],
+ boxes:[{n:'S',r:R(10,10,300,90)}],caps:[{id:'c1',p:'IsTrue',r:R(30,46,84,28)}],ents:[],encs:[],lines:[],
+ arrows:[{from:'c1',role:'bearer',to:[310,60],lab:[212,52]}],
+ sym:'S := IsTrue(bearer: S)',note:'The arrow from S lands on S itself: a loop with no “not” on it. Both states are green: two answers, nothing to choose between them.'},
+{id:'liar',title:'3 · This sentence is false',said:'S: “This sentence is false.”',vb:[0,0,330,130],
+ boxes:[{n:'S',r:R(10,10,300,110)}],caps:[{id:'c1',p:'IsTrue',r:R(40,58,84,28)}],ents:[],encs:[{r:R(24,36,130,72)}],lines:[],
+ arrows:[{from:'c1',role:'bearer',to:[310,72],lab:[232,64]}],
+ sym:'S := ¬IsTrue(bearer: S)',note:'The same loop, but it passes out through a “not”. The two states point at each other in red: no answer holds still.'},
+{id:'ab',title:'4 · A and B',said:'A: “B is false.”  B: “A is true.”',vb:[0,0,440,140],
+ boxes:[{n:'A',r:R(10,10,170,120)},{n:'B',r:R(260,10,170,120)}],caps:[{id:'c1',p:'IsTrue',r:R(36,58,84,28)},{id:'c2',p:'IsTrue',r:R(330,80,84,28)}],ents:[],encs:[{r:R(22,36,130,72)}],lines:[],
+ arrows:[{from:'c1',role:'bearer',to:[260,72],lab:[220,64]},{from:'c2',role:'bearer',to:[180,94],lab:[220,112]}],
+ sym:'A := ¬IsTrue(bearer: B); B := IsTrue(bearer: A)',note:'Neither formula mentions itself, so the loop is hidden in the symbols. In the drawing the two arrows form a loop through one “not”, and the states go round a red square.'},
+{id:'n5a',title:'5a · A liar inside a sentence',said:'S: “Q is false,” where Q: “Q is false.”',vb:[0,0,550,190],
+ boxes:[{n:'S',r:R(10,10,520,170)},{n:'Q',r:R(250,34,270,130)}],caps:[{id:'c1',p:'IsTrue',r:R(40,82,84,28)},{id:'c2',p:'IsTrue',r:R(280,86,84,28)}],ents:[],encs:[{r:R(24,60,150,72)},{r:R(264,64,130,72)}],lines:[],
+ arrows:[{from:'c1',role:'bearer',to:[250,96],lab:[212,88]},{from:'c2',role:'bearer',to:[520,100],lab:[456,92]}],
+ sym:'S := ¬IsTrue(bearer: Q); Q := ¬IsTrue(bearer: Q)',note:'Q is the liar, drawn inside S. S’s own arrow only leads into Q’s loop, so S is on no loop of its own: it inherits Q’s paradox rather than being one.'},
+{id:'n5b',title:'5b · A loop inside a loop',said:'S: “Q is false,” where Q: “Q is true and S is true.”',vb:[0,0,550,210],
+ boxes:[{n:'S',r:R(10,10,520,190)},{n:'Q',r:R(250,34,270,150)}],caps:[{id:'c1',p:'IsTrue',r:R(40,92,84,28)},{id:'c2',p:'IsTrue',r:R(270,60,84,28)},{id:'c3',p:'IsTrue',r:R(270,120,84,28)}],ents:[],encs:[{r:R(24,70,150,72)}],lines:[],
+ arrows:[{from:'c1',role:'bearer',to:[250,106],lab:[212,98]},{from:'c2',role:'bearer',to:[520,74],lab:[430,66]},{from:'c3',role:'bearer',to:[530,134],lab:[430,126]}],
+ sym:'S := ¬IsTrue(bearer: Q); Q := IsTrue(bearer: Q) ∧ IsTrue(bearer: S)',note:'Two loops, one through a “not”. Counting “not”s in the formulas would suggest a paradox, but every state leads to one green answer.'},
+{id:'mixed',title:'6 · Snow, and this sentence is false',said:'S: “Snow is falling, and this sentence is false.”',vb:[0,0,350,160],
+ boxes:[{n:'S',r:R(10,10,320,140)}],caps:[{id:'c1',p:'Falling',r:R(30,36,84,28)},{id:'c2',p:'IsTrue',r:R(40,98,84,28)}],ents:[{n:'Snow',r:R(230,36,64,28)}],encs:[{r:R(24,78,130,62)}],lines:[],
+ arrows:[{from:'c1',role:'thing that falls',to:[230,50],lab:[172,42]},{from:'c2',role:'bearer',to:[330,112],lab:[250,104]}],
+ sym:'S := Falling(thing that falls: Snow) ∧ ¬IsTrue(bearer: S)',note:'Change the world below: the same drawing gives a red cycle with snow and a green answer without. The verdict depends on the world, which the formula alone does not show.'},
+{id:'king-a',title:'7A · The king of France is not bald: denying the whole',said:'N: “It is not the case that something is king of France and bald.”',vb:[0,0,660,150],
+ boxes:[{n:'N',r:R(10,10,640,130)}],caps:[{id:'c1',p:'KingOfFrance',r:R(44,62,120,28)},{id:'c2',p:'Bald',r:R(520,62,72,28)}],ents:[],encs:[{r:R(24,38,610,92)}],
+ lines:[{id:'x',pts:[[164,76],[520,76]],attach:[{cap:'c1',role:'thing that is king of France',lab:[262,66]},{cap:'c2',role:'bald thing',lab:[470,66]}]}],arrows:[],
+ sym:'N := ¬∃x (KingOfFrance(thing that is king of France: x) ∧ Bald(bald thing: x))',note:'The “not” enclosure contains the whole heavy line, so the denial covers “something is king of France and bald”. Compare 7B.'},
+{id:'king-b',title:'7B · The king of France is not bald: denying only baldness',said:'N: “Something is king of France and is not bald.”',vb:[0,0,660,140],
+ boxes:[{n:'N',r:R(10,10,640,120)}],caps:[{id:'c1',p:'KingOfFrance',r:R(30,62,120,28)},{id:'c2',p:'Bald',r:R(520,62,72,28)}],ents:[],encs:[{r:R(380,30,250,90)}],
+ lines:[{id:'x',pts:[[150,76],[520,76]],attach:[{cap:'c1',role:'thing that is king of France',lab:[262,66]},{cap:'c2',role:'bald thing',lab:[470,66]}]}],arrows:[],
+ sym:'N := ∃x (KingOfFrance(thing that is king of France: x) ∧ ¬Bald(bald thing: x))',note:'Here the heavy line starts outside the enclosure, so “something” is asserted, and only Bald is denied. The whole difference from 7A is where the enclosure sits relative to the line; symbolically, whether ¬ comes before or after ∃.'},
+{id:'soc-a',title:'8A · All men are mortal; Socrates is a man; so Socrates is mortal',said:'P1: “Every man is mortal.” P2: “Socrates is a man.” C (the conclusion): “Socrates is mortal.”',vb:[0,0,700,262],argument:{premises:['P1','P2'],conclusion:'C'},
+ boxes:[{n:'P1',r:R(10,10,560,130)},{n:'P2',r:R(10,160,330,90)},{n:'C',r:R(350,160,340,90)}],
+ caps:[{id:'c1',p:'Man',r:R(50,72,84,28)},{id:'c2',p:'Mortal',r:R(440,72,90,28)},{id:'c3',p:'Man',r:R(28,200,84,28)},{id:'c4',p:'Mortal',r:R(366,200,84,28)}],
+ ents:[{n:'Socrates',r:R(236,200,92,28)},{n:'Socrates',r:R(586,200,92,28)}],encs:[{r:R(24,40,530,92)},{r:R(320,50,224,74)}],
+ lines:[{id:'x',pts:[[134,86],[440,86]],attach:[{cap:'c1',role:'thing that is a man',lab:[227,76]},{cap:'c2',role:'mortal thing',lab:[385,112]}]}],
+ arrows:[{from:'c3',role:'thing that is a man',to:[236,214],lab:[174,206]},{from:'c4',role:'mortal thing',to:[586,214],lab:[518,206]}],
+ sym:'P1 := ¬∃x (Man(thing that is a man: x) ∧ ¬Mortal(mortal thing: x)); P2 := Man(thing that is a man: Socrates); C := Mortal(mortal thing: Socrates)',
+ note:'“Every man is mortal” is drawn Peirce’s way, as “nothing is a man without being mortal”: the heavy line starts inside one “not” and runs into a second. That reads as ∀x (Man(x) → Mortal(x)). The worlds below check validity: in every world where both premises are true, the conclusion is true too.'},
+{id:'soc-b',title:'8B · All men are mortal; Socrates is mortal; so Socrates is a man',said:'P1: “Every man is mortal.” P2: “Socrates is mortal.” C (the conclusion): “Socrates is a man.”',vb:[0,0,700,262],argument:{premises:['P1','P2'],conclusion:'C'},
+ boxes:[{n:'P1',r:R(10,10,560,130)},{n:'P2',r:R(10,160,330,90)},{n:'C',r:R(350,160,340,90)}],
+ caps:[{id:'c1',p:'Man',r:R(50,72,84,28)},{id:'c2',p:'Mortal',r:R(440,72,90,28)},{id:'c3',p:'Mortal',r:R(28,200,84,28)},{id:'c4',p:'Man',r:R(366,200,84,28)}],
+ ents:[{n:'Socrates',r:R(236,200,92,28)},{n:'Socrates',r:R(586,200,92,28)}],encs:[{r:R(24,40,530,92)},{r:R(320,50,224,74)}],
+ lines:[{id:'x',pts:[[134,86],[440,86]],attach:[{cap:'c1',role:'thing that is a man',lab:[227,76]},{cap:'c2',role:'mortal thing',lab:[385,112]}]}],
+ arrows:[{from:'c3',role:'mortal thing',to:[236,214],lab:[174,206]},{from:'c4',role:'thing that is a man',to:[586,214],lab:[518,206]}],
+ sym:'P1 := ¬∃x (Man(thing that is a man: x) ∧ ¬Mortal(mortal thing: x)); P2 := Mortal(mortal thing: Socrates); C := Man(thing that is a man: Socrates)',
+ note:'The same first premise, but the argument runs backwards: being mortal does not make Socrates a man. The worlds below find a counter-model: a world where both premises are true and the conclusion is false.'}
+
+];
+// ---------- world ----------
+const W={snow:true,king:false,bald:false,man:true,mortal:true};
+const WTXT={man:v=>v?'Socrates is a man':'Socrates is not a man',mortal:v=>v?'Socrates is mortal':'Socrates is not mortal',snow:v=>v?'Snow is falling':'Snow is not falling',king:v=>v?'There is a king of France':'There is no king of France',bald:v=>v?'He is bald':'He is not bald'};
+function world(ex){if(ex&&ex.argument)return {D:['soc'],ent:{Socrates:'soc'},holds:{Man:d=>d==='soc'&&W.man,Mortal:d=>d==='soc'&&W.mortal}};const king=ex&&ex.caps.some(c=>c.p==='KingOfFrance');const D=king?(W.king?['k']:[]):['snow'];return {D,ent:{Snow:'snow'},holds:{Falling:d=>d==='snow'&&W.snow,KingOfFrance:d=>d==='k',Bald:d=>d==='k'&&W.bald}};}
+// ---------- read back from geometry ----------
+const inside=(a,b)=>a.x>=b.x&&a.y>=b.y&&a.x+a.w<=b.x+b.w&&a.y+a.h<=b.y+b.h&&!(a.x===b.x&&a.y===b.y&&a.w===b.w&&a.h===b.h);
+const ptIn=(p,b)=>p[0]>b.x&&p[0]<b.x+b.w&&p[1]>b.y&&p[1]<b.y+b.h;
+const onEdge=(p,b)=>{const e=2.5;const inX=p[0]>=b.x-e&&p[0]<=b.x+b.w+e,inY=p[1]>=b.y-e&&p[1]<=b.y+b.h+e;return inX&&inY&&(Math.abs(p[0]-b.x)<=e||Math.abs(p[0]-b.x-b.w)<=e||Math.abs(p[1]-b.y)<=e||Math.abs(p[1]-b.y-b.h)<=e);};
+function readBack(ex){
+ const regions=[...ex.boxes.map(b=>({kind:'box',n:b.n,r:b.r})),...ex.encs.map((e,i)=>({kind:'enc',i,r:e.r}))];
+ const area=r=>r.w*r.h;
+ const parentOf=r=>regions.filter(g=>inside(r,g.r)).sort((a,b)=>area(a.r)-area(b.r))[0];
+ const regionAt=p=>regions.filter(g=>ptIn(p,g.r)).sort((a,b)=>area(a.r)-area(b.r))[0];
+ const depth=g=>regions.filter(h=>inside(g.r,h.r)).length;
+ regions.forEach(g=>g.parent=parentOf(g.r));
+ ex.caps.forEach(c=>c.parent=parentOf(c.r));
+ ex.lines.forEach(l=>{const rs=l.pts.map(regionAt);l.scope=rs.sort((a,b)=>depth(a)-depth(b))[0];});
+ const term=(a)=>{const ent=ex.ents.find(e=>onEdge(a.to,e.r)||ptIn(a.to,e.r));if(ent)return {kind:'entity',name:ent.n};
+  const bx=ex.boxes.filter(b=>onEdge(a.to,b.r)).sort((p,q)=>area(p.r)-area(q.r))[0];if(bx)return {kind:'sentence',name:bx.n};return {kind:'?',name:'?'};};
+ const atom=c=>{const args=[];const _cid=c.id;ex.arrows.filter(a=>a.from===c.id).forEach(a=>args.push([a.role,term(a)]));ex.lines.forEach(l=>l.attach.filter(t=>t.cap===c.id).forEach(t=>args.push([t.role,{kind:'var',name:l.id}])));return {t:'atom',p:c.p,args,cid:_cid};};
+ const readArea=g=>{const parts=[];
+  ex.caps.filter(c=>c.parent===g).forEach(c=>parts.push({y:c.r.y+c.r.h/2,x:c.r.x,f:atom(c)}));
+  regions.filter(h=>h.kind==='enc'&&h.parent===g).forEach(h=>parts.push({y:h.r.y+h.r.h/2,x:h.r.x,f:{t:'not',a:readArea(h)}}));
+  parts.sort((a,b)=>Math.abs(a.y-b.y)<30?a.x-b.x:a.y-b.y);
+  let f=parts.length===0?{t:'top'}:parts.length===1?parts[0].f:{t:'and',xs:parts.map(p=>p.f)};
+  ex.lines.filter(l=>l.scope===g).forEach(l=>{f={t:'ex',v:l.id,a:f};});
+  return f;};
+ const defs={};regions.filter(g=>g.kind==='box').forEach(g=>defs[g.n]=readArea(g));
+ const info={};ex.caps.forEach(c=>{const box=ex.boxes.filter(b=>inside(c.r,b.r)).sort((a,b)=>area(a.r)-area(b.r))[0];
+  const negs=ex.encs.filter(e=>inside(c.r,e.r)&&inside(e.r,box.r)).length;info[c.id]={atom:atom(c),negs,sent:box.n};});
+ defs.__info=info;return defs;
+}
+function show(f,top){switch(f.t){
+ case 'top':return '⊤';
+ case 'atom':return f.p+'('+f.args.map(([r,t])=>r+': '+t.name).join(', ')+')';
+ case 'not':return '¬'+(f.a.t==='and'?'('+show(f.a)+')':show(f.a));
+ case 'and':return f.xs.map(x=>show(x)).join(' ∧ ');
+ case 'ex':return '∃'+f.v+' ('+show(f.a)+')';}}
+const norm=s=>s.replace(/\s+/g,' ').trim();
+// ---------- evaluate, revise, verdicts ----------
+function ev(f,st,M,env){switch(f.t){
+ case 'top':return true;
+ case 'not':return !ev(f.a,st,M,env);
+ case 'and':return f.xs.every(x=>ev(x,st,M,env));
+ case 'ex':return M.D.some(d=>ev(f.a,st,M,{...env,[f.v]:d}));
+ case 'atom':{if(f.p==='IsTrue')return st[f.args[0][1].name];const t=f.args[0][1];const d=t.kind==='var'?env[t.name]:M.ent[t.name];return d!==undefined&&M.holds[f.p](d);}}}
+function refs(f,out=new Set()){if(f.t==='atom'&&f.p==='IsTrue')out.add(f.args[0][1].name);else if(f.a)refs(f.a,out);else if(f.xs)f.xs.forEach(x=>refs(x,out));return out;}
+function verdicts(defs,M){const names=Object.keys(defs);const R={};names.forEach(n=>R[n]=refs(defs[n]));
+ const reach=n=>{const seen=new Set([n]),q=[n];while(q.length){const m=q.pop();R[m].forEach(k=>{if(!seen.has(k)){seen.add(k);q.push(k);}});}return [...seen];};
+ const onCycle=n=>{const seen=new Set(),q=[...R[n]];while(q.length){const m=q.pop();if(m===n)return true;if(seen.has(m))continue;seen.add(m);R[m].forEach(k=>q.push(k));}return false;};
+ const out={};names.forEach(n=>{const sub=reach(n);const fps=[];
+  for(let m=0;m<(1<<sub.length);m++){const st={};sub.forEach((s,k)=>st[s]=!!(m>>k&1));if(sub.every(s=>ev(defs[s],st,M,{})===st[s]))fps.push(st);}
+  if(!fps.length)out[n]=onCycle(n)?'paradox':'inherits a paradox';else{const vs=new Set(fps.map(s=>s[n]));out[n]=vs.size===2?'either':vs.has(true)?'true':'false';}});
+ return out;}
+// ---------- drawing ----------
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function drawContent(ex,sel,info,M,V,IMP,ANIM,GAPS){
+ const [vx,vy,vw0,vh0]=ex.vb;const vw=IMP?Math.max(vw0,IMP.lay.width-vx):vw0,vh=IMP?IMP.lay.height:vh0;let s=`<svg viewBox="${vx} ${vy} ${vw} ${vh}" style="max-width:${Math.round(vw*1.35)}px" role="img" aria-label="Drawing of ${esc(ex.sym)}"><defs><marker id="ma-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker><marker id="mr-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ref)"/></marker>${['bad','ok','faint','solid','blocked'].map(c=>`<marker id="mi-${c}-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-${c}"/></marker>`).join('')}</defs>`;
+ ex.boxes.forEach(b=>{const v=sel?sel.st[b.n]:undefined;const chg=sel&&sel.next[b.n]!==v;s+=`<rect class="bx${v===undefined?'':v?' T':' F'}${chg?' chg':''}${GAPS&&GAPS.includes(b.n)?' gapbox':''}" x="${b.r.x}" y="${b.r.y}" width="${b.r.w}" height="${b.r.h}" rx="4"/><text class="tag" x="${b.r.x+12}" y="${b.r.y+22}">${b.n}</text>`+(TYPES?`<text class="ptype" x="${b.r.x+20+b.n.length*9}" y="${b.r.y+21}">sentence</text>`:'');
+  if(V&&V[b.n]){const lab=V[b.n]+(usesWorld(ex)?' in this world':'');const bad=lab.startsWith('paradox')||lab.startsWith('inherits')||lab.startsWith('neither')||lab.startsWith('gap');const pend=lab.startsWith('not yet');const bw=lab.length*6.7+20;const bx=b.r.x+b.r.w-10-bw,by=b.r.y-10;s+=`<g><title>Verdict for ${b.n}: ${lab}${usesWorld(ex)?', in this world':''}.</title><rect class="badge ${pend?'bpend':bad?'bbad':'bgood'}" x="${bx}" y="${by}" width="${bw}" height="20" rx="10"/><text class="badget" x="${bx+bw/2}" y="${by+14}" text-anchor="middle">${lab}</text></g>`;}});
+ ex.encs.forEach(e=>{s+=`<rect class="enc" x="${e.r.x}" y="${e.r.y}" width="${e.r.w}" height="${e.r.h}" rx="16"/><text class="enct" x="${e.r.x+12}" y="${e.r.y+16}">not</text>`+(TYPES?`<text class="ptype" x="${e.r.x+36}" y="${e.r.y+16}">operator</text>`:'');});
+ ex.lines.forEach(l=>{s+=`<polyline class="loi" points="${l.pts.map(p=>p.join(',')).join(' ')}"/>`;l.attach.forEach(a=>{s+=`<text class="role" x="${a.lab[0]}" y="${a.lab[1]}" text-anchor="middle">${TYPES?'role: ':''}${a.role}</text>`;});if(TYPES)s+=`<text class="ptype" x="${l.pts[0][0]+10}" y="${l.pts[0][1]+17}">quantifier: there is ${l.id}</text>`;});
+ ex.caps.forEach(c=>{const at=info[c.id].atom;const hasVar=at.args.some(([,t])=>t.kind==='var');const cv=sel&&!hasVar?ev(at,sel.st,M,{}):undefined;s+=`<rect class="cap${cv===undefined?'':cv?' vT':' vF'}" x="${c.r.x}" y="${c.r.y}" width="${c.r.w}" height="${c.r.h}" rx="${c.r.h/2}"/><text class="capt" x="${c.r.x+c.r.w/2}" y="${c.r.y+c.r.h/2+5}" text-anchor="middle">${c.p}</text>`+(TYPES?`<text class="ptype" x="${c.r.x+c.r.w/2}" y="${c.r.y+c.r.h+11}" text-anchor="middle">predicate</text>`:'');});
+ ex.ents.forEach(e=>{s+=`<rect class="ent" x="${e.r.x}" y="${e.r.y}" width="${e.r.w}" height="${e.r.h}" rx="8"/><text x="${e.r.x+e.r.w/2}" y="${e.r.y+e.r.h/2+5}" text-anchor="middle">${e.n}</text>`+(TYPES?`<text class="ptype" x="${e.r.x+e.r.w/2}" y="${e.r.y+e.r.h+11}" text-anchor="middle">thing</text>`:'');});
+ const RS=refStructure(ex,info);const toks=[];ex.arrows.forEach((a,ai)=>{const c=ex.caps.find(k=>k.id===a.from);const toBox=ex.boxes.some(b=>onEdge(a.to,b.r))&&!ex.ents.some(e=>onEdge(a.to,e.r));
+  const fx=a.to[0]>c.r.x?c.r.x+c.r.w:c.r.x,fy=c.r.y+c.r.h/2;const d=fy===a.to[1]?`M${fx} ${fy}H${a.to[0]}`:`M${fx} ${fy}H${(fx+a.to[0])/2}V${a.to[1]}H${a.to[0]}`;
+  const tgt=toBox?ex.boxes.filter(b=>onEdge(a.to,b.r)).sort((p,q)=>p.r.w*p.r.h-q.r.w*q.r.h)[0].n:'';const sg=toBox?RS.sign[ai]:null,lp=toBox&&RS.onLoop.has(ai);if(ANIM&&toBox)toks.push(d);s+=`<g><title>${toBox?'Role '+a.role+', filled by sentence '+tgt+'. A '+(sg==='−'?'negative':'positive')+' reference (it sits inside '+(sg==='−'?'an odd':'an even')+' number of “not”s)'+(lp?', and part of a reference loop':''):'Role '+a.role}</title><path class="${toBox?'refa':'arr'}${lp?' onloop':''}" d="${d}" marker-end="url(#${toBox?'mr':'ma'}-${ex.id})"/><text class="role" x="${a.lab[0]}" y="${a.lab[1]}" text-anchor="middle">${TYPES?'role: ':''}${a.role}</text>${sg==='−'&&lp?`<circle class="sgn ${sg==='−'?'neg':'pos'}" cx="${fx+(a.to[0]>fx?14:-14)}" cy="${fy}" r="8"/><text class="sgnt" x="${fx+(a.to[0]>fx?14:-14)}" y="${fy+4}" text-anchor="middle">${sg}</text>`:''}</g>`;});
+ toks.forEach(d=>{s+=`<circle class="tok" r="6"><animateMotion dur="0.8s" fill="freeze" path="${d}"/></circle>`;});
+ if(IMP)s+=drawImp(ex,IMP.imp,IMP.A,IMP.lay,IMP.forced,IMP.TV);
+ return s+'</svg>';}
+function drawStates(ex,defs,M,selKey){
+ const names=Object.keys(defs);const n=names.length;const states=[];
+ for(let m=0;m<(1<<n);m++){const a={};names.forEach((s,k)=>a[s]=!(m>>(n-1-k)&1));states.push(a);}
+ const key=a=>names.map(s=>a[s]?1:0).join('');const next=a=>{const b={};names.forEach(s=>b[s]=ev(defs[s],a,M,{}));return b;};
+ const idx={};states.forEach((a,i)=>idx[key(a)]=i);const to=states.map(a=>idx[key(next(a))]);
+ const onCyc=states.map((_,i)=>{let j=to[i];for(let k=0;k<states.length;k++){if(j===i)return to[i]!==i;j=to[j];}return false;});
+ const BW=n===1?104:120,BH=n===1?40:n===2?50:66;const P=n===1?[[30,54],[226,54]]:n===2?[[22,30],[222,30],[22,150],[222,150]]:states.map((_,i)=>[22+(i%4)*170,30+Math.floor(i/4)*130]);const width=n===1?360:n===2?372:22+4*170,H=n===1?130:n===2?226:30+Math.ceil(states.length/4)*130;
+ let s=`<svg viewBox="0 0 ${width} ${H}" role="img" aria-label="Where each state leads"><defs><marker id="m-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker><marker id="mc-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--cyc)"/></marker><marker id="mf-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--fix)"/></marker></defs>`;
+ const C=i=>[P[i][0]+BW/2,P[i][1]+BH/2];const clip=(cx,cy,tx,ty,pad)=>{const dx=tx-cx,dy=ty-cy;const k=Math.min((BW/2+pad)/Math.abs(dx||1e-9),(BH/2+pad)/Math.abs(dy||1e-9));return [cx+dx*k,cy+dy*k];};
+ states.forEach((a,i)=>{const j=to[i];if(i===j){const [x,y]=[P[i][0]+BW-26,P[i][1]];s+=`<path d="M${x} ${y}C${x+6} ${y-40} ${x+44} ${y-30} ${x+28} ${y+1}" fill="none" stroke="var(--fix)" stroke-width="1.8" marker-end="url(#mf-${ex.id})"/>`;return;}
+  const [cx,cy]=C(i),[tx,ty]=C(j);const both=to[j]===i;let ox=0,oy=0;if(both){const dx=tx-cx,dy=ty-cy,L=Math.hypot(dx,dy);ox=-dy/L*7;oy=dx/L*7;}
+  const [x1,y1]=clip(cx+ox,cy+oy,tx+ox,ty+oy,2),[x2,y2]=clip(tx+ox,ty+oy,cx+ox,cy+oy,4);const cy2=onCyc[i];
+  s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${cy2?'var(--cyc)':'var(--line)'}" stroke-width="${cy2?2:1.5}" marker-end="url(#${cy2?'mc':'m'}-${ex.id})"/>`;});
+ states.forEach((a,i)=>{const [x,y]=P[i];const f=to[i]===i;const k=key(a);const lines=names.map(nm=>nm+' '+(a[nm]?'true':'false'));
+  s+=`<g class="st${k===selKey?' sel':''}" data-k="${k}" tabindex="0" role="button" aria-label="State ${lines.join(', ')}. Show it on the drawing."><title>${lines.join(', ')}. ${f?'Fixed point.':'Leads to '+names.map(nm=>nm+' '+(states[to[i]][nm]?'true':'false')).join(', ')+'.'} Click to show it on the drawing.</title><rect x="${x}" y="${y}" width="${BW}" height="${BH}" rx="7" fill="${f?'var(--fixbg)':'var(--node)'}" stroke="${f?'var(--fix)':'var(--line)'}" stroke-width="${f?1.6:1}"/>`+lines.map((l,q)=>`<text x="${x+BW/2}" y="${y+BH/2+5+(q-(lines.length-1)/2)*17}" text-anchor="middle" font-size="14.5">${l}</text>`).join('')+'</g>';});
+ return {svg:s+'</svg>',states,next,key};}
+function explain(ex,defs,info,sel,M){
+ const tv=v=>v?'true':'false';
+ const rows=Object.keys(defs).map(n=>{const now=sel.st[n],nxt=sel.next[n];
+  const caps=ex.caps.filter(c=>info[c.id].sent===n);
+  const parts=caps.map(c=>{const i=info[c.id];const hasVar=i.atom.args.some(([,t])=>t.kind==='var');
+   const where=i.negs===0?'':i.negs===1?', inside a “not”':', inside '+i.negs+' “not”s';
+   const fits=hasVar?M.D.filter(d=>ev(i.atom,sel.st,M,{x:d})).map(d=>d==='k'?'the king':'Snow'):[];return hasVar?`${show(i.atom)} is true of ${fits.length?fits.join(' and '):'nothing in this world'}${where}`:`${show(i.atom)} is ${tv(ev(i.atom,sel.st,M,{}))}${where}`;});
+  const why=parts.length?' Its '+(parts.length>1?'claims':'claim')+': '+parts.join('; ')+'.':'';
+  const lead=`<b>${n}</b> is ${tv(now)} in this state.${why} So its content is ${tv(nxt)}, `;
+  return `<p>${lead}${now===nxt?`which agrees: ${n} stays ${tv(now)}.`:`which disagrees: the next step makes ${n} ${tv(nxt)}.`}</p>`;}).join('');
+ return `<div class="explain">${rows}</div>`;}
+
+
+
+// ---------- reference structure: signs and loops (Beringer and Schindler's signed reference graphs; Walicki's odd cycles) ----------
+function refStructure(ex,info){
+ const edges=[];ex.arrows.forEach((a,ai)=>{const tgt=ex.boxes.filter(b=>onEdge(a.to,b.r)&&!ex.ents.some(e=>onEdge(a.to,e.r))).sort((p,q)=>p.r.w*p.r.h-q.r.w*q.r.h)[0];
+  if(!tgt)return;const i=info[a.from];edges.push({ai,from:i.sent,to:tgt.n,neg:i.negs%2===1});});
+ const cycles=[];const names=ex.boxes.map(b=>b.n);
+ names.forEach(st=>{const dfs=(n,path,used)=>{edges.forEach((e,k)=>{if(e.from!==n||used.has(k))return;if(e.to===st){const cyc=[...used,k];if(Math.min(...cyc.map(c=>names.indexOf(edges[c].from)))===names.indexOf(st))cycles.push(cyc);return;}
+   if(path.includes(e.to))return;dfs(e.to,[...path,e.to],new Set([...used,k]));});};dfs(st,[st],new Set());});
+ const uniq=[];const seen=new Set();cycles.forEach(c=>{const k=[...c].sort().join(',');if(!seen.has(k)){seen.add(k);uniq.push(c);}});
+ const onLoop=new Set();uniq.forEach(c=>c.forEach(k=>onLoop.add(edges[k].ai)));
+ return {edges,cycles:uniq.map(c=>({path:c.map(k=>edges[k].from).concat([edges[c[0]].from]),negs:c.filter(k=>edges[k].neg).length})),onLoop,sign:Object.fromEntries(edges.map(e=>[e.ai,e.neg?'−':'+']))};}
+function loopText(RS){if(!RS.cycles.length)return 'Reference loops: none. Nothing here refers back, directly or indirectly, to itself.';
+ return 'Reference loops: '+RS.cycles.map(c=>`${c.path.join(' → ')}, with ${c.negs===0?'no “not”':c.negs===1?'one “not”':c.negs+' “not”s'}: ${c.negs%2?'odd, the liar’s pattern':'even'}`).join('; ')+'. An odd loop makes a paradox possible, not certain (Rabern, Rabern and Macauley call such graphs “dangerous”); whether one occurs depends on the rest of the drawing and on the theory of truth in force.';}
+// ---------- theories of truth: Kripke (strong Kleene least fixed point) and Gaifman (pointer semantics) ----------
+function ev3(f,vals,M,env,note){switch(f.t){
+ case 'top':return 'T';
+ case 'not':{const v=ev3(f.a,vals,M,env,note);return v==='T'?'F':v==='F'?'T':'U';}
+ case 'and':{const vs=f.xs.map(x=>ev3(x,vals,M,env,note));return vs.includes('F')?'F':vs.every(v=>v==='T')?'T':'U';}
+ case 'ex':{const vs=M.D.map(d=>ev3(f.a,vals,M,{...env,[f.v]:d},note));return vs.includes('T')?'T':vs.every(v=>v==='F')?'F':'U';}
+ case 'atom':{if(f.p==='IsTrue'){const v=vals[f.args[0][1].name];if(v==='GAP'){if(note)note.jump=true;return 'F';}return v==='T'||v==='F'?v:'U';}
+  const t=f.args[0][1];const d=t.kind==='var'?env[t.name]:M.ent[t.name];if(d!==undefined&&M.unk&&M.unk[f.p]&&M.unk[f.p](d))return 'U';return d!==undefined&&M.holds[f.p](d)?'T':'F';}}}
+function kripke(defs,M){const names=Object.keys(defs);const val={},why={},stage={};names.forEach(n=>val[n]='U');
+ for(let k=1;k<=names.length+2;k++){const nv={};names.forEach(n=>nv[n]=ev3(defs[n],val,M,{}));let ch=false;names.forEach(n=>{if(val[n]==='U'&&nv[n]!=='U'){val[n]=nv[n];why[n]='grounded at stage '+k;stage[n]=k;ch=true;}});if(!ch)break;}
+ names.forEach(n=>{if(val[n]==='U')why[n]='never grounded';});return {val,why,stage};}
+function gaifman(defs,M){const names=Object.keys(defs);const val={},why={},events=[];const R={};names.forEach(n=>R[n]=refs(defs[n]));
+ for(let guard=0;guard<50;guard++){let prog=false;
+  names.forEach(n=>{if(val[n]!==undefined)return;const note={};const cur=Object.fromEntries(names.map(m=>[m,val[m]===undefined?'U':val[m]]));const v=ev3(defs[n],cur,M,{},note);if(v!=='U'){val[n]=v;why[n]=note.jump?'jump rule: it refers to a gap':'standard rules';events.push({names:[n],rule:why[n],val:v});prog=true;}});
+  if(prog)continue;const und=names.filter(n=>val[n]===undefined);if(!und.length)break;
+  const reach=n=>{const seen=new Set(),q=[...R[n]].filter(m=>und.includes(m));while(q.length){const m=q.pop();if(seen.has(m))continue;seen.add(m);R[m].forEach(k=>{if(und.includes(k))q.push(k);});}return seen;};
+  const closed=und.filter(n=>{const r=reach(n);return r.has(n)&&[...r].every(m=>reach(m).has(n));});
+  if(closed.length){closed.forEach(n=>{val[n]='GAP';why[n]='closed loop rule';});events.push({names:closed,rule:'closed loop rule',val:'GAP'});continue;}
+  und.forEach(n=>{val[n]='GAP';why[n]='give-up rule';});events.push({names:und,rule:'give-up rule',val:'GAP'});}
+ return {val,why,events};}
+const THEORIES={classical:'Classical: two values; consistent answers are fixed points.',kripke:'Kripke (1975): values built up in stages from the facts (strong Kleene, least fixed point); a sentence never grounded has no value.',gaifman:'Gaifman (1992): pointer semantics; a closed loop gets a gap, and a sentence outside it that calls a gap “not true” is true (jump rule).'};
+function theoryVerdicts(defs,M){if(THEORY==='kripke')return kripke(defs,M);if(THEORY==='gaifman')return gaifman(defs,M);return null;}
+const vword=v=>v==='T'?'true':v==='F'?'false':v==='GAP'?'gap':'neither';
+function drawTV(ex,imp,lay,TV){let s='';
+ Object.values(imp.ports).forEach(p=>{const [x,y]=lay.pos[p.id];const r=p.kind==='sent'?11:10;
+  if(p.kind==='fact'){const ruled=p.closed;s+=`<g class="port fact ${p.v}${ruled?' ruled':''}"><title>${factText(p)} ${p.v==='T'?'holds':'does not hold'}.${p.closed?' Closed: the world rules this out.':' Open: this is how the world is.'}</title><circle cx="${x}" cy="${y}" r="${r}"/>${ruled?`<path class="slash" d="M${x-r+3} ${y+r-3}L${x+r-3} ${y-r+3}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${p.v}</text></g>`;return;}
+  const v=TV.val[p.sent];const has=v===p.v;s+=`<g class="port sent ${p.v} tv${has?' has':' not'}"><title>${p.sent}: ${vword(v)} under this theory (${TV.why[p.sent]}).</title><circle cx="${x}" cy="${y}" r="${r}"/><text x="${x}" y="${y+4}" text-anchor="middle">${p.v}</text></g>`;});
+ ex.boxes.forEach(b=>{const [x,y]=lay.pos[b.n+'.F'];const v=TV.val[b.n];s+=`<text class="tvnote" x="${x-36-11}" y="${y+28}">${v==='T'||v==='F'?'':'no value: '}${esc(TV.why[b.n])}</text>`;});
+ return s;}
+// ---------- motion: step-by-step runs, one per theory (learner-controlled) ----------
+function classicalRun(defs,M){const names=Object.keys(defs);let st={};names.forEach(n=>st[n]=true);const seq=[st];const key=s=>names.map(n=>s[n]?1:0).join('');
+ for(let i=0;i<16;i++){const nx={};names.forEach(n=>nx[n]=ev(defs[n],st,M,{}));seq.push(nx);const k=key(nx);const j=seq.slice(0,-1).findIndex(s=>key(s)===k);st=nx;if(j>=0)return {seq,repeatAt:j};}
+ return {seq,repeatAt:-1};}
+function stateAt(run,k){if(k<run.seq.length)return run.seq[k];if(run.repeatAt<0)return run.seq[run.seq.length-1];const len=run.seq.length-1-run.repeatAt;return run.seq[run.repeatAt+((k-run.repeatAt)%len)];}
+function motionPanel(ex,defs,M,run,k){const names=Object.keys(defs);const tv=b=>b?'true':'false';
+ if(THEORY==='classical'){const kk=k;const st=stateAt(run,kk);
+  let msg=kk===0?`Start: suppose every sentence is true (${names.map(n=>n+' '+tv(st[n])).join(', ')}). Press Step: each sentence then takes the value its content has right now.`:
+   `Pass ${kk}: ${names.map(n=>n+' is now '+tv(st[n])).join(', ')}.`;
+  if(kk>0){const prev=stateAt(run,kk-1);const same=names.every(n=>prev[n]===st[n]);
+   if(same)msg+=' Nothing changed: the sentences agree with themselves. This is a consistent answer, and it stays.';
+   else{const j=[...Array(kk).keys()].find(i=>names.every(n=>stateAt(run,i)[n]===st[n]));if(j!==undefined)msg+=` Same as ${j===0?'the start':'pass '+j}${kk>run.seq.length-1?' again':''}: it goes round the same loop of passes, and will forever. It never settles, so there is no consistent answer.`;}}
+  const strip=names.map(n=>`<div class="mrow"><span>${n}</span>${[...Array(kk+1).keys()].slice(-24).map(i=>stateAt(run,i)).map(s=>`<span class="chip ${s[n]?'cT':'cF'}">${s[n]?'T':'F'}</span>`).join('')}</div>`).join('');
+  return `<p>${msg}</p><div class="mstrip">${strip}</div>`;}
+ if(THEORY==='kripke'){const r=kripke(defs,M);const max=Math.max(0,...Object.values(r.stage||{}));
+  if(k===0)return `<p>Stage 0: nothing has a value yet. Press Step: at each stage, every sentence whose content can now be settled from the facts and from values already found gets its value.</p>`;
+  const got=names.filter(n=>r.stage[n]===k);const left=names.filter(n=>!r.stage[n]||r.stage[n]>k);
+  if(k>max)return `<p>Stage ${k}: nothing new can be settled, so the construction is complete. ${left.length?left.join(' and ')+(left.length>1?' were':' was')+' never reached, so '+(left.length>1?'they have':'it has')+' no value: the loop never gets started from the facts.':'Every sentence has a value.'}</p>`;
+  return `<p>Stage ${k}: ${got.map(n=>n+' becomes '+vword(r.val[n])).join(', ')}.</p>`;}
+ const g=gaifman(defs,M);const ev=g.events||[];
+ if(k===0)return `<p>Nothing evaluated yet. Press Step: Gaifman's rules are applied in order.</p>`;
+ if(k>ev.length)return `<p>All sentences evaluated.</p>`;
+ const e=ev[k-1];const who=e.names.join(' and ');
+ if(e.rule==='closed loop rule')return `<p>Closed loop: ${who} only ${e.names.length>1?'call each other':'calls itself'}, and nothing outside can give ${e.names.length>1?'them':'it'} a value. ${e.names.length>1?'They get':'It gets'} a gap.</p>`;
+ if(e.rule.startsWith('jump'))return `<p>Jump rule: ${who} ${e.names.length>1?'say':'says'} that a gap is not true, which is correct, so ${e.names.length>1?'they are':'it is'} ${vword(e.val)}.</p>`;
+ return `<p>Standard rules: ${who} ${e.names.length>1?'are':'is'} ${vword(e.val)}, settled directly from the facts and values already found.</p>`;}
+function partialTV(defs,M,k){if(THEORY==='kripke'){const r=kripke(defs,M);const val={},why={};Object.keys(defs).forEach(n=>{if(r.stage[n]&&r.stage[n]<=k){val[n]=r.val[n];why[n]=r.why[n];}else{val[n]='U';why[n]=k>Math.max(0,...Object.values(r.stage))?'never grounded':'not yet';}});return {val,why};}
+ const g=gaifman(defs,M);const val={},why={};Object.keys(defs).forEach(n=>{val[n]='U';why[n]='not yet evaluated';});(g.events||[]).slice(0,k).forEach(e=>e.names.forEach(n=>{val[n]=e.val;why[n]=e.rule;}));return {val,why,loop:k>0&&g.events[k-1]&&g.events[k-1].rule==='closed loop rule'?g.events[k-1].names:[]};}
+// ---------- model theory track: worlds side by side (Euler diagrams of each structure) ----------
+function validityPanel(ex,defs){const arg=ex.argument;const rows=[];
+ [[true,true],[true,false],[false,true],[false,false]].forEach(([man,mortal])=>{const M={D:['soc'],ent:{Socrates:'soc'},holds:{Man:d=>d==='soc'&&man,Mortal:d=>d==='soc'&&mortal}};
+  const val=Object.fromEntries(Object.keys(defs).map(n=>[n,ev(defs[n],{},M,{})]));const prem=arg.premises.every(p=>val[p]);const counter=prem&&!val[arg.conclusion];rows.push({man,mortal,val,prem,counter});});
+ const counter=rows.find(r=>r.counter);
+ const pic=r=>{const sx=r.man&&r.mortal?100:r.man?60:r.mortal?140:100,sy=r.man||r.mortal?62:104;
+  return `<svg viewBox="0 0 200 124" role="img" aria-label="World: Socrates is ${r.man?'':'not '}a man and ${r.mortal?'':'not '}mortal"><rect x="2" y="2" width="196" height="120" rx="8" class="wbg${r.counter?' wcounter':r.prem?' wprem':''}"/><circle cx="76" cy="64" r="38" class="eul"/><circle cx="124" cy="64" r="38" class="eul"/><text class="eult" x="46" y="18" text-anchor="middle">Man</text><text class="eult" x="154" y="18" text-anchor="middle">Mortal</text><circle cx="${sx}" cy="${sy}" r="5" class="sdot"/><text class="sname" x="${r.man||r.mortal?sx:sx+34}" y="${r.man||r.mortal?sy+18:sy+4}" text-anchor="middle">Socrates</text></svg>`;};
+ const chips=r=>Object.keys(defs).map(n=>`<span class="chip ${r.val[n]?'cT':'cF'}" title="${n} is ${r.val[n]?'true':'false'} in this world">${n} ${r.val[n]?'T':'F'}</span>`).join(' ');
+ return `<div class="valid"><h3>Is the argument valid? Every possible world, side by side</h3><p class="hint">Each picture is one world (a structure): the circles are the things each predicate holds of. Worlds where both premises are true have a green border; a counter-model, where the premises are true and the conclusion false, has a red one. For this argument, worlds containing only Socrates are enough: extra things can only make the first premise false, never help a counter-model.</p><div class="wgrid">${rows.map(r=>`<div class="wcell">${pic(r)}<div class="wchips">${chips(r)}</div><div class="wcap">${r.counter?'Counter-model':r.prem?'Premises true: conclusion '+(r.val[arg.conclusion]?'true':'false'):'A premise is false'}</div></div>`).join('')}</div><p class="vline">${counter?`<b style="color:var(--bad)">Invalid.</b> There is a world where both premises are true and the conclusion is false: one where Socrates is ${counter.mortal?'mortal':'not mortal'} but ${counter.man?'is':'is not'} a man.`:`<b style="color:var(--ok)">Valid.</b> In every world where both premises are true, the conclusion is true too. No counter-model exists.`}</p></div>`;}
+// ---------- implication graph: true/false ports, junctions, arrows, generated from the logic ----------
+function buildImp(defs,M){
+ const ports={},junc=[],edges=[];let jn=0;
+ const port=(id,info)=>{if(!ports[id])ports[id]={id,...info};return id;};
+ const sentPort=(X,v)=>port(X+'.'+v,{kind:'sent',sent:X,v});
+ function factPort(a,env,v){const t=a.args[0][1];const d=t.kind==='var'?env[t.name]:null;const base=a.p+'('+(d||M.ent[t.name]||t.name)+')';
+  return port(base+'.'+v,{kind:'fact',cid:a.cid,d,atom:a,env:{...env},v,base});}
+ function mk(kind,branches){
+  if(kind==='both'){const bs=branches.filter(b=>b!==null);if(!bs.length)return null;if(bs.length===1)return bs[0];const id='j'+(jn++);junc.push({id,kind,branches:bs});bs.forEach(b=>edges.push({from:id,to:b}));return id;}
+  if(branches.some(b=>b===null))return null;if(branches.length===1)return branches[0];const id='j'+(jn++);junc.push({id,kind,branches});branches.forEach(b=>edges.push({from:id,to:b}));return id;}
+ function need(f,val,env){switch(f.t){
+  case 'top':return val?null:mk('oneof',[]);
+  case 'atom':return f.p==='IsTrue'?sentPort(f.args[0][1].name,val?'T':'F'):factPort(f,env,val?'T':'F');
+  case 'not':return need(f.a,!val,env);
+  case 'and':return mk(val?'both':'oneof',f.xs.map(x=>need(x,val,env)));
+  case 'ex':return mk(val?'oneof':'both',M.D.map(d=>need(f.a,val,{...env,[f.v]:d})));}}
+ Object.keys(defs).forEach(X=>{sentPort(X,'T');sentPort(X,'F');
+  const t=need(defs[X],true,{}),f=need(defs[X],false,{});if(t!==null)edges.push({from:X+'.T',to:t});if(f!==null)edges.push({from:X+'.F',to:f});});
+ Object.values(ports).forEach(p=>{if(p.kind==='fact'){const holds=ev(p.atom,{},M,p.env);p.closed=(p.v==='T')!==holds;}});
+ return {ports,junc,edges};}
+function impAnalyse(imp,defs){
+ const J=Object.fromEntries(imp.junc.map(j=>[j.id,j]));
+ const outs=n=>imp.edges.map((e,i)=>[e,i]).filter(([e])=>e.from===n);
+ const isPort=n=>!!imp.ports[n];const closed=n=>isPort(n)&&imp.ports[n].closed;
+ const opp=n=>n.slice(0,-1)+(n.endsWith('T')?'F':'T');
+ const openFact=n=>isPort(n)&&imp.ports[n].kind==='fact'&&!imp.ports[n].closed;
+ function prop(p,seed){const F=new Set(seed||[p]),used=new Set(),q=[...F];let bad=false;
+  while(q.length){const n=q.shift();if(closed(n)){bad=true;continue;}if(isPort(n)&&F.has(opp(n)))bad=true;
+   const j=J[n];
+   if(j&&j.kind==='oneof'){const os=outs(n);os.forEach(([e,i])=>used.add(i));
+    if(os.some(([e])=>F.has(e.to)||openFact(e.to)))continue;
+    let open=os.filter(([e])=>!closed(e.to)&&!(isPort(e.to)&&F.has(opp(e.to))));
+    if(open.length>1)open=open.filter(([e])=>!prop(p,[...F,e.to]).bad);
+    if(!open.length){bad=true;continue;}if(open.length===1){const t=open[0][0].to;if(!F.has(t)){F.add(t);q.push(t);}}continue;}
+   outs(n).forEach(([e,i])=>{used.add(i);if(!F.has(e.to)){F.add(e.to);q.push(e.to);}});}
+  return {F,used,bad};}
+ const sents=Object.keys(defs);const P={};sents.forEach(X=>{P[X+'.T']=prop(X+'.T');P[X+'.F']=prop(X+'.F');});
+ const R={};sents.forEach(n=>R[n]=refs(defs[n]));
+ const onCycle=n=>{const seen=new Set(),q=[...R[n]];while(q.length){const m=q.pop();if(m===n)return true;if(seen.has(m))continue;seen.add(m);R[m].forEach(k=>q.push(k));}return false;};
+ const verdict={};sents.forEach(X=>{const rT=P[X+'.T'].bad,rF=P[X+'.F'].bad;verdict[X]=rT&&rF?(onCycle(X)?'paradox':'inherits a paradox'):rT?'false':rF?'true':'either';});
+ // loops: strongly connected parts of the effective graph
+ const eff=n=>{const os=outs(n);const j=J[n];if(!j||j.kind!=='oneof')return os;if(os.some(([e])=>openFact(e.to)))return [];const o=os.filter(([e])=>!closed(e.to));return o.length===1?o:[];};
+ const nodes=[...Object.keys(imp.ports),...imp.junc.map(j=>j.id)];let idx=0;const I={},L={},on=new Set(),st=[],comp={};let c=0;
+ function sc(v){I[v]=L[v]=idx++;st.push(v);on.add(v);eff(v).forEach(([e])=>{const w=e.to;if(I[w]===undefined){sc(w);L[v]=Math.min(L[v],L[w]);}else if(on.has(w))L[v]=Math.min(L[v],I[w]);});if(L[v]===I[v]){let w;do{w=st.pop();on.delete(w);comp[w]=c;}while(w!==v);c++;}}
+ nodes.forEach(v=>{if(I[v]===undefined)sc(v);});
+ const size={};Object.values(comp).forEach(k=>size[k]=(size[k]||0)+1);
+ const badComp=new Set();sents.forEach(X=>{if(comp[X+'.T']===comp[X+'.F'])badComp.add(comp[X+'.T']);});
+ const usedAll=new Set();sents.forEach(X=>['T','F'].forEach(v=>{const r=P[X+'.'+v];if(r.bad)r.used.forEach(i=>usedAll.add(i));}));
+ const cls=imp.edges.map((e,i)=>{const a=comp[e.from],b=comp[e.to];if(a===b&&badComp.has(a))return 'bad';if(a===b&&(size[a]>1||e.from===e.to))return 'ok';if(closed(e.to)&&J[e.from]&&J[e.from].kind==='oneof')return 'blocked';return usedAll.has(i)?'solid':'faint';});
+ const ruled=new Set();sents.forEach(X=>['T','F'].forEach(v=>{if(P[X+'.'+v].bad)ruled.add(X+'.'+v);}));
+ return {verdict,cls,ruled,comp,badComp,prop,P};}
+function factText(p){const t=p.atom.args[0];return p.atom.p+'('+t[0]+': '+(p.d==='k'?'the king':p.d==='soc'?'Socrates':t[1].name)+')';}
+function layoutImp(ex,imp,info){
+ const pos={};const boxBottom=Math.max(...ex.boxes.map(b=>b.r.y+b.r.h));
+ // sentence ports on each box's bottom edge
+ ex.boxes.forEach(b=>{const y=b.r.y+b.r.h;pos[b.n+'.T']=[b.r.x+40,y];pos[b.n+'.F']=[b.r.x+76,y];});
+ // junctions below the boxes, under their source port
+ let maxD=0;
+ const placeJ=(jid,x,d)=>{if(pos[jid])return;pos[jid]=[x,boxBottom+46+d*38];maxD=Math.max(maxD,d);const j=imp.junc.find(k=>k.id===jid);j.branches.forEach((b,i)=>{if(!imp.ports[b])placeJ(b,x+40*(i+1),d+1);});};
+ imp.edges.forEach(e=>{if(imp.ports[e.from]&&!imp.ports[e.to]&&!pos[e.to])placeJ(e.to,pos[e.from][0],0);});
+ imp.junc.forEach(j=>{if(!pos[j.id])placeJ(j.id,40,0);});
+ // depths for arcs that stay above the world panel
+ const sentEdge=e=>{const t=imp.ports[e.to];return !(t&&t.kind==='fact');};
+ const spans=imp.edges.map((e,i)=>({i,e})).filter(o=>sentEdge(o.e)).map(o=>{const a=pos[o.e.from],b=pos[o.e.to];return {i:o.i,lo:Math.min(a[0],b[0]),hi:Math.max(a[0],b[0])};}).sort((p,q)=>(p.hi-p.lo)-(q.hi-q.lo));
+ const depth={};const placed=[];spans.forEach(sp=>{const rank=placed.filter(o=>o.lo<sp.hi+8&&sp.lo<o.hi+8).length;depth[sp.i]=26+(sp.hi-sp.lo)*0.1+15*rank;placed.push(sp);});
+ let low=boxBottom+30+maxD*38;imp.edges.forEach((e,i)=>{if(depth[i]!==undefined){const a=pos[e.from],b=pos[e.to];low=Math.max(low,Math.max(a[1],b[1])+depth[i]+6);}});
+ // world panel with one box per fact, ports on each fact's top edge
+ const facts={};Object.values(imp.ports).filter(p=>p.kind==='fact').forEach(p=>{if(!facts[p.base]){const c=ex.caps.find(k=>k.id===p.cid);facts[p.base]={base:p.base,p,ax:c.r.x,text:factText(p)};}});
+ const fl=Object.values(facts).sort((a,b)=>a.ax-b.ax);const hasWorld=worldKeys(ex).length>0;
+ const wy=low+26;let fx=ex.vb[0]+28;fl.forEach(f=>{f.w=Math.max(150,f.text.length*6.9+24);f.x=Math.max(fx,f.ax);f.y=wy+28;fx=f.x+f.w+24;pos[f.base+'.T']=[f.x+30,f.y];pos[f.base+'.F']=[f.x+64,f.y];});
+ const wh=hasWorld?(fl.length?102:44):0;
+ const width=Math.max(ex.vb[0]+ex.vb[2],fx+20);
+ return {pos,depth,boxBottom,world:hasWorld?{x:ex.vb[0]+10,y:wy,w:width-ex.vb[0]-20,h:wh}:null,facts:fl,height:(hasWorld?wy+wh+16:low+16)-ex.vb[1],width};}
+function worldSentence(ex){const k=worldKeys(ex);if(k[0]==='man')return 'World: Socrates is '+(W.man?'':'not ')+'a man, and '+(W.mortal?'':'not ')+'mortal';if(k[0]==='snow')return 'World: snow is '+(W.snow?'falling':'not falling');if(k[0]==='king')return W.king?'World: there is a king of France, and he is '+(W.bald?'bald':'not bald'):'World: there is no king of France, so “there is x” has nothing to range over';return '';}
+function drawImp(ex,imp,A,lay,forced,TV){
+ let s='';
+ if(lay.world){const w=lay.world;s+=`<g><title>The world: the facts every verdict here depends on.</title><rect class="worldp" x="${w.x}" y="${w.y}" width="${w.w}" height="${w.h}" rx="10"/><text class="worldt" x="${w.x+14}" y="${w.y+w.h-14}">${esc(worldSentence(ex))}</text>${TYPES?`<text class="ptype" x="${w.x+w.w-12}" y="${w.y+w.h-14}" text-anchor="end">world</text>`:''}</g>`;
+  lay.facts.forEach(f=>{const holds=!imp.ports[f.base+'.T'].closed;s+=`<g><title>Fact: ${esc(f.text)} ${holds?'holds':'does not hold'} in this world.</title><rect class="factb" x="${f.x}" y="${f.y}" width="${f.w}" height="34" rx="7"/><text class="factt" x="${f.x+f.w/2}" y="${f.y+23}" text-anchor="middle">${esc(f.text)}</text>${TYPES?`<text class="ptype" x="${f.x+86}" y="${f.y-6}">fact: ${holds?'holds':'does not hold'}</text>`:''}</g>`;});}
+ if(TV)return s+drawTV(ex,imp,lay,TV);
+ imp.edges.forEach((e,i)=>{const a=lay.pos[e.from],b=lay.pos[e.to];const c=A.cls[i];const f=forced&&forced.used.has(i);
+  const fromPort=!!imp.ports[e.from],toPort=!!imp.ports[e.to],toFact=toPort&&imp.ports[e.to].kind==='fact';
+  const ay=fromPort?a[1]+11:a[1]+5;let d;
+  if(toFact){const by=b[1]-11;const h=Math.max(30,(by-ay)*0.5);d=`M${a[0]} ${ay}C${a[0]} ${ay+h} ${b[0]} ${by-h} ${b[0]} ${by}`;}
+  else{const by=toPort?b[1]+11:b[1]-5;
+   if(e.from===e.to)d=`M${a[0]-6} ${ay}C${a[0]-22} ${ay+40} ${a[0]+22} ${ay+40} ${a[0]+6} ${ay}`;
+   else if(fromPort&&!toPort&&Math.abs(a[0]-b[0])<1)d=`M${a[0]} ${ay}V${by}`;
+   else{const bottom=Math.max(ay,by)+lay.depth[i];d=`M${a[0]} ${ay}C${a[0]} ${bottom} ${b[0]} ${bottom} ${b[0]} ${by}`;}}
+  s+=`<path class="imp ${c}${f?' forced':''}" d="${d}"${toPort?` marker-end="url(#mi-${c}-${ex.id})"`:''}/>`;});
+ imp.junc.forEach(j=>{const [x,y]=lay.pos[j.id];const bad=A.badComp.has(A.comp[j.id]);
+  s+=`<g><title>${j.kind==='both'?'Both: every branch must hold.':j.branches.length?'One of: at least one branch must hold.':'One of, with no branches: nothing in this world can satisfy it.'}</title><circle class="jn ${j.kind}${bad?' jbad':''}" cx="${x}" cy="${y}" r="5"/><text class="ptype" x="${j.branches.length?x:x+10}" y="${j.branches.length?y+17:y+4}" text-anchor="${j.branches.length?'middle':'start'}">${j.kind==='both'?'both':'one of'}${j.branches.length?'':': no branches, because nothing in this world fits'}</text></g>`;});
+ Object.values(imp.ports).forEach(p=>{const [x,y]=lay.pos[p.id];const r=p.kind==='sent'?11:10;const ruled=A.ruled.has(p.id)||p.closed;const fo=forced&&forced.F.has(p.id);
+  const tip=p.kind==='sent'?`${p.sent} is ${p.v==='T'?'true':'false'}.${A.ruled.has(p.id)?' Ruled out.':''} Click to see what assuming it forces.`:`${factText(p)} ${p.v==='T'?'holds':'does not hold'}.${p.closed?' Closed: the world rules this out.':' Open: this is how the world is.'}`;
+  s+=`<g class="port ${p.kind} ${p.v}${ruled?' ruled':''}${fo?' fo':''}" data-p="${p.id}"><title>${tip}</title><circle cx="${x}" cy="${y}" r="${r}"/>${ruled?`<path class="slash" d="M${x-r+3} ${y+r-3}L${x+r-3} ${y-r+3}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${p.v}</text></g>`;});
+ return s;}
+// ---------- syntax graph: built from the logic, every node and edge typed ----------
+const TYPE={sentence:'sentence',and:'operator',not:'operator',ex:'quantifier',pred:'predicate',thing:'thing',top:'empty'};
+function buildGraph(defs){
+ const nodes=[],edges=[];let id=0;
+ const add=(type,label,extra={})=>{const n={id:'n'+(id++),type,label,kids:[],...extra};nodes.push(n);return n;};
+ const roots={};Object.keys(defs).forEach(name=>roots[name]=add('sentence',name,{name}));
+ function build(f,scope){switch(f.t){
+  case 'and':{const n=add('and','and');f.xs.forEach((x,i)=>{const c=build(x,scope);n.kids.push(c);edges.push({from:n,to:c,kind:'part',label:'part '+(i+1)});});return n;}
+  case 'not':{const n=add('not','not');const c=build(f.a,scope);n.kids.push(c);edges.push({from:n,to:c,kind:'negates',label:'negates'});return n;}
+  case 'ex':{const n=add('ex','there is '+f.v,{v:f.v});const c=build(f.a,{...scope,[f.v]:n});n.kids.push(c);edges.push({from:n,to:c,kind:'such',label:'such that'});return n;}
+  case 'top':return add('top','⊤');
+  case 'atom':{const n=add('pred',f.p,{atom:f});f.args.forEach(([role,t])=>{
+    if(t.kind==='entity'){const e=add('thing',t.name,{name:t.name});n.kids.push(e);edges.push({from:n,to:e,kind:'role',label:'role: '+role,role});}
+    else if(t.kind==='sentence')edges.push({from:n,to:roots[t.name],kind:'ref',label:'role: '+role+' (refers to '+t.name+')',role});
+    else edges.push({from:n,to:scope[t.name],kind:'var',label:'role: '+role+' (is the '+t.name+')',role});});return n;}}}
+ Object.keys(defs).forEach(name=>{const c=build(defs[name],{});roots[name].kids.push(c);edges.push({from:roots[name],to:c,kind:'says',label:'says'});});
+ return {nodes,edges,roots};}
+function readGraph(g){
+ const out=(n,kind)=>g.edges.filter(e=>e.from===n&&e.kind===kind);
+ function rec(n){switch(n.type){
+  case 'and':return {t:'and',xs:out(n,'part').sort((a,b)=>parseInt(a.label.slice(5))-parseInt(b.label.slice(5))).map(e=>rec(e.to))};
+  case 'not':return {t:'not',a:rec(out(n,'negates')[0].to)};
+  case 'ex':return {t:'ex',v:n.v,a:rec(out(n,'such')[0].to)};
+  case 'top':return {t:'top'};
+  case 'pred':return {t:'atom',p:n.label,args:g.edges.filter(e=>e.from===n&&(e.kind==='role'||e.kind==='ref'||e.kind==='var')).map(e=>[e.role,e.kind==='role'?{kind:'entity',name:e.to.name}:e.kind==='ref'?{kind:'sentence',name:e.to.name}:{kind:'var',name:e.to.v}])};}}
+ return Object.keys(g.roots).map(nm=>nm+' := '+show(rec(out(g.roots[nm],'says')[0].to))).join('; ');}
+function layoutGraph(g){
+ const GAP=34,VG=92;
+ const meas=n=>{n.kids.forEach(meas);n.w=Math.max(n.label.length*8+30,64);const kw=n.kids.reduce((a,k)=>a+k.sw,0)+GAP*Math.max(0,n.kids.length-1);n.sw=Math.max(n.w,kw);};
+ const place=(n,x,y)=>{n.y=y;n.x=x+n.sw/2;const kw=n.kids.reduce((a,k)=>a+k.sw,0)+GAP*Math.max(0,n.kids.length-1);let cx=x+(n.sw-kw)/2;n.kids.forEach(k=>{place(k,cx,y+VG);cx+=k.sw+GAP;});};
+ const nX=g.edges.filter(e=>e.kind==='ref'||e.kind==='var').length;const top=50+16*nX;
+ let x=20;const roots=Object.values(g.roots);roots.forEach(r=>{meas(r);place(r,x,top);x+=r.sw+60;});
+ const maxY=Math.max(...g.nodes.map(n=>n.y)),maxR=Math.max(...g.nodes.map(n=>n.x+n.w/2));
+ const labEnd=Math.max(0,...g.edges.filter(e=>e.kind==='ref'||e.kind==='var').map(e=>e.from.x+14+e.label.length*6.6));
+ return {w:Math.max(maxR+40+18*nX+20,labEnd+12),h:maxY+15+34+20*nX+10,maxY,maxR};}
+function drawGraph(ex,g,sel,M){
+ const L=layoutGraph(g);const H=15;let s=`<svg viewBox="0 0 ${L.w} ${L.h}" style="max-width:${Math.round(L.w*1.05)}px" role="img" aria-label="Syntax graph"><defs><marker id="gt-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker><marker id="gr-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ref)"/></marker><marker id="gv-${ex.id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--q)"/></marker></defs>`;
+ let k=0;
+ g.edges.forEach(e=>{const a=e.from,b=e.to;
+  if(e.kind==='ref'||e.kind==='var'){const kk=k++;const sx=a.x+8,sy=a.y+H,by=L.maxY+H+30+20*kk,rx=L.maxR+30+18*kk,ty=14+16*kk,dx=b.x+b.w/2+16;
+   const cls=e.kind==='ref'?'gref':'gvar';
+   s+=`<path class="${cls}" d="M${sx} ${sy}V${by}H${rx}V${ty}H${dx}V${b.y}H${b.x+b.w/2+3}" marker-end="url(#${e.kind==='ref'?'gr':'gv'}-${ex.id})"/><text class="glab ${cls}t" x="${sx+6}" y="${by-5}">${esc(e.label)}</text>`;return;}
+  const y1=a.y+H,y2=b.y-H-16;s+=`<line class="gedge" x1="${a.x}" y1="${y1}" x2="${b.x}" y2="${y2}" marker-end="url(#gt-${ex.id})"/><text class="glab" x="${(a.x+b.x)/2+(b.x>=a.x?6:-6)}" y="${(y1+y2)/2+4}" text-anchor="${b.x>=a.x?'start':'end'}">${esc(e.label)}</text>`;});
+ g.nodes.forEach(n=>{const x=n.x-n.w/2,y=n.y-H;let cls='g-'+n.type;
+  if(sel&&n.type==='sentence'){const v=sel.st[n.name];cls+=(v?' T':' F')+(sel.next[n.name]!==v?' chg':'');}
+  if(sel&&n.type==='pred'&&!n.atom.args.some(([,t])=>t.kind==='var')){cls+=ev(n.atom,sel.st,M,{})?' vT':' vF';}
+  const rx=n.type==='thing'||n.type==='sentence'?6:H;
+  s+=`${TYPES?`<text class="gtype" x="${n.x}" y="${y-5}" text-anchor="middle">${TYPE[n.type]}</text>`:''}<rect class="gnode ${cls}" x="${x}" y="${y}" width="${n.w}" height="${2*H}" rx="${rx}"/><text class="gname" x="${n.x}" y="${n.y+5}" text-anchor="middle">${esc(n.label)}</text>`;});
+ return s+'</svg>';}
+function forceText(p,r,imp){const nm=id=>{const q=imp.ports[id];return q.kind==='sent'?`${q.sent} ${q.v==='T'?'true':'false'}`:`${show(q.atom)}${q.d?' for the king':''} ${q.v==='T'?'holds':'does not hold'}`;};
+ const list=[...r.F].filter(id=>imp.ports[id]&&id!==p).map(nm);
+ return `<div class="explain"><p><b>Assuming ${nm(p)}</b> forces: ${list.length?list.join(', '):'nothing further'}.</p><p>${r.bad?`That runs into a contradiction or a closed port, so <b>${nm(p)}</b> is ruled out.`:`No contradiction: <b>${nm(p)}</b> is consistent.`}</p></div>`;}
+const TEX={
+notsnow:{id:'notsnow',vb:[0,0,350,130],boxes:[{n:'S',r:R(10,10,330,110)}],caps:[{id:'c1',p:'Falling',r:R(44,64,84,28)}],ents:[{n:'Snow',r:R(230,64,64,28)}],encs:[{r:R(24,36,300,76)}],lines:[],
+ arrows:[{from:'c1',role:'thing that falls',to:[230,78],lab:[179,70]}],sym:'S := ¬Falling(thing that falls: Snow)'},
+snowwind:{id:'snowwind',vb:[0,0,360,150],boxes:[{n:'S',r:R(10,10,340,130)}],caps:[{id:'c1',p:'Falling',r:R(30,40,84,28)},{id:'c2',p:'Blowing',r:R(30,92,84,28)}],ents:[{n:'Snow',r:R(230,40,64,28)},{n:'Wind',r:R(230,92,64,28)}],encs:[],lines:[],
+ arrows:[{from:'c1',role:'thing that falls',to:[230,54],lab:[172,46]},{from:'c2',role:'thing that blows',to:[230,106],lab:[172,98]}],sym:'S := Falling(thing that falls: Snow) ∧ Blowing(thing that blows: Wind)'},
+about:{id:'about',vb:[0,0,600,110],boxes:[{n:'S1',r:R(10,10,300,90)},{n:'S2',r:R(380,10,200,90)}],caps:[{id:'c1',p:'Falling',r:R(30,46,84,28)},{id:'c2',p:'IsTrue',r:R(470,46,84,28)}],ents:[{n:'Snow',r:R(214,46,64,28)}],encs:[],lines:[],
+ arrows:[{from:'c1',role:'thing that falls',to:[214,60],lab:[164,52]},{from:'c2',role:'bearer',to:[310,60],lab:[345,52]}],sym:'S1 := Falling(thing that falls: Snow); S2 := IsTrue(bearer: S1)'},
+every:{id:'every',vb:[0,0,580,150],boxes:[{n:'P1',r:R(10,10,560,130)}],caps:[{id:'c1',p:'Man',r:R(50,72,84,28)},{id:'c2',p:'Mortal',r:R(440,72,90,28)}],ents:[],encs:[{r:R(24,40,530,92)},{r:R(320,50,224,74)}],
+ lines:[{id:'x',pts:[[134,86],[440,86]],attach:[{cap:'c1',role:'thing that is a man',lab:[227,76]},{cap:'c2',role:'mortal thing',lab:[385,112]}]}],arrows:[],
+ sym:'P1 := ¬∃x (Man(thing that is a man: x) ∧ ¬Mortal(mortal thing: x))'}
+};
+const byId=id=>EX.find(e=>e.id===id)||TEX[id];
+const LESSONS=[
+{part:'Part 1 · Sentences and the world',title:'A sentence and its worlds',ex:'snow',space:true,
+ steps:[
+ {show:{atoms:[]},text:['This box is a <b>sentence</b>, named S.','Inside it, the blue capsule is the claim: <b>Falling</b>. The grey arrow says what fills the claim’s role: the thing that falls is <b>Snow</b>.','So S says: <i>snow is falling</i>. That is all a sentence box shows: what is said, not whether it is true.']},
+ {show:{atoms:['snow']},text:['Below the sentence are <b>all the possible worlds</b>, as far as this one fact goes. There are only two: one where snow is falling, and one where it is not.','Each world is drawn with the same marks as a sentence. A claim that holds is drawn plainly; a claim that does not hold is drawn inside a red “not”. Every world settles every claim: one or the other.']},
+ {show:{atoms:['snow'],T:true},text:['Now suppose S is true. The circle <b>T</b> stands for that supposition.','If S is true, then snow must be falling, so the world we are talking about must be one of the worlds where snow is falling. T’s arrow points straight at that <b>set of worlds</b>, outlined with a dashed line.','Those worlds are shaded green: they are exactly the worlds where S is true.']},
+ {show:{atoms:['snow'],T:true,F:true},text:['The circle <b>F</b> stands for the other supposition: S is false.','If S is false, then snow must not be falling, so F’s arrow points at the set of worlds where snow is not falling, shaded orange.','Every possible world is in exactly one of the two sets. Logicians call the green set the sentence’s <b>truth conditions</b>: it is what S means.']},
+ {show:{atoms:['snow','wind'],T:true,F:true},text:['Add a second fact, the wind. Now there are four possible worlds.','S says nothing about the wind, so its sets take in whole columns: snow falling, <i>with or without</i> wind, is green; no snow falling, with or without wind, is orange.']},
+ {show:{atoms:['snow','wind'],T:true,F:true,points:[{label:'World 1',w:{snow:true,wind:true}},{label:'World 2',w:{snow:false,wind:true}}]},text:['Finally, particular worlds. A world is just one cell: World 1 is the one with snow and wind; World 2 has wind but no snow.','S is <b>true in World 1</b> because World 1 is one of the green worlds, and <b>false in World 2</b> because World 2 is one of the orange ones. That is all “true in a world” means.']}
+ ],
+ tryit:'Go back a step and forward again, and watch how adding the wind splits each region without changing which side a world falls on.',
+ quiz:{q:'Which worlds make S (“snow is falling”) true?',opts:['Only World 1','Every world where snow is falling, whatever else is true there'],a:1,why:'S’s truth conditions are a region of possible worlds, not a single world. World 1 is one member of it.'}},
+{part:'Part 1 · Sentences and the world',title:'Not',ex:'notsnow',space:true,
+ steps:[
+ {show:{atoms:[]},text:['One new mark: the red dashed enclosure tagged <b>not</b>. It denies everything inside it. So this S says: <i>it is not the case that snow is falling</i>.']},
+ {show:{atoms:['snow'],T:true,F:true},text:['The two possible worlds again. If S is true, then snow must <i>not</i> be falling, so T’s arrow points at the no-snow world. If S is false, then snow must be falling, so F’s arrow points at the snow world.','The “not” simply swaps the two arrows compared with the last lesson.']},
+ {show:{atoms:['snow'],T:true,F:true,points:[{label:'World 1',w:{snow:true}}]},text:['World 1, where snow is falling, is an orange world, so this S is <b>false in World 1</b>.']}
+ ],
+ tryit:'Compare with lesson 1: same two worlds, regions swapped.',
+ quiz:{q:'Which region is F’s here (S is false)?',opts:['The worlds where snow is not falling','The worlds where snow is falling'],a:1,why:'S denies that snow is falling, so S is false exactly where snow is falling.'}},
+{part:'Part 1 · Sentences and the world',title:'And',ex:'snowwind',space:true,
+ steps:[
+ {show:{atoms:[]},text:['Two claims in the same box are <b>both</b> asserted. That is how “and” is drawn: no separate mark, just sharing the area (Peirce’s convention).','So S says: <i>snow is falling, and the wind is blowing</i>.']},
+ {show:{atoms:['snow','wind']},text:['S mentions two facts, so there are four possible worlds.']},
+ {show:{atoms:['snow','wind'],sets:['snow:T']},text:['Before working out S, look at each fact on its own. Here, outlined in blue, are the <b>worlds where snow is falling</b>: the left column.']},
+ {show:{atoms:['snow','wind'],sets:['snow:T','wind:T']},text:['And here, also outlined, are the <b>worlds with wind</b>: the top row.','Only one world is in both outlines: the top-left one, with snow <i>and</i> wind.']},
+ {show:{atoms:['snow','wind'],T:true},text:['If S is true, then snow is falling <i>and</i> the wind is blowing, so the world must be in <i>both</i> sets: where they <b>overlap</b>.','T’s arrow points at that one world, shaded green.']},
+ {show:{atoms:['snow','wind'],sets:['snow:F','wind:F']},text:['Now the false side. Outlined: the worlds <b>without</b> falling snow (the right column) and the worlds <b>without</b> wind (the bottom row).','Notice the bottom-right world, with neither snow nor wind: it is inside <i>both</i> outlines.']},
+ {show:{atoms:['snow','wind'],T:true,F:true},text:['If S is false, then <i>at least one</i> fact fails, so the world must be in at least one of those two sets: anything either outline covers. That is three worlds, shaded orange, and it <b>includes</b> the world where both fail.','So “and” is the <b>overlap</b> of two sets, and “at least one fails” is everything the opposite sets <b>cover together</b>.']},
+ {show:{atoms:['snow','wind'],T:true,F:true,points:[{label:'World 1',w:{snow:true,wind:true}},{label:'World 2',w:{snow:true,wind:false}}]},text:['World 1 has snow and wind: it is the green world, so S is <b>true in World 1</b>. World 2 has snow but no wind: it is orange, so S is <b>false in World 2</b>.']}
+ ],
+ tryit:'Go back through the steps and watch the two outlines turn into the green overlap and the orange combination.',
+ quiz:{q:'S is false in the world with neither snow nor wind. Why?',opts:['It is not in either set','At least one fact fails there (in fact both do), so it is in the orange set'],a:1,why:'“False” only needs one fact to fail; a world where both fail certainly qualifies.'}},
+{part:'Part 1 · Sentences and the world',title:'Other logics',ex:'snow',space:true,
+ steps:[
+ {show:{atoms:['snow'],T:true,F:true},theory:'classical',text:['So far, every world has settled every claim: snow is either falling or not. That is an assumption of <b>classical</b> logic, not a fact about logic itself.','Different logics make different assumptions, so the tutorial has a <b>Logic</b> switch at the top of the page. Everything you have seen so far was in Classical.']},
+ {show:{atoms:['snow'],T:true,F:true},theory:'kripke',text:['Now the switch is on <b>Three-valued</b>. Here a world is allowed to leave a claim <b>unsettled</b> (Kleene’s logic, 1952). So there is a third world: one that says nothing about falling snow.','In that world S is neither true nor false: it lands in <b>neither</b> region, shown grey. True, false and neither are the three values.']},
+ {show:{atoms:['snow'],T:true,F:true},theory:'gaifman',text:['The third setting is <b>Gaifman</b> (1992). It does not change the worlds at all: they stay classical, as you can see. What it changes is how sentences <i>about truth</i> get their values. It only makes a difference once sentences start talking about themselves, so you will meet it in lesson 6.']},
+ {show:{atoms:['snow'],T:true,F:true},theory:'classical',text:['The switch is back on Classical, and the tutorial continues there.','But the switch stays available on every lesson. In lesson 6 you will see the same three-valued idea applied to a sentence about itself: Kripke gives it no value at all, much as the unsettled world here leaves S with none.']}
+ ],
+ tryit:'Use the Logic switch at the top on the lessons you have already done: lesson 3, “And”, gets nine possible worlds under Three-valued.',
+ quiz:{q:'Under Three-valued logic, what is S (“snow is falling”) in a world that says nothing about falling snow?',opts:['False','Neither true nor false','True'],a:1,why:'Nothing in that world makes S true or false, so it lands in neither region.'}},
+{part:'Part 2 · Sentences about sentences',title:'A sentence about a sentence',ex:'about',space:true,main:'S2',
+ steps:[
+ {show:{atoms:[]},text:['Two sentences. S1 says snow is falling.','S2’s claim is <b>IsTrue</b>, and its blue arrow lands on the <b>outline</b> of box S1. An arrow landing on a box outline means “this sentence”: S2 says <i>“S1 is true”</i>.']},
+ {show:{atoms:[],arrows:true},text:['Suppose S2 is true. Then what S2 says must hold: S1 is true. So S2’s T has an arrow to S1’s T. Likewise, if S2 is false, then S1 is false: an arrow from S2’s F to S1’s F.','This is the one new thing in Part 2: an arrow can end at another sentence’s T or F, instead of at a set of worlds.']},
+ {show:{atoms:['snow'],T:true,F:true,arrows:true},text:['Now follow the chain into the worlds. If S2 is true, then S1 is true; and if S1 is true, then the world must be one where snow is falling. So S2’s T leads, through S1, to the same set of worlds.','You can also start at S1: if S1 is true, the world is a snowy one, and in every snowy world S2 is true as well. So S1 and S2 pick out exactly the same set of worlds (its label names both): they are true together and false together. Logicians call such sentences <b>equivalent</b>.','Why is there an arrow from S2 to S1 but not back? An arrow means “this sentence’s own words require that”. S2’s words are about S1, so they require something of S1. S1’s words are only about snow, so they require nothing of S2; that S2 comes out true too is a <i>result</i>, shown by the shared set of worlds. Keeping arrows one-way shows who is talking about whom, which is what reveals the loops in the next lessons.','So the equivalence gets its own mark instead: the grey <b>≡</b> link between the two boxes, which appears only when two sentences turn out to be true in exactly the same worlds. It is a result, not a requirement, so it never counts as part of a loop. (A two-way magenta arrow here would draw a loop between S1 and S2, which would look just like a sentence holding itself up, even though nothing here refers to itself.)']},
+ {show:{atoms:['snow'],T:true,F:true,arrows:true,points:[{label:'World 1',w:{snow:true}},{label:'World 2',w:{snow:false}}]},text:['So S2 is true in World 1 and false in World 2, for exactly the same reason as S1.']}
+ ],
+ tryit:'Switch the Logic at the top to Three-valued: in the unsettled world, S1 and S2 both get no value.',
+ quiz:{q:'Why are S2’s regions the same as S1’s?',opts:['S2 is about the snow','Supposing S2 true leads to supposing S1 true, and the same for false'],a:1,why:'S2 only talks about S1, so its suppositions lead to S1’s, and from there to the world.'}},
+{part:'Part 2 · Sentences about sentences',title:'A sentence about itself',ex:'truth',space:true,motion:true,
+ steps:[
+ {show:{atoms:[]},text:['Now the blue arrow lands on S’s <b>own</b> outline: S says <i>“S is true”</i>, about itself.']},
+ {show:{atoms:[],arrows:true},text:['Suppose S is true: then what S says must hold, and what S says is that S is true. So T’s arrow leads back to T. Likewise F leads back to F.','Neither arrow ever reaches the worlds, and neither runs into a conflict: the <b>green dashed</b> loops mean “holds itself up”.']},
+ {show:{flow:true},theory:'classical',text:['<b>Watch the dot.</b> The dot is the supposition being passed along. It starts at T: <i>suppose S is true</i>.','It follows what that implies: along the blue arrow into IsTrue, so IsTrue(S) is true, so what S says holds, and it arrives back at T. There is no “not” on the way, so nothing changes it: T leads to T, the green loop from the last step.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'classical',text:['S never mentions the facts, so which world we are in makes no difference: the single box below stands for <b>any world at all</b>. Since neither supposition says anything about the facts, nothing in any world can contradict either one, so both arrows point at that box, and it is shaded both green and orange.','In classical logic the verdict is <b>either</b>: S can be true or false, and nothing picks between them.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'kripke',text:['This is the first sentence the three logics disagree about, so the Logic switch from lesson 4 now matters. It has moved to <b>Three-valued</b>.','Kripke builds values up from the facts, one stage at a time. S only talks about itself, so no fact ever settles it: S is <b>never grounded</b>, and gets <b>no value</b> at all, in any world. Both arrows now end at “no value”.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'gaifman',text:['Now <b>Gaifman</b>. His first rule, the <b>closed-loop rule</b>: if a sentence only refers to itself (here, the arrow back to its own box), its evaluation can never finish, so it gets a <b>gap</b>.','So the truth-teller is “either” in classical logic, “no value” for Kripke, and a “gap” for Gaifman: one drawing, three verdicts.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'classical',text:['The switch is back on Classical. From here on, try the switch whenever a sentence talks about itself.']}
+ ],
+ tryit:'Press Step under “Watch it run”: S keeps whichever value it starts with.',
+ quiz:{q:'Why is every world in both regions?',opts:['Because it is snowing','Because each supposition only leads back to itself, so neither meets a conflict'],a:1,why:'Nothing S says involves the world, and neither supposition contradicts itself.'}},
+{part:'Part 2 · Sentences about sentences',title:'The liar',ex:'liar',space:true,motion:true,
+ steps:[
+ {show:{atoms:[]},text:['Put a “not” around the claim: S says <i>“S is not true”</i>. The <b>−</b> on the arrow marks that this loop of reference passes through a “not”.']},
+ {show:{atoms:[],arrows:true},text:['Suppose S is true: then what S says holds, so S is <i>not</i> true. T leads to F.','Suppose S is false: then what S says fails, so S <i>is</i> true. F leads to T.','Each supposition leads to its own opposite: the <b>red loop</b>.']},
+ {show:{flow:true},theory:'classical',text:['<b>Watch the dot.</b> The dot is the supposition being passed along. It starts at T: <i>suppose S is true</i>.','It follows what that implies, through the parts of the sentence. Along the blue arrow into IsTrue: then IsTrue(S) is true. Through the “not”: so S is <i>not</i> true. The dot turns into F there, and arrives at S’s F.','From F it sets off again, turns back into T at the “not”, and arrives at T. It is walking the red loop T → F → T from the last step, one implication at a time, forever.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'classical',text:['A supposition that leads to its own opposite contradicts itself, so no world can be like that: both arrows end at “no world fits”. The box for “any world” is grey: in neither set.','That is a <b>paradox</b>: no verdict in any world.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'kripke',text:['Under <b>Three-valued</b> (Kripke) the liar is treated exactly like the truth-teller: it is never grounded in the facts, so it simply has <b>no value</b>. No contradiction arises, because it is never made true or false in the first place.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'gaifman',text:['Under <b>Gaifman</b> it is again a closed loop, so it gets a <b>gap</b>.','Notice: Kripke and Gaifman treat the liar and the truth-teller the same way. Only classical logic tells them apart (“either” versus “paradox”).']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},theory:'classical',text:['Back to Classical for the next lessons.']}
+ ],
+ tryit:'Press Step several times: the value flips every pass and never settles. Then try the Logic switch at the top.',
+ quiz:{q:'Why are both regions empty?',opts:['Because it is not snowing','Because each supposition leads to its own opposite'],a:1,why:'A supposition that implies its own opposite cannot hold in any world.'}},
+{part:'Part 2 · Sentences about sentences',title:'A hidden loop',ex:'ab',space:true,motion:true,main:'A',
+ steps:[
+ {show:{atoms:[]},text:['A says <i>“B is false”</i>; B says <i>“A is true”</i>. Neither mentions itself.','But follow the blue arrows: A → B → A is a loop, with one − on it. The symbols hide this loop; the drawing shows it.']},
+ {show:{atoms:[],arrows:true},text:['Follow the suppositions: A true leads to B false, which leads to A false, which leads to B true, which leads back to A true. Round a red loop through all four, so each supposition eventually leads to its own opposite.']},
+ {show:{atoms:[],status:true,T:true,F:true,arrows:true},text:['So no world fits either sentence: both are paradoxes, in every world.']}
+ ],
+ tryit:'Press Step: the two values go round four combinations, then repeat.',
+ quiz:{q:'How many − marks are on the loop A → B → A?',opts:['None','One','Two'],a:1,why:'A’s arrow sits inside a “not”; B’s does not. One − makes the loop the liar’s pattern.'}},
+{part:'Part 2 · Sentences about sentences',title:'When the world decides',ex:'mixed',space:true,motion:true,
+ steps:[
+ {show:{atoms:[]},text:['S says two things, side by side: <i>snow is falling</i>, and <i>S is not true</i>.']},
+ {show:{atoms:['snow'],T:true,F:true},text:['Suppose S is true: then snow is falling <i>and</i> S is not true. The second part contradicts the supposition, so no world is in T’s region.','Suppose S is false: then at least one part fails. In a world without snow the first part fails, which is enough: those worlds are in F’s region. In a world with snow, only the liar part could fail, and that leads back round the loop.','So the snow world is grey: in neither region, a paradox there. The no-snow world is orange: S is simply false there.']},
+ {show:{atoms:['snow'],T:true,F:true,points:[{label:'World 1',w:{snow:true}},{label:'World 2',w:{snow:false}}]},text:['In World 1 S is a paradox; in World 2 it is false. A sentence whose verdict depends on the world like this is called <b>contingent</b>.']}
+ ],
+ tryit:'Press Step in each world to compare: it flips forever with snow, and settles on false without.',
+ quiz:{q:'In World 2, without snow, S is…',opts:['a paradox','false','true'],a:1,why:'S claims snow is falling; that fails in World 2, so S is false there whatever its second part says.'}},
+{part:'Part 2 · Sentences about sentences',title:'One drawing, three logics',ex:'n5a',space:true,motion:true,main:'S',
+ steps:[
+ {show:{atoms:[]},theory:'classical',text:['Q is a liar, drawn inside S: Q says “Q is not true”. S says <i>“Q is false”</i>.','Logicians disagree about what the liar’s verdict should be, so this lesson uses the <b>Logic</b> switch from lesson 4. The drawing never changes; only the verdicts do.']},
+ {show:{atoms:[],arrows:true,status:true},theory:'classical',text:['<b>Classical</b>: Q is the liar from lesson 7, with its red loop. S leads into Q’s loop, so S has no consistent verdict either: it <b>inherits</b> the paradox.']},
+ {show:{atoms:[],arrows:true,status:true},theory:'kripke',text:['<b>Three-valued</b> (Kripke): values are built up from the facts, and the liar never gets one. Q is <b>neither</b>, and so is S, which depends on Q.']},
+ {show:{atoms:[],arrows:true,status:true},theory:'gaifman',text:['<b>Gaifman</b>: first, the <b>closed-loop rule</b> from lesson 6. Q only refers to itself, so Q gets a <b>gap</b>. So far this matches Kripke.']},
+ {show:{atoms:[],arrows:true,status:true},theory:'gaifman',text:['Now Gaifman’s second rule, the one that makes him differ from Kripke: the <b>jump rule</b>. S sits outside Q’s loop and says Q is not true. Q has a gap, so it is indeed not true: S is simply <b>true</b>.','This is Gaifman’s “two-line puzzle”: write “the sentence on line 1 is not true” on line 1, then write the same words on line 2. Line 1 is the liar and gets a gap; line 2 is about line 1, from outside, and is true. Same words, different verdicts, because they sit in different places.','Same drawing, three rulebooks, three answers.']}
+ ],
+ tryit:'Press Step under each logic to watch how it reaches its answer.',
+ quiz:{q:'When you switch logics, what changes?',opts:['The drawing of the sentences','Only the verdicts and how they are worked out'],a:1,why:'What the sentences say is fixed; the logic is the rulebook for giving them values.'}},
+{part:'Part 3 · “Every” and arguments',title:'“Every”',ex:'every',space:true,
+ steps:[
+ {show:{atoms:[]},theory:'classical',text:['Peirce has no symbol for “every”. Instead he says <i>there is nothing that is a man and not mortal</i>.','The heavy black line means <b>something</b>. Here it runs from Man, inside a “not”, into a second “not” around Mortal. Read from the outside in: <i>not (something is a man and not mortal)</i>, which is the same as <i>every man is mortal</i>.']},
+ {show:{atoms:['man','mortal'],T:true,F:true},text:['The possible worlds here contain one thing, Socrates, and two facts about him: is he a man, is he mortal? That makes four worlds.','P1 fails only where there is a man who is not mortal: that single world is orange. Every other world, including the ones where Socrates is not a man at all, is green.']}
+ ],
+ tryit:'Notice the bottom-right world: Socrates is neither a man nor mortal, and P1 is still true there.',
+ quiz:{q:'Which world makes “every man is mortal” false?',opts:['Socrates is a man and mortal','Socrates is a man and not mortal','Socrates is neither'],a:1,why:'P1 fails only if there is a man who is not mortal.'}},
+{part:'Part 3 · “Every” and arguments',title:'A valid argument',ex:'soc-a',space:true,
+ steps:[
+ {show:{atoms:[]},theory:'classical',text:['An <b>argument</b>: two premises and a conclusion, each its own sentence. P1 is “every man is mortal”, drawn as in the last lesson. P2 says Socrates is a man. C, the conclusion, says Socrates is mortal.']},
+ {show:{atoms:['man','mortal'],status:true},text:['The same four worlds, now showing all three sentences’ verdicts in each.']},
+ {show:{atoms:['man','mortal'],argue:true},text:['An argument is <b>valid</b> if the conclusion is true in every world where all the premises are true.','Only one world has both premises true (green border), and C is true there too. So the argument is valid: there is no world where the premises hold and the conclusion fails.']}
+ ],
+ tryit:'Check each world’s three verdicts against the borders.',
+ quiz:{q:'Why is this argument valid?',opts:['The conclusion is true in one world','In every world where both premises are true, the conclusion is true too'],a:1,why:'Validity is about every world, not just one.'}},
+{part:'Part 3 · “Every” and arguments',title:'An invalid argument',ex:'soc-b',space:true,
+ steps:[
+ {show:{atoms:[]},theory:'classical',text:['The same first premise, but now: <i>Socrates is mortal, so Socrates is a man</i>.']},
+ {show:{atoms:['man','mortal'],argue:true},text:['Two worlds have both premises true. In one, Socrates is a man and mortal, and C is true. In the other, Socrates is mortal but <i>not</i> a man: both premises are true there, but C is false. That world has a <b>red</b> border: it is a <b>counter-model</b>.','One counter-model is enough to show an argument is <b>invalid</b>.']}
+ ],
+ tryit:'Find the red-bordered world and read its three verdicts.',
+ quiz:{q:'What is a counter-model?',opts:['A world where everything is false','A world where the premises are true and the conclusion false','A world the argument does not mention'],a:1,why:'If such a world exists, the premises do not guarantee the conclusion.'}}
+];
+// ---------- logical space: every arrow means "then this must hold"; it ends at another supposition or at a set of worlds ----------
+const ATOMS={snow:{key:'snow',pred:'Falling',role:'thing that falls',thing:'Snow',yes:'snow falling',no:'no snow falling',un:'snow unsettled',setT:'worlds where snow is falling',setF:'worlds where snow is not falling'},
+ wind:{key:'wind',pred:'Blowing',role:'thing that blows',thing:'Wind',yes:'wind',no:'no wind',un:'wind unsettled',setT:'worlds with wind',setF:'worlds without wind'},
+ man:{key:'man',pred:'Man',role:'thing that is a man',thing:'Socrates',yes:'Socrates a man',no:'not a man',un:'man unsettled',setT:'worlds where Socrates is a man',setF:'worlds where he is not a man'},
+ mortal:{key:'mortal',pred:'Mortal',role:'mortal thing',thing:'Socrates',yes:'mortal',no:'not mortal',un:'mortal unsettled',setT:'worlds where he is mortal',setF:'worlds where he is not mortal'}};
+const PRED2ATOM={Falling:'snow',Blowing:'wind',Man:'man',Mortal:'mortal'};
+function cellStatus(defs,M){const names=Object.keys(defs);
+ if(THEORY==='classical'){const V=verdicts(defs,M);return Object.fromEntries(names.map(n=>{const v=V[n];return [n,{c:v==='true'?'T':v==='false'?'F':v==='either'?'B':'N',w:v}];}));}
+ const TV=theoryVerdicts(defs,M);return Object.fromEntries(names.map(n=>{const v=TV.val[n];return [n,{c:v==='T'?'T':v==='F'?'F':'N',w:vword(v)}];}));}
+function drawSpace(L,ex,defs,info,SH){
+ const atoms=(SH.atoms||[]).map(k=>ATOMS[k]);const names=ex.boxes.map(b=>b.n);const main=L.main||names[names.length-1];const multi=names.length>1;
+ const content=drawContent(ex,null,info,worldOf(ex,{}),null,null).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
+ const bb=Math.max(...ex.boxes.map(b=>b.r.y+b.r.h));
+ const three=THEORY==='kripke';const VALS=three?[true,false,'u']:[true,false];const cols=atoms.length?VALS:[null];const rows=atoms.length>1?VALS:[null];
+ const cellW=(ci,ri)=>{const w={};if(atoms[0])w[atoms[0].key]=cols[ci];if(atoms[1])w[atoms[1].key]=rows[ri];return w;};
+ const M0=worldOf(ex,cellW(0,0));const imp=buildImp(defs,M0);const A=impAnalyse(imp,defs);const lay=layoutImp(ex,imp,info);
+ const isS=id=>imp.ports[id]&&imp.ports[id].kind==='sent';const isFact=id=>imp.ports[id]&&imp.ports[id].kind==='fact';const J=Object.fromEntries(imp.junc.map(j=>[j.id,j]));
+ const showPorts=SH.T||SH.F||SH.arrows;
+ // which edges to draw: everything reachable from the shown suppositions
+ const starts=[];if(SH.T||SH.arrows)names.forEach(n=>{if(SH.T||SH.arrows)starts.push(n+'.T');});if(SH.F||SH.arrows)names.forEach(n=>starts.push(n+'.F'));
+ const allow=id=>{const v=id.split('.').pop();return (v==='T'&&(SH.T||SH.arrows))||(v==='F'&&(SH.F||SH.arrows));};
+ const reach=new Set();starts.filter(allow).forEach(p=>{const q=[p];while(q.length){const n=q.pop();if(reach.has(n))continue;reach.add(n);imp.edges.forEach(e=>{if(e.from===n)q.push(e.to);});}});
+ const factsUsable=atoms.length>0&&SH.grid!==false;
+ const drawE=imp.edges.map((e,i)=>({e,i})).filter(({e})=>reach.has(e.from)&&(!isFact(e.to)||factsUsable)&&showPorts);
+ let band=bb+(showPorts?24:6);
+ drawE.forEach(({e,i})=>{if(!(isS(e.from)&&isS(e.to)))return;const a=lay.pos[e.from],b=lay.pos[e.to];if(!a||!b)return;if(e.from===e.to)band=Math.max(band,a[1]+11+40);else band=Math.max(band,Math.max(a[1],b[1])+(lay.depth[i]||30)+16);});
+ if(showPorts)band=Math.max(band,bb+50);
+ // grid geometry
+ const showStatus=multi||!atoms.length||SH.status;const CW=atoms.length?236:300,GAP=18,RH=(atoms.length?40+atoms.length*40:34)+(showStatus?28:0),gx0=atoms.length>1?110:24;
+ const grid=atoms.length||SH.T||SH.F||SH.argue||SH.status;const gy0=band+(grid?56:0);
+ const cellAt=(ci,ri)=>({x:gx0+ci*(CW+GAP),y:gy0+48+ri*(RH+GAP)});
+ const gridR={x:gx0,y:gy0+48,w:cols.length*(CW+GAP)-GAP,h:rows.length*(RH+GAP)-GAP};
+ let s='';let cellsSvg='',over='',extras='';const stats=[];
+ if(grid){
+  if(atoms.length){cols.forEach((c,ci)=>{const p=cellAt(ci,0);cellsSvg+=`<text class="colh" x="${p.x+CW/2}" y="${gy0+14}" text-anchor="middle">${c==='u'?atoms[0].un:c?atoms[0].yes:atoms[0].no}</text>`;});
+   if(atoms.length>1)rows.forEach((r,ri)=>{const p=cellAt(0,ri);cellsSvg+=`<text class="rowh" x="${gx0-14}" y="${p.y+RH/2+4}" text-anchor="end">${r==='u'?atoms[1].un:r?atoms[1].yes:atoms[1].no}</text>`;});}
+  const mentions=atoms.length&&ex.caps.some(c=>atoms.some(a=>a.pred===c.p));cellsSvg+=`<text class="spacet" x="${gx0}" y="${gy0-6}">${atoms.length?(mentions?'All possible worlds':'Possible worlds, shown for comparison: these sentences never mention snow')+(three?' (three-valued: a world may leave a claim unsettled)':''):'Any world: nothing here depends on the facts'}</text>`;
+  cols.forEach((c,ci)=>rows.forEach((r,ri)=>{const p=cellAt(ci,ri);const w=cellW(ci,ri);const st=cellStatus(defs,worldOf(ex,w));stats.push({ci,ri,st,w});const m=st[main].c;
+   const arg=SH.argue&&ex.argument;const prem=arg&&ex.argument.premises.every(n=>st[n].c==='T');const counter=prem&&st[ex.argument.conclusion].c!=='T';
+   const inT=!arg&&SH.T&&(m==='T'||m==='B'),inF=!arg&&SH.F&&(m==='F'||m==='B'),inN=!arg&&SH.T&&SH.F&&m==='N';
+   const cls=arg?(counter?' counter':prem?' prem':''):(inT&&inF?' inB':inT?' inT':inF?' inF':inN?' inN':'');
+   cellsSvg+=`<g class="cell${cls}"><title>${atoms.length?'A world where '+atoms.map(a=>w[a.key]==='u'?a.un:w[a.key]?a.yes:a.no).join(', ')+'. ':''}${names.map(n=>n+': '+st[n].w).join('; ')}.</title><rect class="cellr" x="${p.x}" y="${p.y}" width="${CW}" height="${RH}" rx="10"/>${cls===' inB'?`<rect class="cellr2" x="${p.x+5}" y="${p.y+5}" width="${CW-10}" height="${RH-10}" rx="7"/>`:''}`;
+   atoms.forEach((a,k)=>{const y=p.y+24+k*40;const holds=w[a.key];if(holds==='u'){cellsSvg+=`<text class="unset" x="${p.x+16}" y="${y+15}">says nothing about ${a.pred}(${a.thing})</text>`;return;}
+    const cx=p.x+(holds?22:30),cw=a.pred.length*7.6+24,tx=cx+cw+46,tw=a.thing.length*7.4+22;
+    if(!holds)cellsSvg+=`<rect class="fneg" x="${cx-14}" y="${y-14}" width="${tx+tw-cx+28}" height="38" rx="12"/><text class="fnegt" x="${cx-8}" y="${y-3}">not</text>`;
+    cellsSvg+=`<rect class="fcap" x="${cx}" y="${y}" width="${cw}" height="22" rx="11"/><text class="fcapt" x="${cx+cw/2}" y="${y+15}" text-anchor="middle">${a.pred}</text><path class="farr" d="M${cx+cw} ${y+11}H${tx-2}"/><rect class="fthing" x="${tx}" y="${y}" width="${tw}" height="22" rx="6"/><text class="fthingt" x="${tx+tw/2}" y="${y+15}" text-anchor="middle">${a.thing}</text>`;});
+   if(showStatus&&(SH.T||SH.F||SH.argue||SH.status))cellsSvg+=`<text class="cstat" x="${p.x+14}" y="${p.y+RH-11}">${names.map(n=>n+' '+st[n].w).join(' · ')}</text>`;
+   (SH.points||[]).forEach(pt=>{if(atoms.every(a=>(pt.w[a.key]??true)===w[a.key])){cellsSvg+=`<g class="wpt"><circle cx="${p.x+CW-16}" cy="${p.y+14}" r="7"/><text x="${p.x+CW-28}" y="${p.y+18}" text-anchor="end">${pt.label}</text></g>`;}});
+   cellsSvg+='</g>';}));}
+ // sets of worlds that arrows can point at
+ const setBox=(key,val)=>{const ai=atoms.findIndex(a=>a.key===key);if(ai<0)return null;const sel=stats.filter(o=>o.w[key]===val);if(!sel.length)return null;
+  const c0=Math.min(...sel.map(o=>o.ci)),c1=Math.max(...sel.map(o=>o.ci)),r0=Math.min(...sel.map(o=>o.ri)),r1=Math.max(...sel.map(o=>o.ri));const a=cellAt(c0,r0),b=cellAt(c1,r1);
+  return {x:a.x-9,y:a.y-9,w:b.x+CW-a.x+18,h:b.y+RH-a.y+18,col:ai===0,label:val?ATOMS[key].setT:ATOMS[key].setF};};
+ const used={};const tgtOf=id=>{const p=imp.ports[id];const key=PRED2ATOM[p.atom.p];const k=key+':'+p.v;if(!used[k]){const bx=setBox(key,p.v==='T');if(!bx)return null;used[k]=bx;}return used[k];};
+ // arrows: between sentences, the reasoning steps; into the world, one arrow per supposition straight to its set of worlds
+ const sentEdge=e=>isS(e.from)&&isS(e.to);
+ drawE.forEach(({e,i})=>{if(!sentEdge(e))return;const a=lay.pos[e.from],b=lay.pos[e.to];if(!a||!b)return;let c=A.cls[i];if(c==='faint'||c==='blocked')c='solid';const ay=a[1]+11,by=b[1]+11;let d;
+  if(e.from===e.to)d=`M${a[0]-6} ${ay}C${a[0]-22} ${ay+40} ${a[0]+22} ${ay+40} ${a[0]+6} ${ay}`;else{const bot=Math.max(ay,by)+(lay.depth[i]||30);d=`M${a[0]} ${ay}C${a[0]} ${bot} ${b[0]} ${bot} ${b[0]} ${by}`;}
+  s+=`<path class="imp ${c}" d="${d}" marker-end="url(#mi-${c}-${ex.id})"/>`;});
+ const leadsToWorld=(n,v)=>{const q=[n+'.'+v],seen=new Set();while(q.length){const x=q.pop();if(seen.has(x))continue;seen.add(x);if(isFact(x))return true;imp.edges.forEach(e=>{if(e.from===x&&!(isS(e.from)&&isS(e.to)&&x!==n+'.'+v))q.push(e.to);});}return false;};
+ const directOnly=(n,v)=>imp.edges.filter(e=>e.from===n+'.'+v).every(e=>isS(e.to));
+ const regionArrows=[];
+ if(grid&&stats.length&&!SH.argue)names.forEach(n=>['T','F'].forEach(v=>{if(!(v==='T'?SH.T:SH.F))return;if(directOnly(n,v)&&n!==main)return;
+   if(directOnly(n,v)&&imp.edges.some(e=>e.from===n+'.'+v))return; // handled by the sentence arrows, plus the every/no-world arrows below for the main sentence
+   if(!leadsToWorld(n,v)&&n===main)return;
+   const cells=stats.filter(o=>{const c=o.st[n].c;return v==='T'?(c==='T'||c==='B'):(c==='F'||c==='B');});regionArrows.push({n,v,cells});}));
+ regionArrows.forEach(({n,v,cells})=>{const p=lay.pos[n+'.'+v];const key=o=>o.ci+','+o.ri;const mine=cells.map(key).sort().join('|');const same=names.filter(m=>stats.filter(o=>{const c=o.st[m].c;return v==='T'?(c==='T'||c==='B'):(c==='F'||c==='B');}).map(key).sort().join('|')===mine);const lab=`worlds where ${same.length>1?same.slice(0,-1).join(', ')+' and '+same[same.length-1]+' are':n+' is'} ${v==='T'?'true':'false'}`;
+  if(!cells.length){const bx=gridR.x+gridR.w+40,by=gridR.y+(v==='T'?0:70);extras+=`<g><title>No world can make ${n} ${v==='T'?'true':'false'}.</title><rect class="empty" x="${bx}" y="${by}" width="150" height="50" rx="12"/><text class="emptyt" x="${bx+75}" y="${by+30}" text-anchor="middle">no world fits</text></g>`;over+=`<path class="imp solid" d="M${p[0]} ${p[1]+11}C${p[0]} ${p[1]+90} ${bx-40} ${by+25} ${bx-2} ${by+25}" marker-end="url(#mi-solid-${ex.id})"/>`;return;}
+  const c0=Math.min(...cells.map(o=>o.ci)),c1=Math.max(...cells.map(o=>o.ci)),r0=Math.min(...cells.map(o=>o.ri)),r1=Math.max(...cells.map(o=>o.ri));
+  let tx,ty;if(cells.length===(c1-c0+1)*(r1-r0+1)){const a=cellAt(c0,r0),b=cellAt(c1,r1);const R2={x:a.x-9,y:a.y-9,w:b.x+CW-a.x+18,h:b.y+RH-a.y+18};extras+=`<rect class="tgt" x="${R2.x}" y="${R2.y}" width="${R2.w}" height="${R2.h}" rx="14"/>`;tx=R2.x+R2.w/2+(v==='T'?-20:20);ty=R2.y;}
+  else{cells.forEach(o=>{const a=cellAt(o.ci,o.ri);extras+=`<rect class="tgt" x="${a.x-6}" y="${a.y-6}" width="${CW+12}" height="${RH+12}" rx="13"/>`;});const top=cells.slice().sort((x,y)=>x.ri-y.ri||x.ci-y.ci)[0];const a=cellAt(top.ci,top.ri);tx=a.x+CW/2;ty=a.y-6;}
+  extras+=`<text class="tgtl" x="${tx}" y="${ty-6}" text-anchor="middle">${lab}</text>`;
+  over+=`<g><title>If ${n} is ${v==='T'?'true':'false'}, the world must be one of the ${lab}.</title><path class="imp solid" d="M${p[0]} ${p[1]+11}C${p[0]} ${p[1]+70} ${tx} ${ty-70} ${tx} ${ty-18}" marker-end="url(#mi-solid-${ex.id})"/></g>`;});
+ // optional: show some basic sets of worlds on their own (used to explain "and" and "one of")
+ (SH.sets||[]).forEach(k=>{const [key,v]=k.split(':');const bx=setBox(key,v==='T');if(!bx)return;used[k]=bx;});
+ // a supposition that says nothing about the facts leads to every world (or, if it contradicts itself, to none)
+ const hasFactReach=v=>{const q=[main+'.'+v],seen=new Set();while(q.length){const n=q.pop();if(seen.has(n))continue;seen.add(n);if(isFact(n))return true;imp.edges.forEach(e=>{if(e.from===n)q.push(e.to);});}return false;};
+ if(grid&&stats.length&&!SH.argue)[['T',SH.T],['F',SH.F]].forEach(([v,on])=>{if(!on||hasFactReach(v))return;const ok=stats.some(o=>{const c=o.st[main].c;return v==='T'?(c==='T'||c==='B'):(c==='F'||c==='B');});const p=lay.pos[main+'.'+v];
+  if(ok){const tx=gridR.x+gridR.w*(v==='T'?0.3:0.7);over+=`<g><title>Supposing ${main} ${v==='T'?'true':'false'} places no demand on the facts: it fits every world.</title><path class="imp solid" d="M${p[0]} ${p[1]+11}C${p[0]} ${p[1]+60} ${tx} ${gridR.y-60} ${tx} ${gridR.y-12}" marker-end="url(#mi-solid-${ex.id})"/></g>`;if(!extras.includes('tgtall'))extras+=`<rect class="tgtall" x="${gridR.x-10}" y="${gridR.y-10}" width="${gridR.w+20}" height="${gridR.h+20}" rx="16"/><text class="tgtl" x="${gridR.x+gridR.w-4}" y="${gridR.y-16}" text-anchor="end">every world</text>`;}
+  else{const bx=gridR.x+gridR.w+40,by=gridR.y+(v==='T'?0:70);const why=THEORY==='classical'?['no world fits:','it contradicts itself']:THEORY==='kripke'?['no value:','never grounded in facts']:['gap:','a closed loop'];const cl=THEORY==='classical'?'bad':'solid';extras+=`<g><title>${THEORY==='classical'?`Supposing ${main} ${v==='T'?'true':'false'} contradicts itself, so no world can be like that.`:THEORY==='kripke'?`Under Kripke’s rules ${main} never gets a value: nothing in the facts ever settles it.`:`Under Gaifman’s closed-loop rule, ${main} gets a gap: it only refers to itself, so its evaluation can never finish.`}</title><rect class="empty${THEORY==='classical'?'':' emptyn'}" x="${bx}" y="${by}" width="170" height="50" rx="12"/><text class="emptyt${THEORY==='classical'?'':' emptynt'}" x="${bx+85}" y="${by+22}" text-anchor="middle">${why[0]}</text><text class="emptyt${THEORY==='classical'?'':' emptynt'}" x="${bx+85}" y="${by+38}" text-anchor="middle">${why[1]}</text></g>`;over+=`<path class="imp ${cl}" d="M${p[0]} ${p[1]+11}C${p[0]} ${p[1]+90} ${bx-40} ${by+25} ${bx-2} ${by+25}" marker-end="url(#mi-${cl}-${ex.id})"/>`;}});
+ // basic sets shown on their own, with their labels
+ Object.values(used).forEach(t=>{extras+=`<rect class="tgtset" x="${t.x}" y="${t.y}" width="${t.w}" height="${t.h}" rx="14"/><text class="setl" x="${t.col?t.x+t.w/2:gridR.x+gridR.w+18}" y="${t.col?t.y-6:t.y+t.h/2+4}" text-anchor="${t.col?'middle':'start'}">${t.label}</text>`;});
+ // a derived relation, drawn separately from the arrows: two sentences true in exactly the same worlds are equivalent (≡)
+ if(grid&&stats.length>1&&SH.T&&SH.F&&!SH.argue){const sig=(m,v)=>stats.filter(o=>{const c=o.st[m].c;return v==='T'?(c==='T'||c==='B'):(c==='F'||c==='B');}).map(o=>o.ci+','+o.ri).sort().join('|');
+  for(let i=0;i<ex.boxes.length;i++)for(let j=i+1;j<ex.boxes.length;j++){const A1=ex.boxes[i],B1=ex.boxes[j];const n1=A1.n,n2=B1.n;if(sig(n1,'T')!==sig(n2,'T')||sig(n1,'F')!==sig(n2,'F'))continue;if(stats.some(o=>o.st[n1].c==='N'||o.st[n2].c==='N'))continue;
+   const l=A1.r.x+A1.r.w<=B1.r.x?A1:B1,r=l===A1?B1:A1;if(l.r.x+l.r.w>r.r.x)continue;const x1=l.r.x+l.r.w,x2=r.r.x,y=Math.min(l.r.y+l.r.h,r.r.y+r.r.h)-18;
+   extras+=`<g><title>${n1} and ${n2} are equivalent: true in exactly the same worlds. This is a result worked out from the worlds, not something either sentence requires.</title><path class="eqv" d="M${x1} ${y-3}H${x2}M${x1} ${y+3}H${x2}"/><circle class="eqvc" cx="${(x1+x2)/2}" cy="${y}" r="10"/><text class="eqvt" x="${(x1+x2)/2}" y="${y+5}" text-anchor="middle">≡</text><text class="eqvl" x="${(x1+x2)/2}" y="${y+24}" text-anchor="middle">equivalent</text></g>`;}}
+ // ports
+ if(showPorts)ex.boxes.forEach(b=>{[['T','sent T'],['F','sent F']].forEach(([v,c])=>{if(!(v==='T'?(SH.T||SH.arrows):(SH.F||SH.arrows)))return;const p=lay.pos[b.n+'.'+v];s+=`<g class="port ${c}"><title>${v==='T'?'Suppose '+b.n+' is true.':'Suppose '+b.n+' is false.'}</title><circle cx="${p[0]}" cy="${p[1]}" r="11"/><text x="${p[0]}" y="${p[1]+4}" text-anchor="middle">${v}</text></g>`;});});
+ // a plain-language key under the grid
+ let key='';const kY=grid?gridR.y+gridR.h+34:band+10;
+ if(grid&&(SH.T||SH.F)&&!SH.argue){const parts=[];const has=f=>stats.some(o=>f(o.st[main].c));const sig=(m,v)=>stats.filter(o=>{const c=o.st[m].c;return v==='T'?(c==='T'||c==='B'):(c==='F'||c==='B');}).map(o=>o.ci+','+o.ri).sort().join('|');const who=v=>{const same=names.filter(m=>sig(m,v)===sig(main,v));return same.length>1?same.slice(0,-1).join(', ')+' and '+same[same.length-1]+' are':main+' is';};if(SH.T&&has(c=>c==='T'||c==='B'))parts.push(`<tspan class="kT">green</tspan>: worlds where ${who('T')} true`);if(SH.F&&has(c=>c==='F'||c==='B'))parts.push(`<tspan class="kF">orange</tspan>: worlds where ${who('F')} false`);if(stats.some(o=>o.st[main].c==='B'))parts.push('both colours: either value works');if(SH.T&&SH.F&&stats.some(o=>o.st[main].c==='N'))parts.push('<tspan class="kN">grey</tspan>: neither');key=parts.length?`<text class="key" x="${gx0}" y="${kY}">${parts.join('; ')}.</text>`:'';}
+ if(SH.argue)key=`<text class="key" x="${gx0}" y="${kY}"><tspan class="kT">Green border</tspan>: every premise is true there. <tspan class="kX">Red border</tspan>: a counter-model.</text>`;
+ const rowT=Object.values(used).some(t=>!t.col);const keyLen=key.replace(/<[^>]+>/g,'').length;const W=Math.max(gx0+keyLen*7+30,ex.vb[0]+ex.vb[2],gx0+cols.length*(CW+GAP)+(extras.includes('empty')?250:rowT?190:30));let H=grid?kY+16:(showPorts?band+10:bb+12);if(extras.includes('class="empty'))H=Math.max(H,gridR.y+140);
+ return `<svg viewBox="${ex.vb[0]} ${ex.vb[1]} ${W-ex.vb[0]} ${H-ex.vb[1]}" class="fit" role="img" aria-label="Sentences and the space of possible worlds">${content}${cellsSvg}${extras}${s}${over}${key}</svg>`;}
+// ---------- the supposition as a dot: it walks the implications through the sentence's own parts, automatically ----------
+let FLOWRUN=0;
+function flowGeom(ex,info){const b=ex.boxes[0].r;const a=ex.arrows.find(x=>ex.boxes.some(bx=>onEdge(x.to,bx.r)));const c=ex.caps.find(k=>k.id===a.from).r;const enc=ex.encs[0]?ex.encs[0].r:null;const nots=info[a.from].negs;
+ const fx=c.x+c.w,fy=c.y+c.h/2,cx=c.x+c.w/2;const exitY=enc?enc.y+enc.h:c.y+c.h;const B=b.y+b.h,right=b.x+b.w;const pT=b.x+40,pF=b.x+76;
+ const route=(sx,ex2)=>{const pts=[[sx,B],[sx,B+22],[right+18,B+22],[right+18,fy],[right,fy],[fx,fy],[cx,fy],[cx,exitY],[cx,B-14],[ex2,B-14],[ex2,B]];return pts;};
+ return {b,c,enc,nots,fx,fy,cx,exitY,B,right,pT,pF,route};}
+function ptsToD(p){return 'M'+p.map(q=>q.join(' ')).join('L');}
+function drawFlow(ex,defs,info){const g=flowGeom(ex,info);
+ let s=drawContent(ex,null,info,worldOf(ex,{}),null,null).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
+ const res=v=>g.nots%2?!v:v;
+ s+=`<rect id="fbox" class="fbox fT" x="${g.b.x-4}" y="${g.b.y-4}" width="${g.b.w+8}" height="${g.b.h+8}" rx="7"/>`;
+ if(g.enc)s+=`<rect id="fenc" class="fenc" x="${g.enc.x-3}" y="${g.enc.y-3}" width="${g.enc.w+6}" height="${g.enc.h+6}" rx="18" opacity="0"/>`;
+ // the two routes: from T to wherever supposing T leads, and from F likewise
+ const rT=g.route(g.pT,res(true)?g.pT:g.pF),rF=g.route(g.pF,res(false)?g.pT:g.pF);
+ [rT,rF].forEach(r=>{s+=`<path class="froute" d="${ptsToD(r.slice(0,5))}"/><path class="froute" d="${ptsToD(r.slice(7))}"/>`;});
+ s+=`<path id="fpathT" class="fhid" d="${ptsToD(rT)}"/><path id="fpathF" class="fhid" d="${ptsToD(rF)}"/>`;
+ [['T',g.pT],['F',g.pF]].forEach(([v,x])=>{s+=`<g id="fport${v}" class="port sent ${v}"><circle cx="${x}" cy="${g.B}" r="11"/><text x="${x}" y="${g.B+4}" text-anchor="middle">${v}</text></g>`;});
+ s+=`<g id="fdot" class="fdot fT"><circle r="13" cx="${g.pT}" cy="${g.B}"/><text x="${g.pT}" y="${g.B+5}" text-anchor="middle">T</text></g>`;
+ return `<svg viewBox="${ex.vb[0]-4} ${ex.vb[1]-6} ${g.right+40-ex.vb[0]} ${g.B+40-ex.vb[1]}" class="fit flow" role="img" aria-label="A dot carrying the supposition about S round the sentence">${s}</svg>`;}
+function flowPanel(ex,info){const g=flowGeom(ex,info);
+ return `<div class="mrow" id="fhistrow"><span>S</span><span id="fhist"></span></div>`;}
+function flowStart(ex,info){const run=++FLOWRUN;const g=flowGeom(ex,info);const res=v=>g.nots%2?!v:v;
+ const dot=document.getElementById('fdot');if(!dot)return;const circ=dot.querySelector('circle'),txt=dot.querySelector('text');const box=document.getElementById('fbox'),enc=document.getElementById('fenc'),hist=document.getElementById('fhist');
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;let cur=true;const H=['T'];
+ const setDot=(x,y,v)=>{circ.setAttribute('cx',x);circ.setAttribute('cy',y);txt.setAttribute('x',x);txt.setAttribute('y',y+5);txt.textContent=v?'T':'F';dot.setAttribute('class','fdot '+(v?'fT':'fF'));};
+ const lit=v=>{['T','F'].forEach(k=>{const p=document.getElementById('fport'+k);if(p)p.style.opacity=(k==='T')===v?'1':'0.35';});box.setAttribute('class','fbox '+(v?'fT':'fF'));};
+ const showHist=()=>{if(hist)hist.innerHTML=H.slice(-14).map(h=>`<span class="chip ${h==='T'?'cT':'cF'}">${h}</span>`).join('');};
+ lit(cur);showHist();
+ const lap=()=>{if(run!==FLOWRUN||!document.body.contains(dot))return;const path=document.getElementById(cur?'fpathT':'fpathF');const total=path.getTotalLength();
+  const pts=g.route(cur?g.pT:g.pF,0);let flipAt=0;for(let i=1;i<=7;i++)flipAt+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);
+  const out=res(cur);const speed=total/3600,hold=enc?900:300,tF=flipAt/speed,dur=total/speed+hold;const t0=performance.now();let flipped=false;
+  const frame=now=>{if(run!==FLOWRUN||!document.body.contains(dot))return;const t=now-t0;let L,v;
+   if(t<tF){L=speed*t;v=cur;}else if(t<tF+hold){L=flipAt;v=t<tF+hold*0.45?cur:out;if(!flipped){flipped=true;if(enc&&out!==cur){enc.setAttribute('opacity','1');setTimeout(()=>enc&&enc.setAttribute('opacity','0'),hold+300);}}}else{L=Math.min(total,flipAt+speed*(t-tF-hold));v=out;}
+   if(reduced){const ph=t<tF?0:t<tF+hold?1:2;L=[0,flipAt,total][ph];v=ph===0?cur:ph===1&&t<tF+hold*0.45?cur:out;}
+   const p=path.getPointAtLength(L);setDot(p.x,p.y,v);
+   if(t<dur){requestAnimationFrame(frame);return;}
+   cur=out;H.push(cur?'T':'F');lit(cur);showHist();setTimeout(lap,900);};
+  requestAnimationFrame(frame);};
+ setTimeout(lap,800);}
+// ---------- tutorial: truth as a relation between sentences and worlds ----------
+const DN={snow:'Snow',wind:'Wind',soc:'Socrates',k:'the king'};
+const usesWorld=ex=>ex.caps.some(c=>c.p!=='IsTrue');
+const worldKeys=ex=>{const ps=ex.caps.map(c=>c.p);if(ps.includes('Man')||ps.includes('Mortal'))return ['man','mortal'];const k=[];if(ps.includes('Falling'))k.push('snow');if(ps.includes('Blowing'))k.push('wind');return k;};
+function worldOf(ex,w){const ps=ex.caps.map(c=>c.p);if(ps.includes('Man')||ps.includes('Mortal'))return {D:['soc'],ent:{Socrates:'soc'},holds:{Man:d=>d==='soc'&&w.man===true,Mortal:d=>d==='soc'&&w.mortal===true},unk:{Man:d=>d==='soc'&&w.man==='u',Mortal:d=>d==='soc'&&w.mortal==='u'}};
+ return {D:['snow','wind'],ent:{Snow:'snow',Wind:'wind'},holds:{Falling:d=>d==='snow'&&w.snow===true,Blowing:d=>d==='wind'&&w.wind===true},unk:{Falling:d=>d==='snow'&&w.snow==='u',Blowing:d=>d==='wind'&&w.wind==='u'}};}
+function wdesc(ex,w){const k=worldKeys(ex);if(!k.length)return 'its facts make no difference to these sentences';if(k[0]==='man')return 'Socrates is '+(w.man?'':'not ')+'a man, and '+(w.mortal?'':'not ')+'mortal';
+ return (w.snow?'snow is falling':'nothing is falling')+(k.includes('wind')?(w.wind?'; the wind is blowing':'; no wind'):'');}
+const WBT={snow:v=>v?'Snow is falling':'Nothing is falling',wind:v=>v?'Wind is blowing':'No wind',man:v=>v?'Socrates is a man':'Socrates is not a man',mortal:v=>v?'Socrates is mortal':'Socrates is not mortal'};
+let TYPES=true,THEORY='classical',SHOWREASON=true;const MOT={},ANIM={},WS={},FOCUS={},ANS={};let LI=0;
+function edgeLabel(v,name,multi){const p=multi?name+' ':'';return p+(v==='true'?'true in':v==='false'?'false in':v==='either'?'either, in':v==='paradox'?'paradox in':v==='inherits a paradox'?'inherits a paradox in':v==='neither'?'no value in':v==='gap'?'gap in':v==='not yet'?'not yet worked out in':v+' in');}
+function drawLesson(L,li,ex,defs,info,SH){SH=SH||{worlds:true,lines:true,T:true,F:true};
+ const worlds=WS[li].slice(0,SH.nworlds||WS[li].length);const fi=Math.min(FOCUS[li]||0,worlds.length-1);const allowP=id=>{const parts=id.split('.');const q=parts.pop();const nm=parts.join('.');if(SH.sents&&!SH.sents.includes(nm))return false;return (q==='T'&&SH.T)||(q==='F'&&SH.F);};const Ms=worlds.map(w=>worldOf(ex,w));
+ const per=Ms.map(M=>{const imp=buildImp(defs,M);const A=impAnalyse(imp,defs);let TV=THEORY!=='classical'?theoryVerdicts(defs,M):null;return {M,imp,A,TV};});
+ const F=per[fi];const MK=MOT[ex.id];let selInfo=null,GAPS=null,TVf=F.TV;
+ if(L.motion&&MK!==undefined){if(THEORY!=='classical'){const p=partialTV(defs,F.M,MK);TVf={val:p.val,why:p.why};GAPS=p.loop;}else{const run=classicalRun(defs,F.M);selInfo={st:stateAt(run,MK),next:stateAt(run,MK+1)};}}
+ const verdict=i=>{const P=per[i];const TV=i===fi?TVf:P.TV;return TV?Object.fromEntries(Object.keys(defs).map(n=>[n,TV.why[n]&&TV.why[n].startsWith('not yet')?'not yet':vword(TV.val[n])])):P.A.verdict;};
+ const lay=layoutImp(ex,F.imp,info);const pos={...lay.pos};
+ // content (sentences only, no badges)
+ let content=drawContent(ex,TVf?null:selInfo,info,F.M,null,null,ANIM[ex.id],GAPS);content=content.replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'');
+ const boxBottom=Math.max(...ex.boxes.map(b=>b.r.y+b.r.h));
+ let band=(SH.T||SH.F)?boxBottom+34:boxBottom+6;F.imp.edges.forEach((e,i)=>{if(lay.depth[i]!==undefined){const a=pos[e.from],b=pos[e.to];if(a&&b)band=Math.max(band,Math.max(a[1],b[1])+lay.depth[i]+8);}});
+ F.imp.junc.forEach(j=>{if(pos[j.id])band=Math.max(band,pos[j.id][1]+24);});
+ // world panels
+ const bases=[...new Set(Object.values(F.imp.ports).filter(p=>p.kind==='fact').map(p=>p.base))];
+ const rowOf=b=>{const p=Object.values(F.imp.ports).find(q=>q.base===b);const t=p.atom.args[0][1];const thing=DN[p.d||F.M.ent[t.name]]||t.name;return {base:b,pred:p.atom.p,role:p.atom.args[0][0],thing};};
+ const rows=bases.map(rowOf);const capw=r=>r.pred.length*8.2+30,thw=r=>r.thing.length*8+28;
+ const PW=Math.max(250,...worlds.map(w=>wdesc(ex,w).length*6.6+40),...rows.map(r=>capw(r)+Math.max(110,r.role.length*6.4+20)+thw(r)+90));const PY=band+(worlds.length>1||Object.keys(defs).length>1?84:70);const RT=L.reqLabels?62:38;const PH=rows.length?RT+4+rows.length*58+40:84;
+ const px=i=>ex.vb[0]+10+i*(PW+24);
+ let s='';
+ if(SH.worlds)worlds.forEach((w,i)=>{const x=px(i);s+=`<g class="wpanel${i===fi?' focus':''}" data-wi="${i}" role="button" tabindex="0" aria-label="World ${i+1}: ${esc(wdesc(ex,w))}. Click to show the requirement arrows for this world."><title>World ${i+1}: ${esc(wdesc(ex,w))}. Click to show why each verdict holds here.</title><rect class="wrect" x="${x}" y="${PY}" width="${PW}" height="${PH}" rx="12"/><text class="wtitle" x="${x+14}" y="${PY+PH-30}">World ${i+1}${i===fi&&worlds.length>1?' · showing why':''}</text><text class="wdesc" x="${x+14}" y="${PY+PH-12}">${esc(wdesc(ex,w))}</text>`;
+  if(!rows.length)s+=`<text class="wdesc" x="${x+14}" y="${PY+30}">(no facts are used here)</text>`;
+  rows.forEach((r,k)=>{const ry=PY+RT+k*58;const holds=!per[i].imp.ports[r.base+'.T'].closed;const cx=x+16,cw=capw(r),tx=x+16+cw+Math.max(110,r.role.length*6.4+20);
+   const ex2=tx+thw(r);s+=`<g class="frow"><title>${esc(r.pred+'('+r.role+': '+r.thing+')')} ${holds?'holds':'does not hold'} in World ${i+1}.</title>${holds?'':`<rect class="fneg" x="${cx-10}" y="${ry-18}" width="${ex2-cx+20}" height="${26+28}" rx="14"/><text class="fnegt" x="${cx-2}" y="${ry-6}">not</text>`}<rect class="fcap" x="${cx}" y="${ry}" width="${cw}" height="26" rx="13"/><text class="fcapt" x="${cx+cw/2}" y="${ry+18}" text-anchor="middle">${r.pred}</text><path class="farr" d="M${cx+cw} ${ry+13}H${tx-2}"/><text class="frole" x="${(cx+cw+tx)/2}" y="${ry+6}" text-anchor="middle">${esc(r.role)}</text><rect class="fthing" x="${tx}" y="${ry}" width="${thw(r)}" height="26" rx="7"/><text x="${tx+thw(r)/2}" y="${ry+18}" text-anchor="middle">${r.thing}</text></g>`;
+   if(i===fi){pos[r.base+'.T']=[cx+cw/2-9,ry];pos[r.base+'.F']=[cx+cw/2+9,ry];}});
+  s+='</g>';});
+ // requirement arrows (focus world), unless a three-valued theory is in force
+ let req='';
+ const reach=new Set();Object.values(F.imp.ports).filter(p=>p.kind==='sent'&&allowP(p.id)).forEach(p=>{const q=[p.id];while(q.length){const n=q.pop();if(reach.has(n))continue;reach.add(n);F.imp.edges.forEach(e=>{if(e.from===n)q.push(e.to);});}});
+ if(!TVf){F.imp.edges.forEach((e,i)=>{if(!reach.has(e.from))return;if(F.imp.ports[e.to]&&F.imp.ports[e.to].kind==='fact'&&!SH.worlds)return;const a=pos[e.from],b=pos[e.to];if(!a||!b)return;const c=F.A.cls[i]==='faint'?'solid':F.A.cls[i];const fromPort=!!F.imp.ports[e.from];const tp=F.imp.ports[e.to];const toFact=tp&&tp.kind==='fact';const ay=fromPort&&!(F.imp.ports[e.from].kind==='fact')?a[1]+11:a[1]+5;
+   if(toFact){const by=b[1]-3;const h=Math.max(30,(by-ay)*0.45);const bar=tp.v==='F';const met=!tp.closed;req+=`<g class="rmark ${met?'ok':'bad'}"><title>${met?'Fits this world.':'Clashes with this world.'}</title><circle cx="${b[0]}" cy="${by-15}" r="7.5"/><text x="${b[0]}" y="${by-11}" text-anchor="middle">${met?'✓':'✗'}</text></g>`;
+   if(L.reqLabels){req+=`<text class="reqlab" x="${b[0]+(bar?18:36)}" y="${by-(bar?44:28)}">${bar?'if F: this must not hold':'if T: this must hold'}${met?' ✓':' ✗ but it '+(bar?'does':'does not')}</text>`;}
+   req+=`<path class="imp ${c}" d="M${a[0]} ${ay}C${a[0]} ${ay+h} ${b[0]} ${by-h} ${b[0]} ${by-(bar?2:0)}"${bar?'':` marker-end="url(#mi-${c}-${ex.id})"`}/>${bar?`<line class="imp ${c} barend" x1="${b[0]-8}" y1="${by-2}" x2="${b[0]+8}" y2="${by-2}"/>`:''}`;return;}
+   const by=tp?b[1]+11:b[1]-5;let d;
+   if(e.from===e.to)d=`M${a[0]-6} ${ay}C${a[0]-22} ${ay+40} ${a[0]+22} ${ay+40} ${a[0]+6} ${ay}`;else if(fromPort&&!tp&&Math.abs(a[0]-b[0])<1)d=`M${a[0]} ${ay}V${by}`;else{const bottom=Math.max(ay,by)+(lay.depth[i]||30);d=`M${a[0]} ${ay}C${a[0]} ${bottom} ${b[0]} ${bottom} ${b[0]} ${by}`;}
+   req+=`<path class="imp ${c}" d="${d}"${tp?` marker-end="url(#mi-${c}-${ex.id})"`:''}/>`;});
+  F.imp.junc.forEach(j=>{const p=pos[j.id];if(!p||!reach.has(j.id))return;const [x,y]=p;req+=`<g><title>${j.kind==='both'?'Both: every branch must hold.':'One of: at least one branch must hold.'}</title><circle class="jn ${j.kind}" cx="${x}" cy="${y}" r="5"/><text class="ptype" x="${x}" y="${y+17}" text-anchor="middle">${j.kind==='both'?'both':'one of'}</text></g>`;});
+  Object.values(F.imp.ports).filter(p=>p.kind==='sent'&&allowP(p.id)).forEach(p=>{const [x,y]=pos[p.id];const r=11;const ruled=F.A.ruled.has(p.id);req+=`<g class="port sent ${p.v}${ruled?' ruled':''}"><title>${p.sent} ${p.v==='T'?'true':'false'} in World ${fi+1}${ruled?': crossed out, because supposing it leads to a conflict':': supposing it leads to no conflict'}.</title><circle cx="${x}" cy="${y}" r="${r}"/>${ruled?`<path class="slash" d="M${x-r+3} ${y+r-3}L${x+r-3} ${y-r+3}"/>`:''}<text x="${x}" y="${y+4}" text-anchor="middle">${p.v}</text></g>`;});}
+ else req+=drawTV(ex,F.imp,{pos},TVf);
+ // truth lines: one per sentence per world
+ let lines='';const names=ex.boxes.map(b=>b.n);const multi=names.length>1;
+ if(SH.lines&&SH.worlds)worlds.forEach((w,i)=>{const V=verdict(i);names.forEach((n,bi)=>{const v=V[n];const bx=ex.boxes.find(b=>b.n===n).r;const st=[bx.x+Math.min(bx.w-24,118)+i*26,bx.y+bx.h-12];
+  const ex2=px(i)+PW/2+(bi-(names.length-1)/2)*Math.min(70,PW/(names.length+1));const sy=st[1]+12,ey=PY-2;const cls=v==='true'?'tT':v==='false'?'tF':v==='either'?'tE':v==='not yet'?'tE':'tX';
+  const t=multi?0.62+0.22*(bi/(names.length-1||1)):0.7;const mx=st[0]+(ex2-st[0])*t,my=sy+(ey-sy)*t;const lab=edgeLabel(v,n,multi)+' W'+(i+1);const lw=lab.length*6.3+16;
+  lines+=`<g><title>${n} is ${v} in World ${i+1}.</title><path class="tline ${cls}" d="M${st[0]} ${sy}L${ex2} ${ey}"/><rect class="tchip ${cls}" x="${mx-lw/2}" y="${my-10}" width="${lw}" height="20" rx="10"/><text class="tchipt" x="${mx}" y="${my+4}" text-anchor="middle">${esc(lab)}</text></g>`;});});
+ const W2=SH.worlds?Math.max(ex.vb[0]+ex.vb[2],px(worlds.length-1)+PW+10):ex.vb[0]+ex.vb[2];const H=SH.worlds?PY+PH+16:(SH.T||SH.F?band+12:boxBottom+12);
+ return `<svg viewBox="${ex.vb[0]} ${ex.vb[1]} ${W2-ex.vb[0]} ${H-ex.vb[1]}" style="max-width:${Math.round((W2-ex.vb[0])*1.25)}px" role="img" aria-label="Drawing of ${esc(ex.sym||'')}">${content}${s}${req}${lines}</svg>`;}
+const STEP={};
+function lessonHTML(L,idx){const ex=byId(L.ex);if(!WS[idx])WS[idx]=(L.worlds||[{}]).map(w=>({...w}));const steps=L.steps;const si=steps?Math.min(STEP[idx]||0,steps.length-1):0;const SH=steps?steps[si].show:null;if(steps&&steps[si].theory)THEORY=steps[si].theory;if(steps&&steps[si].focus!==undefined&&FOCUS[idx]===undefined)FOCUS[idx]=steps[si].focus;const last=!steps||si===steps.length-1;
+ const defs=readBack(ex);const info=defs.__info;delete defs.__info;
+ const back=Object.keys(defs).map(n=>n+' := '+show(defs[n])).join('; ');const q=L.quiz;const ans=ANS[idx];const fi=Math.min(FOCUS[idx]||0,WS[idx].length-1);
+ const savedTheory=THEORY;
+ const MK=MOT[ex.id];const Mf=worldOf(ex,WS[idx][fi]);
+ const motion=L.motion&&last?`<div class="motion"><div class="mhead">Watch it run${WS[idx].length>1?' (in World '+(fi+1)+')':''} <button data-act="mstep">Step</button><button data-act="mreset">Reset</button></div>${MK!==undefined?motionPanel(ex,defs,Mf,classicalRun(defs,Mf),MK):'<p>Press Step to watch the values being worked out, one pass at a time.</p>'}</div>`:'';
+ const pic=SH&&SH.flow?drawFlow(ex,defs,info):L.space?drawSpace(L,ex,defs,info,SH):drawLesson(L,idx,ex,defs,info,SH);THEORY=savedTheory;
+ const wk=worldKeys(ex);
+ const nW=SH&&SH.nworlds?SH.nworlds:WS[idx].length;const wctl=wk.length?WS[idx].slice(0,nW).map((w,i)=>`<div class="world">World ${i+1}: ${wk.map(k=>`<button data-wi="${i}" data-w="${k}">${WBT[k](!!w[k])}</button>`).join('')}${nW>1?`<button data-focus="${i}" aria-pressed="${i===fi}">Show why</button>`:''}</div>`).join(''):'';
+ const texts=steps?steps[si].text:L.text;
+ return `<div class="lgrid"><div class="lt"><div class="lpart">${L.part} · Lesson ${idx+1} of ${LESSONS.length}${steps?` · step ${si+1} of ${steps.length}`:''}</div><h2>${L.title}</h2>${steps?`<div class="stepmarks" role="group" aria-label="Steps in this lesson"><span>Step ${si+1} of ${steps.length}</span>${steps.map((_,k)=>`<button class="smark${k===si?' cur':k<si?' done':''}" data-goto="${k}" aria-label="Go to step ${k+1}" ${k===si?'aria-current="step"':''}></button>`).join('')}${!last?`<button class="showall" data-goto="${steps.length-1}">Show the whole picture</button>`:''}</div>${si===0?`<p class="stephint">This lesson builds up the picture one piece at a time. Read each step, then press <b>Next step</b> under the drawing.</p>`:''}`:''}${texts.map(t=>`<p class="ltext">${t}</p>`).join('')}${SH&&SH.flow?flowPanel(ex,info):''}
+
+ 
+ <p class="readback">Reads back as: <code>${esc(back)}</code></p>
+ ${last?`<div class="tryit"><b>Try this:</b> ${L.tryit}</div>
+ <div class="quiz"><p><b>Check:</b> ${q.q}</p><div class="qopts">${q.opts.map((o,i)=>`<button data-q="${i}" class="${ans===undefined?'':i===q.a?'right':ans===i?'wrong':''}">${o}</button>`).join('')}</div>${ans===undefined?'':`<p class="qfb ${ans===q.a?'ok':'no'}">${ans===q.a?'Right.':'Not quite.'} ${q.why}</p>`}</div>`:''}</div><div class="lf"><div class="block">${pic}</div>${L.space?'':(!SH||SH.worlds?wctl:'')}${motion}${L.validity&&(last||(steps&&steps[si].validity))?validityPanel(ex,defs):''}</div></div>`;}
+function renderLesson(){const L=LESSONS[LI];const SHnow=L.steps?L.steps[Math.min(STEP[LI]||0,L.steps.length-1)].show:null;const el=document.getElementById('lesson');el.innerHTML=lessonHTML(L,LI);const ex=byId(L.ex);
+ el.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{const w=WS[LI][+b.dataset.wi];w[b.dataset.w]=!w[b.dataset.w];delete MOT[ex.id];renderLesson();});
+ el.querySelectorAll('button[data-focus]').forEach(b=>b.onclick=()=>{FOCUS[LI]=+b.dataset.focus;delete MOT[ex.id];renderLesson();});
+ el.querySelectorAll('.wpanel').forEach(g=>{const go=()=>{FOCUS[LI]=+g.dataset.wi;delete MOT[ex.id];renderLesson();};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}};});
+ el.querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>{THEORY=b.dataset.t;delete MOT[ex.id];renderLesson();});
+ const st=el.querySelector('[data-act="mstep"]');if(st)st.onclick=()=>{MOT[ex.id]=MOT[ex.id]===undefined?0:MOT[ex.id]+1;ANIM[ex.id]=MOT[ex.id]>0&&!matchMedia('(prefers-reduced-motion: reduce)').matches;renderLesson();ANIM[ex.id]=false;};
+ const rs=el.querySelector('[data-act="mreset"]');if(rs)rs.onclick=()=>{delete MOT[ex.id];renderLesson();};
+ el.querySelectorAll('button[data-nav]').forEach(b=>{if(!b.textContent.trim()){b.style.visibility='hidden';return;}b.onclick=()=>{const d=+b.dataset.nav;if(!stepTo(d))go(LI+d);keepInView();};});
+ el.querySelectorAll('button[data-step]').forEach(b=>b.onclick=()=>{STEP[LI]=Math.max(0,(STEP[LI]||0)+(+b.dataset.step));const st=LESSONS[LI].steps[STEP[LI]];if(st&&st.focus!==undefined)FOCUS[LI]=st.focus;if(st&&st.theory)THEORY=st.theory;renderLesson();});
+ el.querySelectorAll('button[data-goto]').forEach(b=>b.onclick=()=>{STEP[LI]=+b.dataset.goto;const st=LESSONS[LI].steps[STEP[LI]];if(st.focus!==undefined)FOCUS[LI]=st.focus;if(st.theory)THEORY=st.theory;renderLesson();});
+ el.querySelectorAll('button[data-flow]').forEach(b=>b.onclick=()=>{const exx=byId(LESSONS[LI].ex);const d=readBack(exx);const inf=d.__info;const lesson=LI;
+  const one=()=>{if(FLOWBUSY)return;FLOWBUSY=true;el.querySelectorAll('button[data-flow="go"]').forEach(x=>x.disabled=true);flowAnimate(exx,inf,()=>{FLOWBUSY=false;if(LI!==lesson){FLOWAUTO=false;return;}renderLesson();if(FLOWAUTO&&FLOW[exx.id]&&FLOW[exx.id].pass<40)setTimeout(()=>{if(FLOWAUTO&&LI===lesson)one();},350);else FLOWAUTO=false;});};
+  if(b.dataset.flow==='reset'){FLOWAUTO=false;delete FLOW[exx.id];renderLesson();}
+  else if(b.dataset.flow==='auto'){FLOWAUTO=!FLOWAUTO;renderLesson();if(FLOWAUTO)one();}
+  else one();});
+ el.querySelectorAll('button[data-q]').forEach(b=>b.onclick=()=>{ANS[LI]=+b.dataset.q;renderLesson();});
+
+ document.querySelectorAll('#dots button').forEach((d,i)=>{d.setAttribute('aria-current',i===LI?'step':'false');d.classList.toggle('done',ANS[i]===LESSONS[i].quiz.a);});
+ syncLogic();if(SHnow&&SHnow.flow){const exx=byId(LESSONS[LI].ex);const d=readBack(exx);flowStart(exx,d.__info);}else FLOWRUN++;updateNavbar();history.replaceState(null,'','#lesson-'+(LI+1));}
+function updateNavbar(){const Ls=LESSONS[LI].steps;const si=Ls?Math.min(STEP[LI]||0,Ls.length-1):0;const last=!Ls||si===Ls.length-1;const nx=document.getElementById('navnext'),bk=document.getElementById('navback');
+ nx.textContent=last?(LI<LESSONS.length-1?'Next lesson →':'End of the tutorial'):'Next step →';nx.disabled=last&&LI===LESSONS.length-1;
+ bk.textContent=si>0?'← Back a step':'← Previous lesson';bk.disabled=LI===0&&si===0;
+ document.getElementById('navinfo').textContent=`Lesson ${LI+1} of ${LESSONS.length}${Ls?` · step ${si+1} of ${Ls.length}`:''}${last&&LI<LESSONS.length-1?' · try the check before moving on':''}`;}
+document.getElementById('navnext').onclick=()=>{if(!stepTo(1))go(LI+1);keepInView();};
+document.getElementById('navback').onclick=()=>{if(!stepTo(-1)){if(LI>0){go(LI-1);const Lp=LESSONS[LI].steps;if(Lp){STEP[LI]=Lp.length-1;renderLesson();}}}keepInView();};
+function go(i){FLOWAUTO=false;LI=Math.max(0,Math.min(LESSONS.length-1,i));renderLesson();keepInView();}
+function keepInView(){const el=document.getElementById('lesson');if(window.matchMedia('(min-width: 981px)').matches){el.scrollIntoView({block:'start',behavior:'instant'});}else{const r=el.getBoundingClientRect();if(r.top<0)el.scrollIntoView({block:'start',behavior:'instant'});}}
+function syncLogic(){document.querySelectorAll('#logic button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===THEORY));document.getElementById('logicdesc').textContent=LOGICDESC[THEORY];}
+const LOGICDESC={classical:'Two values, true and false. Every world settles every claim.',kripke:'Three values: true, false, or neither. A world may leave a claim unsettled (Kleene), and a sentence that never gets grounded in the facts has no value (Kripke).',gaifman:'Gaifman’s pointer semantics for sentences about truth: a closed loop gets a gap, and a sentence that correctly calls a gap “not true” is true. Worlds stay classical.'};
+document.querySelectorAll('#logic button').forEach(b=>b.onclick=()=>{THEORY=b.dataset.l;Object.keys(MOT).forEach(k=>delete MOT[k]);renderLesson();});
+const dots=document.getElementById('dots');LESSONS.forEach((L,i)=>{const b=document.createElement('button');b.textContent=i+1;b.title=L.title;b.onclick=()=>go(i);dots.appendChild(b);});
+function stepTo(d){FLOWAUTO=false;const Ls=LESSONS[LI].steps;const si=Ls?Math.min(STEP[LI]||0,Ls.length-1):0;if(Ls&&si+d>=0&&si+d<Ls.length){STEP[LI]=si+d;const st=Ls[STEP[LI]];if(st.focus!==undefined)FOCUS[LI]=st.focus;renderLesson();return true;}return false;}
+
+const m=location.hash.match(/lesson-(\d+)/);go(m?+m[1]-1:0);
+
+</script>
+</body>
+</html>
