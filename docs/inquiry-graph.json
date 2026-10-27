@@ -1,0 +1,297 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "scope": "Curated trace of the available conversation; paraphrases, not verbatim quotations. This inquiry provenance graph is not an implementation of the proposed reasoning-object substrate.",
+  "statusDefinitions": {
+    "accepted": "Explicit user request, correction, or approval.",
+    "accepted_direction": "Assistant clarification consistent with subsequent user direction; exact mechanism not separately approved.",
+    "proposed": "Assistant mechanism awaiting specification or review.",
+    "exploratory": "Tentative analogy; not adopted architecture.",
+    "superseded": "Rejected or replaced design framing.",
+    "open": "Unfulfilled obligation."
+  },
+  "nodes": [
+    {
+      "id": "Q01",
+      "type": "requirement",
+      "status": "accepted",
+      "title": "Worlds and candidate values belong with sentence structure",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User rejected the world being absent from 'the world decides' and asked for sentence and suppositional candidates as one thing."
+      }
+    },
+    {
+      "id": "Q02",
+      "type": "requirement",
+      "status": "accepted",
+      "title": "Retain all worlds and suppositions within declared scope",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User wanted all suppositions and worlds in one object, acknowledging that complete displays may become intractable."
+      }
+    },
+    {
+      "id": "Q03",
+      "type": "requirement",
+      "status": "accepted",
+      "title": "Provide coordinated partial views",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User requested viewing subsections of the larger object."
+      }
+    },
+    {
+      "id": "Q04",
+      "type": "requirement",
+      "status": "accepted",
+      "title": "Use simple examples and demanding families",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User requested initial demonstrations and complex examples to test extensibility and formalization; finite examples alone cannot prove generality."
+      }
+    },
+    {
+      "id": "Q05",
+      "type": "rejected_design",
+      "status": "superseded",
+      "title": "Detached or multiplexed tables are insufficient as the main notation",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User said the displayed chart felt like standard symbolic representation rather than schematic dynamic machinery."
+      }
+    },
+    {
+      "id": "Q06",
+      "type": "requirement",
+      "status": "accepted",
+      "title": "Connected machinery and visible exploration",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User proposed pathways and electronic-circuit-like structure including sentences, worlds, and the process of playing out possibilities."
+      }
+    },
+    {
+      "id": "Q07",
+      "type": "correction",
+      "status": "accepted",
+      "title": "Worlds are not permanently inputs",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User suggested a statement's truth could select a set of worlds; assistant revised one-way input framing to joint constraints."
+      }
+    },
+    {
+      "id": "Q08",
+      "type": "clarification",
+      "status": "accepted_direction",
+      "title": "Suppositions, propagation, entailment, and branching differ",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User asked how supposing and its entailments fit; assistant distinguished temporary restrictions, local consequences, global entailment, and alternative trials."
+      }
+    },
+    {
+      "id": "Q09",
+      "type": "analogy",
+      "status": "exploratory",
+      "title": "Infinity-groupoid and ruliad",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User offered these terms tentatively. Assistant identified fixed-rule multiway histories as a closer analogy and explained why reversibility and universal computation were not adopted."
+      }
+    },
+    {
+      "id": "Q10",
+      "type": "decision",
+      "status": "accepted",
+      "title": "Prioritize precise shared objects and inspectable reasoning",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User explicitly agreed with the goals and priorities, then asked whether review concerned human cognition or formal computation."
+      }
+    },
+    {
+      "id": "Q11",
+      "type": "clarification",
+      "status": "accepted_direction",
+      "title": "Separate formal correctness from human intelligibility",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "Assistant corrected the conflation: machine checks and proof obligations are separate from Brian's visual review."
+      }
+    },
+    {
+      "id": "Q12",
+      "type": "requirement",
+      "status": "accepted",
+      "title": "Machine-checkable substrate with potentially intractable instances",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User requested formal computationally checkable structure, compact visual explanations of liar/loops/halting, and views relevant to a question."
+      }
+    },
+    {
+      "id": "Q13",
+      "type": "proposal",
+      "status": "proposed",
+      "title": "Question-directed view contracts",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "Assistant distinguished restriction, projection, collapse, and abstraction; warned that selecting a useful exact view may itself be difficult."
+      }
+    },
+    {
+      "id": "Q14",
+      "type": "correction",
+      "status": "accepted",
+      "title": "An object is broader than a sentence",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User clarified that an instance may involve sentences, worlds, facts, suppositional pathways, and true/false values. Assistant adopted typed structured reasoning objects."
+      }
+    },
+    {
+      "id": "Q15",
+      "type": "authorization",
+      "status": "accepted",
+      "title": "Align repository and preserve inquiry trace",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "User requested making the repository consistent with this direction and updating the inquiry graph trace."
+      }
+    },
+    {
+      "id": "O01",
+      "type": "open_obligation",
+      "status": "open",
+      "title": "Specify executable schema and rule verification",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "No general typed schema or context-aware inference checker is implemented by this documentation revision."
+      }
+    },
+    {
+      "id": "O02",
+      "type": "open_obligation",
+      "status": "open",
+      "title": "Review a connected schematic",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "No new gate or pathway notation has been visually approved."
+      }
+    },
+    {
+      "id": "O03",
+      "type": "open_obligation",
+      "status": "open",
+      "title": "Prove view guarantees within declared scope",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "Projection must preserve dependencies and supporting extensions; approximate summaries require explicit guarantees."
+      }
+    },
+    {
+      "id": "O04",
+      "type": "open_obligation",
+      "status": "open",
+      "title": "Formalize richer self-reference and program behavior",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "Strange loops require precise examples; arithmetic and halting need encodings and assumptions beyond predicate labels."
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "Q01",
+      "to": "Q02",
+      "relation": "extends"
+    },
+    {
+      "from": "Q02",
+      "to": "Q03",
+      "relation": "requires"
+    },
+    {
+      "from": "Q03",
+      "to": "Q04",
+      "relation": "motivates"
+    },
+    {
+      "from": "Q05",
+      "to": "Q01",
+      "relation": "refines"
+    },
+    {
+      "from": "Q05",
+      "to": "Q06",
+      "relation": "motivates"
+    },
+    {
+      "from": "Q06",
+      "to": "Q07",
+      "relation": "refined_by"
+    },
+    {
+      "from": "Q07",
+      "to": "Q08",
+      "relation": "motivates"
+    },
+    {
+      "from": "Q08",
+      "to": "Q09",
+      "relation": "prompts_analogy"
+    },
+    {
+      "from": "Q09",
+      "to": "Q10",
+      "relation": "informs"
+    },
+    {
+      "from": "Q10",
+      "to": "Q11",
+      "relation": "clarified_by"
+    },
+    {
+      "from": "Q11",
+      "to": "Q12",
+      "relation": "refined_by"
+    },
+    {
+      "from": "Q12",
+      "to": "Q13",
+      "relation": "motivates"
+    },
+    {
+      "from": "Q12",
+      "to": "Q14",
+      "relation": "refined_by"
+    },
+    {
+      "from": "Q14",
+      "to": "Q15",
+      "relation": "authorized_by"
+    },
+    {
+      "from": "Q14",
+      "to": "O01",
+      "relation": "requires"
+    },
+    {
+      "from": "Q06",
+      "to": "O02",
+      "relation": "requires"
+    },
+    {
+      "from": "Q13",
+      "to": "O03",
+      "relation": "requires"
+    },
+    {
+      "from": "Q04",
+      "to": "O04",
+      "relation": "motivates"
+    }
+  ]
+}

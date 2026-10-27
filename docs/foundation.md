@@ -1,10 +1,10 @@
 # Foundation: the objects behind the diagrams
 
-Live, editable version: https://claude.ai/artifact/V3ahWhPUDtTRbY1N3PmT8D (a Claude Doc; this file is a copy made on 27 October 2026).
+Historical external copy: https://claude.ai/artifact/V3ahWhPUDtTRbY1N3PmT8D . Later repository revisions may differ.
 
-This page fixes **what** the diagrams draw. It lists the standard objects of logic and model theory, in the order a textbook introduces them, and gives each one the mark that draws it.
+This page defines the existing sentence component and its marks. The governing [project contract](reasoning-objects.md) broadens the target to structured reasoning objects containing sentences, worlds, facts, values, suppositions, and histories. These are components even when shown on separate rendering layers. The complete substrate remains proposed.
 
-**The rule:** every mark in the tutorial and the spec stands for exactly one object on this page, and every object we teach has exactly one mark. A mark with no object here is an invention to remove or justify; an object with no mark is a gap to fill.
+**The rule:** every mark in the tutorial and the spec stands for exactly one object on this page, and each new component requires an explicit visual mapping before adoption. Existing marks do not yet cover the complete target architecture. A mark with no object here is an invention to remove or justify; an object with no mark is a gap to fill.
 
 *(Diagram in the live version: the ontology of a logic. Left column, the language: sorts, names, predicates and roles, logical operators, sentences. Right column, the worlds: worlds, facts, satisfaction, truth values. Below, defined from satisfaction: truth conditions, consequence, truth and its theories. The whole is framed as "a logic (in institution theory, an institution)".)*
 
@@ -12,7 +12,7 @@ The left column is the **language**: what can be said. The right column is the *
 
 ## 1. Sorts: the kinds of object
 
-A **sort** is a kind of object that sentences can talk about. Our language has two:
+A **sort** is a kind of object that sentences can talk about. The implemented object language has two (these do not classify metadata such as worlds or proof records):
 
 | Sort | Its objects | Example names |
 | --- | --- | --- |
@@ -54,7 +54,7 @@ The **logical operators** are the words whose meaning **never changes** between 
 
 **Quantifiers** work over the objects of a sort: "something is P" is true when at least one object makes P true; "every thing is P" when all of them do.
 
-**Three-valued logic (Kleene's strong tables):** a third value, N (neither). "Not N" is N; "F and N" is F; "T and N" is N. Switching the Logic setting is largely switching these tables.
+**Three-valued logic (Kleene's strong tables):** a third value, N (neither). "Not N" is N; "F and N" is F; "T and N" is N. A truth theory also specifies fixed-point selection or revision rules; switching tables alone does not define the theory.
 
 | Operator | Our mark | Status |
 | --- | --- | --- |
@@ -80,7 +80,7 @@ Both are layouts of the same abstract diagram and read back to the same formula.
 
 ## 5. Worlds and facts
 
-A **world** (a **model** or **structure**) fixes which objects exist for each sort, what each name stands for, and each predicate's extension. Each member of an extension is a **fact**. A classical world settles every claim; partial worlds, the three-valued alternative, may leave a claim unsettled.
+A **world** (a **model** or **structure**) fixes which objects exist for each sort, what each name stands for, and each predicate's extension. Each member of an extension is a **fact**. An ordinary classical world settles ordinary predicates. Sentence truth candidates are separate until consistency constraints are checked. Partial interpretations may leave claims unsettled.
 
 | Object | Our mark |
 | --- | --- |
@@ -88,7 +88,7 @@ A **world** (a **model** or **structure**) fixes which objects exist for each so
 | A fact that holds | The claim drawn plainly inside the cell |
 | A claim that does not hold | The same claim inside a "not" (the world's *diagram*, in Robinson's sense) |
 | An unsettled claim (three-valued only) | "says nothing about …" in the cell |
-| All possible worlds | The grid itself |
+| All worlds in a declared scope | The existing grid; future objects may specify the family symbolically |
 
 **Sources:** Tarski; Robinson; Kleene; Barwise and Perry (partial worlds).
 
@@ -121,6 +121,8 @@ The value of a whole sentence is worked out from the inside out, passing through
 
 ## 8. The truth predicate, theories of truth, and logics
 
+Self-reference requires distinguishing ordinary worlds and sentence assignments. Queries must distinguish some, all, and no consistent assignments; see [the proposed kernel](reasoning-objects.md#3-proposed-finite-classical-kernel).
+
 **The truth predicate.** IsTrue's role ("bearer") accepts a **sentence**. It must agree with satisfaction itself: IsTrue(S′) holds in a world exactly when S′ is true there. That makes the definition circular whenever sentences refer to themselves or form loops.
 
 | Theory | How it resolves the circle | Liar's verdict | Source |
@@ -130,9 +132,9 @@ The value of a whole sentence is worked out from the inside out, passing through
 | Gaifman | Closed loops get a gap; jump rule outside them | Gap | Gaifman 1992 |
 | Revision | Revise round after round | Flips forever | Gupta and Belnap 1993 |
 
-**What a paradox is, in these terms.** For the liar, no classical world can make IsTrue agree with satisfaction: there is no **fixed point**. A three-valued world can leave IsTrue(S) unsettled, and then S comes out neither, which agrees: Kripke's answer. The truth-teller has two agreeing worlds: "either". The T and F circles stand for these **candidate worlds**.
+**What a paradox is, in these terms.** For the liar, no classical world can make IsTrue agree with satisfaction: there is no **fixed point**. A three-valued world can leave IsTrue(S) unsettled, and then S comes out neither, which agrees: Kripke's answer. At each fixed ordinary world the truth-teller has two consistent sentence assignments. T and F circles are candidate sentence values, not ordinary worlds. “Either” summarizes assignments, not a third Boolean value.
 
-**Logics.** A whole logic is an **institution** (Goguen and Burstall 1992). The Logic switch chooses among classical, three-valued (Kleene plus Kripke) and Gaifman's; it changes operators' tables, what counts as a world and how IsTrue is read, never the sentences.
+**Logics.** Institution theory (Goguen and Burstall 1992) supplies a framework relating signatures, sentences, models, and satisfaction. A UI setting does not establish its compatibility laws. The existing Logic switch illustrates alternatives; each theory needs its own specification and validation.
 
 ## 9. Audit (as of 27 October 2026)
 
@@ -141,7 +143,7 @@ The value of a whole sentence is worked out from the inside out, passing through
 | Sort tags on roles | Decided; drawn by the engine |
 | A visible "and" | Decided (divider); drawn by the engine |
 | "or", "if" | No worked example yet |
-| T and F circles | Resolved: candidate worlds for IsTrue |
+| T and F circles | Candidate sentence values, distinct from ordinary worlds |
 | Dot animations in the tutorial | A replay of revision; to be replaced in the rebuild |
 | "Inherits a paradox" | Our own term; find the standard one or say it is ours |
 | Red used for both "not" and paradox | Resolved in the engine (neutral "not"); still present in tutorial.html |
@@ -156,9 +158,9 @@ Every picture is built only from these marks, and each mark means the same objec
 
 **Worlds:** world cell; grid; shading (truth conditions); set outline (dashed magenta); ≡ link.
 
-**Graph form and value layers (amendment, after tests passed):** sentence node; "says" edge; "not" node; "inside" edge; "something" node with "home" edge; role edge (blue when filled by a sentence); true layer and false layer; crossing (passing a "not"); closed curve (one curve through both copies of a sentence, a figure 8, means no consistent value; two separate curves mean either value holds).
+**Graph form and value layers (amendment, after tests passed):** sentence node; "says" edge; "not" node; "inside" edge; "something" node with "home" edge; role edge (blue when filled by a sentence); true layer and false layer; crossing (passing a "not"); closed curve (for pure signed cycles only: one component through both value copies means no consistent assignment; two components mean two assignments. A figure-eight crossing is a layout choice).
 
-**Rules:** a process is shown by these marks changing over steps, never by a new shape; colour carries value only; every picture's caption names the marks it uses.
+**Rules:** existing processes use these marks with explicit step meanings; colour carries value only; captions name the marks used. Connected schematics and history views are design goals, but no new gate/pathway marks are approved or introduced by this revision. Propose their meanings here before implementation.
 
 ## Sources
 
