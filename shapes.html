@@ -88,6 +88,16 @@ function readBack(sh){const C=[...sh.boxes.map(b=>({...b,kind:'box'})),...sh.enc
  caps.forEach(k=>{if(!k.area)throw new ReadErr('D1','a claim outside every sentence box');});
  // roles
  const fill={};caps.forEach(k=>fill[k.id]={});
+ // Resolve visible arrow origins, then check their stored claim identifiers.
+ [...sh.roleArrows,...sh.refArrows].forEach(a=>{const origins=caps.filter(k=>onOutline(a.from,k));
+  if(origins.length!==1||origins[0].id!==a.cap)throw new ReadErr('D3','a role arrow must start on its claim outline');
+ });
+ const filledRoles=new Set();
+ const checkRole=a=>{const k=caps.find(k=>k.id===a.cap),roles=k&&PREDS[k.pred];
+  if(!roles||!roles.some(([r])=>r===a.role))throw new ReadErr('D3','unknown claim or role');
+  const key=JSON.stringify([a.cap,a.role]);if(filledRoles.has(key))throw new ReadErr('D3','a role is filled more than once');filledRoles.add(key);
+ };
+ [...sh.roleArrows,...sh.refArrows,...sh.lines.flatMap(l=>l.attach)].forEach(checkRole);
  sh.roleArrows.forEach(a=>{const t=sh.things.find(t=>onOutline(a.to,t));if(!t)throw new ReadErr('D3',`role arrow "${a.role}" does not end on a thing box`);fill[a.cap][a.role]={kind:'name',v:t.name,sort:'thing'};});
  sh.refArrows.forEach(a=>{const b=sh.boxes.find(b=>onOutline(a.to,b));if(!b)throw new ReadErr('D3',`reference arrow "${a.role}" does not end on a sentence box`);fill[a.cap][a.role]={kind:'sent',v:b.name,sort:'sentence'};});
  const lines=sh.lines.map((l,i)=>{const homes=l.pts.map(p=>C.filter(c=>ptIn(p,{x:c.x,y:c.y,w:c.w,h:c.h})).sort((p,q)=>p.w*p.h-q.w*q.h)[0]).filter(Boolean);
@@ -159,6 +169,11 @@ function graphLayout(text){const G={nodes:[],edges:[]};let nid=0;const COLW=150,
 function graphReadBack(G){const at=p=>G.nodes.filter(n=>onOutline(p,n));
  const E=G.edges.map(e=>{const a=at(e.from),b=at(e.to);if(a.length!==1||b.length!==1)throw new ReadErr('G1',`an edge does not run from one node's outline to another's`);return {...e,a:a[0],b:b[0]};});
  const parentOf={};E.filter(e=>e.kind==='says'||e.kind==='inside'||e.kind==='home').forEach(e=>{if(parentOf[e.b.id])throw new ReadErr('G2','a node has two parents');parentOf[e.b.id]=e.a;});
+ const filledRoles=new Set();E.filter(e=>e.kind==='role').forEach(e=>{
+  const roles=e.a.kind==='claim'&&PREDS[e.a.label];
+  if(!roles||!roles.some(([r])=>r===e.label))throw new ReadErr('G3','unknown claim or role');
+  const key=JSON.stringify([e.a.id,e.label]);if(filledRoles.has(key))throw new ReadErr('G3','a role is filled more than once');filledRoles.add(key);
+ });
  G.nodes.forEach(n=>{if(n.kind!=='sent'&&n.kind!=='thing'&&!parentOf[n.id])throw new ReadErr('G2',`a "${n.label}" node hangs loose`);});
  const kids=(n,kinds)=>E.filter(e=>e.a===n&&kinds.includes(e.kind)).map(e=>e.b).sort((p,q)=>p.y-q.y||p.x-q.x);
  const inScope=(v,c)=>{const home=parentOf[v.id];for(let n=parentOf[c.id];n;n=parentOf[n.id])if(n===home)return true;return false;};

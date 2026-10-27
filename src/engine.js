@@ -68,6 +68,16 @@ function readBack(sh){const C=[...sh.boxes.map(b=>({...b,kind:'box'})),...sh.enc
  caps.forEach(k=>{if(!k.area)throw new ReadErr('D1','a claim outside every sentence box');});
  // roles
  const fill={};caps.forEach(k=>fill[k.id]={});
+ // Resolve visible arrow origins, then check their stored claim identifiers.
+ [...sh.roleArrows,...sh.refArrows].forEach(a=>{const origins=caps.filter(k=>onOutline(a.from,k));
+  if(origins.length!==1||origins[0].id!==a.cap)throw new ReadErr('D3','a role arrow must start on its claim outline');
+ });
+ const filledRoles=new Set();
+ const checkRole=a=>{const k=caps.find(k=>k.id===a.cap),roles=k&&PREDS[k.pred];
+  if(!roles||!roles.some(([r])=>r===a.role))throw new ReadErr('D3','unknown claim or role');
+  const key=JSON.stringify([a.cap,a.role]);if(filledRoles.has(key))throw new ReadErr('D3','a role is filled more than once');filledRoles.add(key);
+ };
+ [...sh.roleArrows,...sh.refArrows,...sh.lines.flatMap(l=>l.attach)].forEach(checkRole);
  sh.roleArrows.forEach(a=>{const t=sh.things.find(t=>onOutline(a.to,t));if(!t)throw new ReadErr('D3',`role arrow "${a.role}" does not end on a thing box`);fill[a.cap][a.role]={kind:'name',v:t.name,sort:'thing'};});
  sh.refArrows.forEach(a=>{const b=sh.boxes.find(b=>onOutline(a.to,b));if(!b)throw new ReadErr('D3',`reference arrow "${a.role}" does not end on a sentence box`);fill[a.cap][a.role]={kind:'sent',v:b.name,sort:'sentence'};});
  const lines=sh.lines.map((l,i)=>{const homes=l.pts.map(p=>C.filter(c=>ptIn(p,{x:c.x,y:c.y,w:c.w,h:c.h})).sort((p,q)=>p.w*p.h-q.w*q.h)[0]).filter(Boolean);
@@ -118,3 +128,4 @@ function evaluate(text,name,W,maxSteps){const defs=Object.fromEntries(text.map(d
   const key=JSON.stringify(area);if(seen.has(key))return {result:null,halts:false,cycleFrom:seen.get(key),steps};seen.set(key,steps.length-1);}
  return {result:null,halts:false,steps,why:'step limit'};}
 if(typeof module!=='undefined')module.exports={genText,printText,layout,readBack,ReadErr,randWorld,evalFormula,evalDiagram,evaluate,rng,THINGS,PREDS};
+

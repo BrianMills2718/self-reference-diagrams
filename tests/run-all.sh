@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 cd "$(dirname "$0")"
 ./build-combined.sh
 node test.js
-node test2.js | grep -E "bad pictures|derivation steps"
+node test2.js
 node test3.js
+node test-readers.js
+

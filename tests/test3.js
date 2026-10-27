@@ -1,3 +1,4 @@
+const assert=require('node:assert/strict');
 const E=require('./combined.js');const {genText,printText,graphLayout,graphReadBack,valueLayers,pureLoop,hasConsistentValue,evaluate,rng}=E;
 const R=rng(4242);let ok=0,N=400;const fails=[];
 for(let i=0;i<N;i++){const t=genText(R,1+Math.floor(R()*3));const f=printText(t);let b;try{b=printText(graphReadBack(graphLayout(t)));}catch(e){b='ERR '+e.rule+' '+e.message;}if(b===f)ok++;else fails.push([f,b]);}
@@ -13,3 +14,9 @@ for(let i=0;i<500;i++){const n=1+Math.floor(R()*5);const t=pureLoop(R,n);const c
  const r=evaluate(t,t[0].name,W0,200);const unfolds=r.steps.filter(s=>s.rule.startsWith('unfold')).length;const curveLen=curves.find(c=>c.some(x=>x[0]===t[0].name))?.length;lapN++;if(!r.halts&&r.cycleFrom===0&&unfolds===curveLen)lapOK++;}
 console.log('pure loops: one curve exactly when no consistent value',agree,'/',M);
 console.log('looping derivation: unfold steps per lap = length of the curve',lapOK,'/',lapN);
+
+
+assert.equal(ok,N,'graph round trips');
+for(const [rule,[tried,caught]] of Object.entries(tr)){assert.ok(tried>0,rule+' exercised');assert.equal(caught,tried,rule+' rejection');}
+assert.equal(agree,M,'pure-loop criterion');
+assert.equal(lapOK,lapN,'derivation lap lengths');

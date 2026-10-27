@@ -1,3 +1,4 @@
+const assert=require('node:assert/strict');
 const E=require('../src/engine.js');const R=E.rng(999);
 let stats={lines:0,depth2:0,self:0,multi:0,loves:0};const N=400;
 const depth=a=>Math.max(0,...a.items.map(it=>it.t==='enc'?1+depth(it.area):0));
@@ -8,7 +9,7 @@ console.log('coverage over',N,'texts:',stats);
 // bad pictures: break each rule on purpose and check it is caught, and named
 const tests={D1:0,D3:0,D4:0,D5:0};const caught={D1:0,D3:0,D4:0,D5:0};
 for(let i=0;i<300;i++){const t=E.genText(R,2);const sh=E.layout(t);
- const tryRule=(rule,mut)=>{const s=JSON.parse(JSON.stringify(sh));if(!mut(s))return;tests[rule]++;try{E.readBack(s);}catch(e){if(e.rule===rule)caught[rule]++;else console.log('wrong rule',rule,'->',e.rule,e.message);return;}console.log('NOT CAUGHT',rule);};
+ const tryRule=(rule,mut)=>{const s=JSON.parse(JSON.stringify(sh));if(!mut(s))return;tests[rule]++;try{E.readBack(s);}catch(e){if(e.rule===rule)caught[rule]++;else assert.fail('wrong rule '+rule+' -> '+e.rule+': '+e.message);return;}assert.fail('NOT CAUGHT '+rule);};
  tryRule('D1',s=>{const e=s.encs[0];if(!e)return false;const b=s.boxes.find(b=>e.x>=b.x&&e.x<=b.x+b.w);e.x=b.x+b.w-10;return true;});
  tryRule('D3',s=>{const a=s.roleArrows[0]||s.refArrows[0];if(!a)return false;a.to=[-5000,-5000];return true;});
  tryRule('D4',s=>{const l=s.lines[0];if(!l)return false;l.attach[0].at=[l.attach[0].at[0]-9,l.attach[0].at[1]];return true;});
@@ -21,7 +22,12 @@ const EX={snow:[{name:'S',area:A(C('Falling',nm('Snow')))}],truth:[{name:'S',are
  about:[{name:'S1',area:A(C('Falling',nm('Snow')))},{name:'S2',area:A(C('IsTrue',st('S1')))}],
  mixed:[{name:'S',area:A(C('Falling',nm('Snow')),N_(A(C('IsTrue',st('S')))))}]};
 const W1={Falling:new Set(['Snow']),Blowing:new Set(),Happy:new Set(),Loves:new Set(),IsTrue:new Set()},W2={...W1,Falling:new Set()};
-for(const [k,t] of Object.entries(EX))for(const [wn,W] of [['snow',W1],['no snow',W2]])t.forEach(d=>{const r=E.evaluate(t,d.name,W,40);console.log(k.padEnd(6),wn.padEnd(8),d.name.padEnd(3),r.halts?'halts: '+r.result:'never halts'+(r.cycleFrom!==undefined?' (cycle back to step '+r.cycleFrom+')':' '+r.why),'| steps:',r.steps.slice(0,8).map(s=>s.rule).join(' > '));});
+for(const [k,t] of Object.entries(EX))for(const [wn,W] of [['snow',W1],['no snow',W2]])t.forEach(d=>{const r=E.evaluate(t,d.name,W,40);const expected=k==='snow'||k==='about'?wn==='snow':k==='mixed'&&wn==='no snow'?false:null;assert.equal(r.halts,expected!==null,k+' '+wn);assert.equal(r.result,expected,k+' '+wn);if(expected===null)assert.notEqual(r.cycleFrom,undefined,'expected cycle: '+k);console.log(k.padEnd(6),wn.padEnd(8),d.name.padEnd(3),r.halts?'halts: '+r.result:'never halts'+(r.cycleFrom!==undefined?' (cycle back to step '+r.cycleFrom+')':' '+r.why),'| steps:',r.steps.slice(0,8).map(s=>s.rule).join(' > '));});
 // each derivation step reads back
 let stepOK=0,stepN=0;for(const [k,t] of Object.entries(EX))t.forEach(d=>{const r=E.evaluate(t,d.name,W1,40);r.steps.forEach(s=>{if(!s.area)return;stepN++;const tt=t.map(x=>x.name===d.name?{name:x.name,area:s.area}:x);try{if(E.printText(E.readBack(E.layout(tt)))===E.printText(tt))stepOK++;}catch(e){console.log('step fail',e.message);}});});
 console.log('derivation steps that read back exactly',stepOK,'/',stepN);
+
+
+for(const rule of Object.keys(tests)){assert.ok(tests[rule]>0,rule+' exercised');assert.equal(caught[rule],tests[rule],rule+' rejection');}
+assert.ok(stepN>0,'derivation steps exercised');
+assert.equal(stepOK,stepN,'derivation step round trips');
