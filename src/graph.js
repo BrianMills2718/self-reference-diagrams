@@ -18,6 +18,11 @@ function graphLayout(text){const G={nodes:[],edges:[]};let nid=0;const COLW=150,
 function graphReadBack(G){const at=p=>G.nodes.filter(n=>onOutline(p,n));
  const E=G.edges.map(e=>{const a=at(e.from),b=at(e.to);if(a.length!==1||b.length!==1)throw new ReadErr('G1',`an edge does not run from one node's outline to another's`);return {...e,a:a[0],b:b[0]};});
  const parentOf={};E.filter(e=>e.kind==='says'||e.kind==='inside'||e.kind==='home').forEach(e=>{if(parentOf[e.b.id])throw new ReadErr('G2','a node has two parents');parentOf[e.b.id]=e.a;});
+ const filledRoles=new Set();E.filter(e=>e.kind==='role').forEach(e=>{
+  const roles=e.a.kind==='claim'&&PREDS[e.a.label];
+  if(!roles||!roles.some(([r])=>r===e.label))throw new ReadErr('G3','unknown claim or role');
+  const key=JSON.stringify([e.a.id,e.label]);if(filledRoles.has(key))throw new ReadErr('G3','a role is filled more than once');filledRoles.add(key);
+ });
  G.nodes.forEach(n=>{if(n.kind!=='sent'&&n.kind!=='thing'&&!parentOf[n.id])throw new ReadErr('G2',`a "${n.label}" node hangs loose`);});
  const kids=(n,kinds)=>E.filter(e=>e.a===n&&kinds.includes(e.kind)).map(e=>e.b).sort((p,q)=>p.y-q.y||p.x-q.x);
  const inScope=(v,c)=>{const home=parentOf[v.id];for(let n=parentOf[c.id];n;n=parentOf[n.id])if(n===home)return true;return false;};
@@ -42,3 +47,4 @@ function hasConsistentValue(text){const n=text.length;const names=text.map(d=>d.
  for(let m=0;m<(1<<n);m++){const W={Falling:new Set(),Blowing:new Set(),Happy:new Set(),Loves:new Set(),Man:new Set(),Mortal:new Set(),IsTrue:new Set(names.filter((_,i)=>m>>i&1))};
   if(text.every((d,i)=>evalFormula(d.area,W,{})===!!(m>>i&1)))return true;}return false;}
 if(typeof module!=='undefined')module.exports={graphLayout,graphReadBack,valueLayers,pureLoop,hasConsistentValue};
+
