@@ -17,6 +17,8 @@ Three layers are kept apart, as Dau does for Peirce's graphs and ISO Common Logi
 
 The existing renderer treats values, worlds, and reasoning as annotations. In the target architecture these are linked components of a larger object. Hiding their display must not delete constraints. Transformation rules describe derivations; suppositions and exploration steps require separate types and contexts.
 
+See [standards-mapping.md](standards-mapping.md) for the recommended established foundations and the exact finite snow encoding. The existing grammar is a project representation, not a claim of Common Logic/CGIF conformance or a universal theory of truth. Names/denotation, variable binding, and sentence-registry references require distinct mappings.
+
 ## 1. Abstract syntax
 
 Fix a **vocabulary** Σ: sorts (*thing*, *sentence*), names with sorts, predicates with named, sorted roles.
@@ -85,7 +87,7 @@ Read-back follows edges, never nesting. The read-back theorem holds for both lay
 
 A world gives objects per sort, an object per name and an extension per predicate (except IsTrue). Satisfaction is defined directly on abstract diagrams (Dau): an area is true when some choice of objects for its home lines makes every item true; an enclosure when its inner area is not true; a claim when its role-filling is in the extension. By the theorem in section 3 this agrees with Tarski on the formula.
 
-IsTrue's extension must agree with satisfaction; a **logic** says what "agree" means: classical fixed points (Boolean assignments; *either* and *paradox* summarize multiple or absent assignments), Kripke's least fixed point with Kleene tables (*neither*), Gaifman's rules (*gap*, jump rule), revision (settles or cycles). An institution-style account requires signatures, models, satisfaction, and compatibility laws; these are not established merely by a logic selector.
+In the selected finite classical profile, named-reference values and sentence-body values are constrained to agree; the resulting Boolean theory may have no model. A general truth predicate requires a separate sentence encoding and truth theory. Historical alternatives include: classical fixed points (Boolean assignments; *either* and *paradox* summarize multiple or absent assignments), Kripke's least fixed point with Kleene tables (*neither*), Gaifman's rules (*gap*, jump rule), revision (settles or cycles). An institution-style account requires signatures, models, satisfaction, and compatibility laws; these are not established merely by a logic selector.
 
 ## 6. Annotations
 

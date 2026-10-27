@@ -2,6 +2,8 @@
 
 Status: agreed direction from the conversation of 27 October 2026. The mathematical kernel below is a proposed specification; a general object schema, verified inference engine, and visual notation remain to be implemented. This contract supersedes the older sentence-only account of the project's scope. Existing sentence grammar remains a component.
 
+The [standards mapping](standards-mapping.md) identifies established definitions for these components and recommends their composition. “Substrate” denotes a representation and its checking contracts, not a new logical foundation. New primitives require a concrete expressive gap in the selected established structures.
+
 ## 1. Goal and priorities
 
 Define a formal substrate (rules for constructing objects, assigning meaning, and checking reasoning) and instances broad enough to contain sentences, ordinary worlds, facts, truth-value candidates, suppositional contexts, derivations, branching histories, and conflicts. Provide question-directed views of those instances.
@@ -18,11 +20,12 @@ The Feynman-diagram analogy is an aspiration for an inspectable graphical calcul
 
 ## 2. What an instance contains
 
-These are proposed component types (distinctions governing allowed connections), not a finalized serialization schema.
+These are proposed storage/component types, not new ontological primitives or a finalized serialization schema. Their standard mathematical counterparts are specified in the standards mapping.
 
 | Component | Meaning and required distinction |
 | --- | --- |
 | Syntax | Sentences, operator occurrences, bindings, and references with stable identities. Equal truth conditions do not imply identical syntax. |
+| Domain entities and interpretation links | Represent ordinary entities separately from their symbols. Denotation, variable binding, and sentence-registry identification are distinct relationships. |
 | World specification | Ordinary domains and predicate interpretations, possibly a symbolically specified family. A fact is relative to a world. |
 | Value assignment | Candidate values for named sentences and, where needed, subexpressions. A candidate is not an established result. |
 | Constraint | A condition on combinations of world facts and values, with a link to the syntax or semantic rule generating it. |
@@ -34,6 +37,8 @@ These are proposed component types (distinctions governing allowed connections),
 “Includes” permits finite generative descriptions (rules specifying potentially infinite objects). It does not require eager enumeration or storing every derivation. Metadata types here are not new object-language sorts: the existing Thing/Sentence distinction does not classify worlds or inference records.
 
 ## 3. Proposed finite classical kernel
+
+This is a finite constraint-satisfaction encoding of a declared Boolean theory. It does not constitute a new theory of truth. The standards mapping supplies the concrete encoding and a correspondence argument for the snow example.
 
 Fix sentence syntax A, an explicitly bounded family W of ordinary worlds, and n named sentences. Let V = {F,T}^n. Evaluate each sentence body with ordinary facts from w and IsTrue(S_i) interpreted by v_i, obtaining F_w(v).
 
@@ -74,7 +79,7 @@ These are different investigations of one object. World conditions can be fixed,
 
 ## 5. Machinery and histories
 
-Constraint propagation (deriving restrictions through local conditions) is an operational proposal. Its rules need soundness checks. It is not automatically complete (able to discover every consequence). Branching may be necessary.
+Constraint propagation (deriving restrictions through local conditions) is an established method. Our selection of rules, scheduling, and proof-record format is an implementation proposal. Its rules need soundness checks. It is not automatically complete (able to discover every consequence). Branching may be necessary.
 
 Each exploration step must record whether it is:
 - adding a supposition;
@@ -111,7 +116,7 @@ A finite test suite is not a universal proof. A type-checkable representation is
 
 ## 8. Staged deliverables
 
-1. Specify a minimal finite object schema and locally checkable inference records.
+1. Use the standards mapping to select established definitions, then specify the representation and translations. Preserve entity/name/interpretation distinctions and use a declared proof calculus for checkable records.
 2. Mock a connected schematic for S:=p, S:=IsTrue(S), S:=NOT IsTrue(S), and the snow object above. Review the visual language before a tutorial rebuild.
 3. Implement the accepted finite prototype, with exhaustive checks of those examples and tests of view preservation.
 4. Add paired reference cycles, even/odd cycles, independent truth-tellers, conjunction blocks, quantifier scope, and hidden contradictions. State exact bounds and retain a separate structural-only test category for large examples.

@@ -2,6 +2,10 @@
 
 Updated 27 October 2026. Read [the project contract](docs/reasoning-objects.md) and [the inquiry trace](docs/inquiry-trace.md).
 
+## Current foundation recommendation
+
+Read [standards-mapping.md](docs/standards-mapping.md) first. The user challenged the apparent invention of ordinary logic and authorized a mapping to established foundations. Recommendation: model theory for ordinary entities/worlds, finite CSPs for executable consistency, an established proof calculus for certificates, and exact relational queries for views. This selects a direction for review; it does not certify a new implementation. Existing terminology is to be mapped, not reinvented.
+
 ## Purpose and decisions in force
 
 Build a machine-checkable substrate whose instances contain linked sentences, worlds, facts, candidate values, suppositions, reasoning histories, and conflicts. A sentence is a component, not the whole object. Question-directed visual views expose this structure. Infinite possibilities may have finite descriptions.
@@ -35,19 +39,20 @@ The general object schema, context-aware derivations, query-preserving views, an
 
 ## Work in review and conversation history
 
-PR #1 is merged. PR #2 (earlier tutorial) and PR #3 (example suite/view obligations) remain unmerged at this revision. This documentation change is based directly on main and imports neither.
+PRs #1 and #4 are merged. PRs #2 (earlier tutorial), #3 (example suite), and #5 (finite snow kernel/schematic) remain unmerged. This mapping is based on main `07d54f0` and imports no unmerged implementation.
 
 Brian rejected a detached sentence/table presentation. The subsequent complete chart still looked too symbolic; he requested connected machinery and exploration. These experiments do not approve new gate marks.
 
-No inquiry graph existed on main. This revision establishes a curated trace from the available conversation, not a verbatim transcript or an exhaustive history of earlier sessions.
+PR #4 established the inquiry graph. The current trace adds the prototype approval, feedback about the ambiguous “open” label, the request for gradual instruction, and the correction to use existing formalisms. It is a curated paraphrase, not a verbatim transcript.
 
 ## Next steps
 
-1. Review the contract and inquiry for fidelity.
-2. Specify the minimal finite schema and rule-checking contract.
-3. Mock ordinary claim, truth-teller, liar, and snow-dependent self-reference within a connected schematic.
-4. After visual review, implement and compare against independent finite enumeration; verify view contracts.
-5. Extend through interacting cycles, conjunctions, quantifier scope, and hidden conflicts.
-6. Address Gödel/halting only with actual encodings and assumptions. Adding predicates or one-way arrows is not a proof.
+1. Review the standards mapping and foundation recommendation.
+2. Define translations linking ordinary entities and interpretations, sentence syntax, finite constraints, and an established proof calculus.
+3. Produce one gradually introduced example with linked syntax/world, constraint, and proof views; Brian reviews readability.
+4. Validate compilation and projection correspondence separately from visual acceptance.
+5. Extend to quantified or infinite cases only within explicit bounds and semantic profiles.
+
+“Open” describes incomplete local investigation, not a truth value or a guarantee of globally compatible possibilities. The guided tutorial should show world cases explicitly and introduce one component at a time.
 
 Live site: https://self-reference-diagrams.pages.dev . This revision does not deploy or alter runtime pages.
