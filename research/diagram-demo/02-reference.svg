@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="530" viewBox="0 0 1020 530" role="img" aria-label="Truth teller and liar: reference alone does not entail inconsistency">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="530" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">02  |  Self-reference and inconsistency are different</text>
+<text x="30" y="70" class="body" text-anchor="start">A square is a relation, not a physical gate. Both candidate values must be considered.</text>
+<rect x="25" y="100" width="480" height="340" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="130" class="var" text-anchor="start">S := Tr(S)</text>
+<line x1="162.0" y1="255.0" x2="341.0" y2="255.0" stroke="#8190a0" stroke-width="2" data-object="teller" data-factor="agree:S" data-variable="S"/>
+<g data-object="teller" data-variable-node="S"><circle cx="135" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="135" y="261" class="var" text-anchor="middle">s</text>
+</g>
+<g data-object="teller" data-factor-node="agree:S"><rect x="341" y="233" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="370" y="261" class="var" text-anchor="middle">=</text>
+</g>
+<text x="50" y="385" class="body" text-anchor="start">= checks s=s: T and F both survive.</text>
+<text x="50" y="415" class="small" text-anchor="start">2 consistent candidates. No joint truth-and-falsity.</text>
+<rect x="525" y="100" width="480" height="340" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="130" class="var" text-anchor="start">S := NOT Tr(S)</text>
+<line x1="848.5316991723" y1="241.37412774994067" x2="780.8444444444444" y2="293.0" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="656.4008477058242" y1="241.4621905429417" x2="723.4" y2="293.0" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="f:S/body" data-variable="S"/>
+<line x1="659.0250714959438" y1="212.67945051490057" x2="723.0" y2="179.87179487179486" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="agree:S" data-variable="S"/>
+<line x1="845.9326014844163" y1="212.7623397378388" x2="781.0" y2="179.74576271186442" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="liar" data-variable-node="S"><circle cx="635" cy="225" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="635" y="231" class="var" text-anchor="middle">s</text>
+</g>
+<g data-object="liar" data-variable-node="@S/body"><circle cx="870" cy="225" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="870" y="231" class="var" text-anchor="middle">b</text>
+</g>
+<g data-object="liar" data-factor-node="f:S/body"><rect x="723" y="293" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="752" y="321" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="liar" data-factor-node="agree:S"><rect x="723" y="143" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="752" y="171" class="var" text-anchor="middle">=</text>
+</g>
+<text x="550" y="385" class="body" text-anchor="start">NOT requires b≠s; = requires b=s.</text>
+<text x="550" y="415" class="small" text-anchor="start">0 consistent candidates. Both trials fail.</text>
+<text x="30" y="480" class="small" text-anchor="start">The reference occurrence is collapsed onto s; its source identity remains in evidence.json.</text>
+<text x="30" y="507" class="small" text-anchor="start">No models here means no Boolean truth-agreement assignment in this declared profile.</text>
+</svg>

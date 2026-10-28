@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="880" viewBox="0 0 1020 880" role="img" aria-label="Exact projection retains joint alternatives and hidden inconsistency">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="880" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">05  |  Change the question; preserve the constraints</text>
+<text x="30" y="70" class="body" text-anchor="start">Projection (hiding variables while retaining supported combinations) is existential quantification.</text>
+<rect x="25" y="95" width="970" height="275" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="125" class="var" text-anchor="start">A := NOT Tr(B); B := NOT Tr(A)</text>
+<line x1="392.0" y1="170.0" x2="586.0" y2="170.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:A/body" data-variable="@A/body"/>
+<line x1="828.806152496076" y1="223.451538124019" x2="644.0" y2="177.25" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:A/body" data-variable="B"/>
+<line x1="149.14953415699773" y1="217.92523292150113" x2="216.0" y2="184.5" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:A" data-variable="A"/>
+<line x1="338.0" y1="170.0" x2="274.0" y2="170.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:A" data-variable="@A/body"/>
+<line x1="588.0" y1="290.0" x2="394.0" y2="290.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:B/body" data-variable="@B/body"/>
+<line x1="151.19384750392396" y1="236.548461875981" x2="336.0" y2="282.75" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:B/body" data-variable="A"/>
+<line x1="830.8504658430022" y1="242.07476707849887" x2="764.0" y2="275.5" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:B" data-variable="B"/>
+<line x1="642.0" y1="290.0" x2="706.0" y2="290.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:B" data-variable="@B/body"/>
+<g data-object="opposite" data-variable-node="A"><circle cx="125" cy="230" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="125" y="236" class="var" text-anchor="middle">A</text>
+</g>
+<g data-object="opposite" data-variable-node="B"><circle cx="855" cy="230" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="855" y="236" class="var" text-anchor="middle">B</text>
+</g>
+<g data-object="opposite" data-variable-node="@A/body"><circle cx="365" cy="170" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="365" y="176" class="var" text-anchor="middle">a</text>
+</g>
+<g data-object="opposite" data-variable-node="@B/body"><circle cx="615" cy="290" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="615" y="296" class="var" text-anchor="middle">b</text>
+</g>
+<g data-object="opposite" data-factor-node="f:A/body"><rect x="586" y="148" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="615" y="176" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="opposite" data-factor-node="agree:A"><rect x="216" y="148" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="245" y="176" class="var" text-anchor="middle">=</text>
+</g>
+<g data-object="opposite" data-factor-node="f:B/body"><rect x="336" y="268" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="365" y="296" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="opposite" data-factor-node="agree:B"><rect x="706" y="268" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="735" y="296" class="var" text-anchor="middle">=</text>
+</g>
+<text x="45" y="350" class="small" text-anchor="start">a and b are body values. Both equations together preserve A ≠ B.</text>
+<rect x="25" y="390" width="470" height="260" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="420" class="var" text-anchor="start">Joint view of A,B: exactly two witnesses</text>
+<g ><circle cx="100" cy="465" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="471" class="var" text-anchor="middle">A</text>
+<rect x="90.0" y="498" width="20" height="20" fill="white"/>
+<text x="100" y="513" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><rect x="216" y="443" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="245" y="471" class="var" text-anchor="middle">≠</text>
+</g>
+<g ><circle cx="390" cy="465" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="390" y="471" class="var" text-anchor="middle">B</text>
+<rect x="380.0" y="498" width="20" height="20" fill="white"/>
+<text x="390" y="513" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<line x1="127" y1="465" x2="216" y2="465" stroke="#8190a0" stroke-width="2" />
+<line x1="274" y1="465" x2="363" y2="465" stroke="#8190a0" stroke-width="2" />
+<g ><circle cx="100" cy="570" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="576" class="var" text-anchor="middle">A</text>
+<rect x="90.0" y="603" width="20" height="20" fill="white"/>
+<text x="100" y="618" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><rect x="216" y="548" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="245" y="576" class="var" text-anchor="middle">≠</text>
+</g>
+<g ><circle cx="390" cy="570" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="390" y="576" class="var" text-anchor="middle">B</text>
+<rect x="380.0" y="603" width="20" height="20" fill="white"/>
+<text x="390" y="618" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<line x1="127" y1="570" x2="216" y2="570" stroke="#8190a0" stroke-width="2" />
+<line x1="274" y1="570" x2="363" y2="570" stroke="#8190a0" stroke-width="2" />
+<rect x="515" y="390" width="480" height="260" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="535" y="420" class="var" text-anchor="start">Hide B: A has two supported values</text>
+<g ><circle cx="590" cy="485" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="590" y="491" class="var" text-anchor="middle">A</text>
+<rect x="563.5" y="518" width="53" height="20" fill="white"/>
+<text x="590" y="533" class="var" text-anchor="middle" style="fill:#536477">{F,T}</text>
+</g>
+<g ><rect x="811" y="463" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="840" y="491" class="var" text-anchor="middle">∃B</text>
+</g>
+<line x1="617" y1="485" x2="811" y2="485" stroke="#8190a0" stroke-width="2" />
+<text x="535" y="605" class="small" text-anchor="start">Witness links recover B=T for A=F; B=F for A=T.</text>
+<rect x="25" y="680" width="970" height="155" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="710" class="var" text-anchor="start">Hidden liar: the question must say whether consistency is global</text>
+<g ><circle cx="100" cy="760" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="766" class="var" text-anchor="middle">p</text>
+</g>
+<g ><rect x="211" y="738" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="240" y="766" class="var" text-anchor="middle">=</text>
+</g>
+<g ><circle cx="380" cy="760" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="380" y="766" class="var" text-anchor="middle">Q</text>
+</g>
+<line x1="127" y1="760" x2="211" y2="760" stroke="#8190a0" stroke-width="2" />
+<line x1="269" y1="760" x2="353" y2="760" stroke="#8190a0" stroke-width="2" />
+<rect x="470" y="728" width="220" height="65" fill="#edf2f7" stroke="#14283e" stroke-dasharray="5 4"/>
+<text x="580" y="755" class="small" text-anchor="middle">collapsed L = NOT L</text>
+<text x="580" y="779" class="small" text-anchor="middle">still has no extension</text>
+<text x="730" y="750" class="var" text-anchor="start">Global projection: ∅</text>
+<text x="730" y="780" class="body" text-anchor="start">Local Q=p: 2 cases</text>
+<text x="45" y="820" class="small" text-anchor="start">Local evaluation explicitly removes L’s constraint. Merely hiding L does not.</text>
+<text x="30" y="870" class="small" text-anchor="start">Snow view: hiding p in all candidates retains 2 groups × 2 cases; restricting to consistent cases retains s=F only.</text>
+</svg>

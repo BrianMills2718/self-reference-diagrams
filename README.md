@@ -18,6 +18,12 @@ For pure signed reference cycles, an odd number of negations joins the true and 
 
 ## Existing pages
 
+For a concrete next-stage visual review, open the [six-plate research atlas](research/diagram-demo/index.html).
+It pairs established factor-graph and Peirce notation with independently checked
+finite encodings, scoped branch certificates, exact views, and a bounded
+signed-cycle signature theorem. See its [evidence and coverage account](research/diagram-demo/README.md).
+These are review proposals; the live tutorial and production notation are unchanged.
+
 Live site: https://self-reference-diagrams.pages.dev
 
 | Page | Status and purpose |

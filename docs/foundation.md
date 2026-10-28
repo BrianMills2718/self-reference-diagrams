@@ -162,6 +162,20 @@ Every picture is built only from these marks, and each mark means the same objec
 
 **Rules:** existing processes use these marks with explicit step meanings; colour carries value only; captions name the marks used. Connected schematics and history views are design goals, but no new gate/pathway marks are approved or introduced by this revision. Propose their meanings here before implementation.
 
+### Proposed review atlas, 28 October 2026 (not adopted)
+
+[`research/diagram-demo/index.html`](../research/diagram-demo/index.html) tests
+established factor-graph notation separately from the production grammar:
+circles denote Boolean variables, squares denote finite relations, and
+undirected edges denote argument incidence. AND, NOT, and = label explicit
+relations, not physical gates. Repeated panels share source identities but show
+different candidate assignments or scoped investigations. A dashed factor
+border flags a failed constraint; panel borders only group review pictures.
+The ≠ and ∃B squares on its view plate abbreviate explicitly derived projected
+relations. None of these proposals changes the existing renderer or claims
+visual approval. The accompanying README states the translation, certificate,
+and view guarantees, and the precise scope of the signed-cycle diagnostic.
+
 ## Sources
 
 Enderton; Tarski (1933, 1936); Robinson; Carnap (1947); Kleene (1952); Barwise and Perry (1983); Peirce; Sowa (1984); Codd (1970); Fillmore (1968); Kripke (1975); Gaifman (1992); Gupta and Belnap (1993); Goguen and Burstall (1992); Aspvall, Plass and Tarjan (1979); Moody (2009); Zaslavsky (signed graphs). Cited from memory; check against the originals before treating as final.
