@@ -1,0 +1,616 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reasoning through constraints — research review</title><style>body{margin:0;background:#eef2f7;color:#14283e;font:17px/1.6 system-ui,sans-serif}main{max-width:1060px;margin:auto;padding:44px 20px}h1{font-size:46px;line-height:1.15;margin:0 0 14px}h2{font-size:25px}.lead{font-size:23px;max-width:850px}nav{display:flex;flex-wrap:wrap;gap:20px;padding:22px 0}a{color:#215789}section{margin:28px 0 44px;background:white;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px #14283e0c}section>p{padding:0 26px 12px}svg{display:block;width:100%;height:auto}.notes{padding:6px 26px 20px}.notes>p{padding:0}@media print{main{max-width:none;padding:0}section{break-inside:avoid;box-shadow:none;border:1px solid #ddd}nav{display:none}h1{font-size:32px}}</style><main><h1>Reasoning through constraints</h1><p class="lead">A review atlas: ordinary inference, self-reference, scoped investigations, and exact changes of view.</p>
+<p><strong>Status:</strong> proposed drawings using established factor-graph and Peirce notation. The mathematical checks below do not establish human intelligibility. These are static review pictures; no live tutorial or notation has been adopted.</p>
+<p><strong>Reading order:</strong> start with 01. T and F mean true and false; 0 and 1 abbreviate F and T. Circles name value variables. Squares name relations. Lines indicate which variables a relation constrains. Panel borders only group pictures.</p>
+<p><strong>Ordinary meaning:</strong> Snow is a constant symbol; it names entity:snow in the declared two-entity domain. Falling is a unary predicate (a property of one entity). p records whether that entity belongs to Falling’s interpretation. The name, entity, predicate, sentence, and value have distinct records. q similarly records Blowing(Wind). “All worlds” below means all combinations of the listed observations, with other ordinary facts ignored.</p>
+<nav><a href="#01-ordinary">01 Ordinary</a><a href="#02-reference">02 Reference</a><a href="#03-snow">03 Snow</a><a href="#04-investigations">04 Investigations</a><a href="#05-views">05 Views</a><a href="#06-signature">06 Signature</a></nav><section id="01-ordinary"><svg xmlns="http://www.w3.org/2000/svg" width="1020" height="650" viewBox="0 0 1020 650" role="img" aria-label="Conjunction reasoning in Peirce and factor graph notation">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="650" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">01  |  Start with ordinary reasoning</text>
+<text x="30" y="70" class="body" text-anchor="start">p means snow is falling; q means wind is blowing. S says p AND q.</text>
+<rect x="25" y="95" width="970" height="180" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="125" class="var" text-anchor="start">Peirce’s assertion sheet: juxtaposition means AND</text>
+<rect x="70" y="155" width="260" height="70" fill="none" stroke="#8190a0"/>
+<text x="140" y="200" class="title" text-anchor="start">p</text>
+<text x="255" y="200" class="title" text-anchor="start">q</text>
+<line x1="355" y1="190" x2="610" y2="190" stroke="#8190a0" stroke-width="2" />
+<text x="482.5" y="181.0" class="small" text-anchor="middle">erase q in a positive area</text>
+<path d="M600 184 L610 190 L600 196" fill="none" stroke="#8190a0" stroke-width="2"/>
+<rect x="640" y="155" width="260" height="70" fill="none" stroke="#8190a0"/>
+<text x="770" y="200" class="title" text-anchor="middle">p</text>
+<rect x="25" y="295" width="970" height="265" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="325" class="var" text-anchor="start">Factor graph: circles hold variables; squares impose joint conditions</text>
+<line x1="473.0" y1="450.0" x2="344.0" y2="450.0" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="156.52939663382082" y1="420.019075038831" x2="286.0" y2="444.5135135135135" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="f:S/body" data-variable="p"/>
+<line x1="156.0648116117632" y1="492.9554563211451" x2="286.0" y2="457.8378378378378" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="f:S/body" data-variable="q"/>
+<line x1="828.0" y1="450.0" x2="709.0" y2="450.0" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="agree:S" data-variable="S"/>
+<line x1="527.0" y1="450.0" x2="651.0" y2="450.0" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="conjunction" data-variable-node="p"><circle cx="130" cy="415" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="130" y="421" class="var" text-anchor="middle">p</text>
+<rect x="120.0" y="448" width="20" height="20" fill="white"/>
+<text x="130" y="463" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-variable-node="q"><circle cx="130" cy="500" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="130" y="506" class="var" text-anchor="middle">q</text>
+<rect x="120.0" y="533" width="20" height="20" fill="white"/>
+<text x="130" y="548" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-variable-node="S"><circle cx="855" cy="450" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="855" y="456" class="var" text-anchor="middle">s</text>
+<rect x="845.0" y="483" width="20" height="20" fill="white"/>
+<text x="855" y="498" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-variable-node="@S/body"><circle cx="500" cy="450" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="500" y="456" class="var" text-anchor="middle">b</text>
+<rect x="490.0" y="483" width="20" height="20" fill="white"/>
+<text x="500" y="498" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-factor-node="f:S/body"><rect x="286" y="428" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="315" y="456" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="conjunction" data-factor-node="agree:S"><rect x="651" y="428" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="680" y="456" class="var" text-anchor="middle">=</text>
+</g>
+<text x="30" y="596" class="body" text-anchor="start">Suppose s=T. The = constraint forces b=T; AND then forces both p=T and q=T.</text>
+<text x="30" y="624" class="small" text-anchor="start">The sheet proof uses erasure. The network proof uses checked local relation reduction.</text>
+</svg><p>Read the sheet as an assertion; read the network as a set of simultaneous constraints. The = square links a sentence’s candidate value to its body value.</p></section><section id="02-reference"><svg xmlns="http://www.w3.org/2000/svg" width="1020" height="530" viewBox="0 0 1020 530" role="img" aria-label="Truth teller and liar: reference alone does not entail inconsistency">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="530" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">02  |  Self-reference and inconsistency are different</text>
+<text x="30" y="70" class="body" text-anchor="start">A square is a relation, not a physical gate. Both candidate values must be considered.</text>
+<rect x="25" y="100" width="480" height="340" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="130" class="var" text-anchor="start">S := Tr(S)</text>
+<line x1="162.0" y1="255.0" x2="341.0" y2="255.0" stroke="#8190a0" stroke-width="2" data-object="teller" data-factor="agree:S" data-variable="S"/>
+<g data-object="teller" data-variable-node="S"><circle cx="135" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="135" y="261" class="var" text-anchor="middle">s</text>
+</g>
+<g data-object="teller" data-factor-node="agree:S"><rect x="341" y="233" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="370" y="261" class="var" text-anchor="middle">=</text>
+</g>
+<text x="50" y="385" class="body" text-anchor="start">= checks s=s: T and F both survive.</text>
+<text x="50" y="415" class="small" text-anchor="start">2 consistent candidates. No joint truth-and-falsity.</text>
+<rect x="525" y="100" width="480" height="340" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="130" class="var" text-anchor="start">S := NOT Tr(S)</text>
+<line x1="848.5316991723" y1="241.37412774994067" x2="780.8444444444444" y2="293.0" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="656.4008477058242" y1="241.4621905429417" x2="723.4" y2="293.0" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="f:S/body" data-variable="S"/>
+<line x1="659.0250714959438" y1="212.67945051490057" x2="723.0" y2="179.87179487179486" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="agree:S" data-variable="S"/>
+<line x1="845.9326014844163" y1="212.7623397378388" x2="781.0" y2="179.74576271186442" stroke="#8190a0" stroke-width="2" data-object="liar" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="liar" data-variable-node="S"><circle cx="635" cy="225" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="635" y="231" class="var" text-anchor="middle">s</text>
+</g>
+<g data-object="liar" data-variable-node="@S/body"><circle cx="870" cy="225" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="870" y="231" class="var" text-anchor="middle">b</text>
+</g>
+<g data-object="liar" data-factor-node="f:S/body"><rect x="723" y="293" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="752" y="321" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="liar" data-factor-node="agree:S"><rect x="723" y="143" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="752" y="171" class="var" text-anchor="middle">=</text>
+</g>
+<text x="550" y="385" class="body" text-anchor="start">NOT requires b≠s; = requires b=s.</text>
+<text x="550" y="415" class="small" text-anchor="start">0 consistent candidates. Both trials fail.</text>
+<text x="30" y="480" class="small" text-anchor="start">The reference occurrence is collapsed onto s; its source identity remains in evidence.json.</text>
+<text x="30" y="507" class="small" text-anchor="start">No models here means no Boolean truth-agreement assignment in this declared profile.</text>
+</svg><p>Tr(S) uses the registry entry S. Its value is the candidate s. The teller’s equality permits both choices; the liar’s two constraints permit neither.</p></section><section id="03-snow"><svg xmlns="http://www.w3.org/2000/svg" width="1020" height="865" viewBox="0 0 1020 865" role="img" aria-label="All four snow candidates in the same factor network">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="865" fill="#f7f9fc"/>
+<text x="30" y="37" class="title" text-anchor="start">03  |  One snow object, four candidate configurations</text>
+<text x="30" y="66" class="body" text-anchor="start">p: Falling(Snow)     s: candidate value of S     n: NOT s     b: body value</text>
+<text x="30" y="91" class="small" text-anchor="start">Each wire is an argument of a constraint. It has no input/output direction.</text>
+<rect x="25" y="115" width="480" height="330" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="145" class="var" text-anchor="start">snow:case:0   p=0  s=0</text>
+<line x1="117.0" y1="348.0" x2="146.0" y2="348.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="243.0" y1="348.0" x2="204.0" y2="348.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="408.0" y1="198.0" x2="299.0" y2="198.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="117.0" y1="198.0" x2="241.0" y2="198.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="110.74197454912914" y1="330.71502120905905" x2="243.6" y2="220.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="297.0" y1="348.0" x2="406.0" y2="348.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="435.0" y1="225.0" x2="435.0" y2="326.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="90" cy="198" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="90" y="204" class="var" text-anchor="middle">p</text>
+<rect x="80.0" y="231" width="20" height="20" fill="white"/>
+<text x="90" y="246" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="270" cy="348" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="270" y="354" class="var" text-anchor="middle">s</text>
+<rect x="260.0" y="381" width="20" height="20" fill="white"/>
+<text x="270" y="396" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="435" cy="198" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="435" y="204" class="var" text-anchor="middle">b</text>
+<rect x="425.0" y="231" width="20" height="20" fill="white"/>
+<text x="435" y="246" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="90" cy="348" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="90" y="354" class="var" text-anchor="middle">n</text>
+<rect x="80.0" y="381" width="20" height="20" fill="white"/>
+<text x="90" y="396" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="146" y="326" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="175" y="354" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="241" y="176" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="270" y="204" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="406" y="326" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="435" y="354" class="var" text-anchor="middle">=</text>
+</g>
+<text x="45" y="423" class="var" text-anchor="start">WITNESS: s = b</text>
+<rect x="525" y="115" width="480" height="330" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="145" class="var" text-anchor="start">snow:case:1   p=0  s=1</text>
+<line x1="617.0" y1="348.0" x2="646.0" y2="348.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="743.0" y1="348.0" x2="704.0" y2="348.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="908.0" y1="198.0" x2="799.0" y2="198.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="617.0" y1="198.0" x2="741.0" y2="198.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="610.7419745491292" y1="330.71502120905905" x2="743.6" y2="220.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="797.0" y1="348.0" x2="906.0" y2="348.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="935.0" y1="225.0" x2="935.0" y2="326.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="590" cy="198" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="590" y="204" class="var" text-anchor="middle">p</text>
+<rect x="580.0" y="231" width="20" height="20" fill="white"/>
+<text x="590" y="246" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="770" cy="348" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="770" y="354" class="var" text-anchor="middle">s</text>
+<rect x="760.0" y="381" width="20" height="20" fill="white"/>
+<text x="770" y="396" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="935" cy="198" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="935" y="204" class="var" text-anchor="middle">b</text>
+<rect x="925.0" y="231" width="20" height="20" fill="white"/>
+<text x="935" y="246" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="590" cy="348" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="590" y="354" class="var" text-anchor="middle">n</text>
+<rect x="580.0" y="381" width="20" height="20" fill="white"/>
+<text x="590" y="396" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="646" y="326" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="675" y="354" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="741" y="176" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="770" y="204" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="906" y="326" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="935" y="354" class="var" text-anchor="middle">=</text>
+</g>
+<text x="545" y="423" class="var" text-anchor="start">REJECTED: s and b disagree at =</text>
+<rect x="25" y="465" width="480" height="330" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="495" class="var" text-anchor="start">snow:case:2   p=1  s=0</text>
+<line x1="117.0" y1="698.0" x2="146.0" y2="698.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="243.0" y1="698.0" x2="204.0" y2="698.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="408.0" y1="548.0" x2="299.0" y2="548.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="117.0" y1="548.0" x2="241.0" y2="548.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="110.74197454912914" y1="680.715021209059" x2="243.6" y2="570.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="297.0" y1="698.0" x2="406.0" y2="698.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="435.0" y1="575.0" x2="435.0" y2="676.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="90" cy="548" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="90" y="554" class="var" text-anchor="middle">p</text>
+<rect x="80.0" y="581" width="20" height="20" fill="white"/>
+<text x="90" y="596" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="270" cy="698" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="270" y="704" class="var" text-anchor="middle">s</text>
+<rect x="260.0" y="731" width="20" height="20" fill="white"/>
+<text x="270" y="746" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="435" cy="548" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="435" y="554" class="var" text-anchor="middle">b</text>
+<rect x="425.0" y="581" width="20" height="20" fill="white"/>
+<text x="435" y="596" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="90" cy="698" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="90" y="704" class="var" text-anchor="middle">n</text>
+<rect x="80.0" y="731" width="20" height="20" fill="white"/>
+<text x="90" y="746" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="146" y="676" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="175" y="704" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="241" y="526" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="270" y="554" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="406" y="676" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="435" y="704" class="var" text-anchor="middle">=</text>
+</g>
+<text x="45" y="773" class="var" text-anchor="start">REJECTED: s and b disagree at =</text>
+<rect x="525" y="465" width="480" height="330" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="495" class="var" text-anchor="start">snow:case:3   p=1  s=1</text>
+<line x1="617.0" y1="698.0" x2="646.0" y2="698.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="743.0" y1="698.0" x2="704.0" y2="698.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="908.0" y1="548.0" x2="799.0" y2="548.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="617.0" y1="548.0" x2="741.0" y2="548.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="610.7419745491292" y1="680.715021209059" x2="743.6" y2="570.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="797.0" y1="698.0" x2="906.0" y2="698.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="935.0" y1="575.0" x2="935.0" y2="676.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="590" cy="548" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="590" y="554" class="var" text-anchor="middle">p</text>
+<rect x="580.0" y="581" width="20" height="20" fill="white"/>
+<text x="590" y="596" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="770" cy="698" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="770" y="704" class="var" text-anchor="middle">s</text>
+<rect x="760.0" y="731" width="20" height="20" fill="white"/>
+<text x="770" y="746" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="935" cy="548" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="935" y="554" class="var" text-anchor="middle">b</text>
+<rect x="925.0" y="581" width="20" height="20" fill="white"/>
+<text x="935" y="596" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="590" cy="698" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="590" y="704" class="var" text-anchor="middle">n</text>
+<rect x="580.0" y="731" width="20" height="20" fill="white"/>
+<text x="590" y="746" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="646" y="676" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="675" y="704" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="741" y="526" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="770" y="554" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="906" y="676" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="935" y="704" class="var" text-anchor="middle">=</text>
+</g>
+<text x="545" y="773" class="var" text-anchor="start">REJECTED: s and b disagree at =</text>
+<text x="30" y="840" class="small" text-anchor="start">Solid/dashed factor borders locate the failed condition; T/F text carries the values.</text>
+</svg><p>Every case keeps the same source identifiers. Only the assigned values differ. The four panels exhaust p and s; unmentioned world facts may vary freely.</p></section><section id="04-investigations"><svg xmlns="http://www.w3.org/2000/svg" width="1020" height="780" viewBox="0 0 1020 780" role="img" aria-label="Four investigations with assumptions scoped to branches">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="780" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">04  |  Follow a supposition through the connected constraints</text>
+<text x="30" y="70" class="body" text-anchor="start">Each panel starts a separate context (a scope in which the listed hypothesis applies).</text>
+<rect x="25" y="95" width="480" height="310" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="125" class="var" text-anchor="start">Suppose s=T</text>
+<line x1="119.25" y1="265.0" x2="144.0" y2="265.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="236.25" y1="265.0" x2="202.0" y2="265.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="393.0" y1="175.0" x2="292.25" y2="175.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="119.25" y1="175.0" x2="234.25" y2="175.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="116.14279200431352" y1="252.4248463135192" x2="234.25" y2="190.26315789473685" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="290.25" y1="265.0" x2="391.0" y2="265.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="420.0" y1="202.0" x2="420.0" y2="243.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="92.25" cy="175.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="92.25" y="181.0" class="var" text-anchor="middle">p</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="263.25" cy="265.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="263.25" y="271.0" class="var" text-anchor="middle">s</text>
+<rect x="253.25" y="298.0" width="20" height="20" fill="white"/>
+<text x="263.25" y="313.0" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="420.0" cy="175.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="420.0" y="181.0" class="var" text-anchor="middle">b</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="92.25" cy="265.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="92.25" y="271.0" class="var" text-anchor="middle">n</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="144.0" y="243.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="173.0" y="271.0" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="234.25" y="153.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="263.25" y="181.0" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="391.0" y="243.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="420.0" y="271.0" class="var" text-anchor="middle">=</text>
+</g>
+<text x="45" y="330" class="small" text-anchor="start">= forces b=T.</text>
+<text x="45" y="354" class="small" text-anchor="start">AND forces n=T and p=T.</text>
+<text x="45" y="378" class="small" text-anchor="start">NOT forces s=F: conflict.</text>
+<rect x="525" y="95" width="480" height="310" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="125" class="var" text-anchor="start">Suppose s=F</text>
+<line x1="619.25" y1="265.0" x2="644.0" y2="265.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="736.25" y1="265.0" x2="702.0" y2="265.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="893.0" y1="175.0" x2="792.25" y2="175.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="619.25" y1="175.0" x2="734.25" y2="175.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="616.1427920043135" y1="252.4248463135192" x2="734.25" y2="190.26315789473685" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="790.25" y1="265.0" x2="891.0" y2="265.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="920.0" y1="202.0" x2="920.0" y2="243.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="592.25" cy="175.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="592.25" y="181.0" class="var" text-anchor="middle">p</text>
+<rect x="582.25" y="208.0" width="20" height="20" fill="white"/>
+<text x="592.25" y="223.0" class="var" text-anchor="middle" style="fill:#536477">F</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="763.25" cy="265.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="763.25" y="271.0" class="var" text-anchor="middle">s</text>
+<rect x="753.25" y="298.0" width="20" height="20" fill="white"/>
+<text x="763.25" y="313.0" class="var" text-anchor="middle" style="fill:#536477">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="920.0" cy="175.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="920.0" y="181.0" class="var" text-anchor="middle">b</text>
+<rect x="910.0" y="208.0" width="20" height="20" fill="white"/>
+<text x="920.0" y="223.0" class="var" text-anchor="middle" style="fill:#536477">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="592.25" cy="265.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="592.25" y="271.0" class="var" text-anchor="middle">n</text>
+<rect x="582.25" y="298.0" width="20" height="20" fill="white"/>
+<text x="592.25" y="313.0" class="var" text-anchor="middle" style="fill:#536477">T</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="644.0" y="243.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="673.0" y="271.0" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="734.25" y="153.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="763.25" y="181.0" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="891.0" y="243.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="920.0" y="271.0" class="var" text-anchor="middle">=</text>
+</g>
+<text x="545" y="330" class="small" text-anchor="start">= forces b=F.</text>
+<text x="545" y="354" class="small" text-anchor="start">NOT forces n=T.</text>
+<text x="545" y="378" class="small" text-anchor="start">AND now forces p=F.</text>
+<rect x="25" y="425" width="480" height="310" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="455" class="var" text-anchor="start">Fix p=F</text>
+<line x1="119.25" y1="595.0" x2="144.0" y2="595.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="236.25" y1="595.0" x2="202.0" y2="595.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="393.0" y1="505.0" x2="292.25" y2="505.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="119.25" y1="505.0" x2="234.25" y2="505.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="116.14279200431352" y1="582.4248463135192" x2="234.25" y2="520.2631578947369" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="290.25" y1="595.0" x2="391.0" y2="595.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="420.0" y1="532.0" x2="420.0" y2="573.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="92.25" cy="505.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="92.25" y="511.0" class="var" text-anchor="middle">p</text>
+<rect x="82.25" y="538.0" width="20" height="20" fill="white"/>
+<text x="92.25" y="553.0" class="var" text-anchor="middle" style="fill:#536477">F</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="263.25" cy="595.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="263.25" y="601.0" class="var" text-anchor="middle">s</text>
+<rect x="253.25" y="628.0" width="20" height="20" fill="white"/>
+<text x="263.25" y="643.0" class="var" text-anchor="middle" style="fill:#536477">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="420.0" cy="505.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="420.0" y="511.0" class="var" text-anchor="middle">b</text>
+<rect x="410.0" y="538.0" width="20" height="20" fill="white"/>
+<text x="420.0" y="553.0" class="var" text-anchor="middle" style="fill:#536477">F</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="92.25" cy="595.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="92.25" y="601.0" class="var" text-anchor="middle">n</text>
+<rect x="82.25" y="628.0" width="20" height="20" fill="white"/>
+<text x="92.25" y="643.0" class="var" text-anchor="middle" style="fill:#536477">T</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="144.0" y="573.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="173.0" y="601.0" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="234.25" y="483.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="263.25" y="511.0" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="391.0" y="573.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="420.0" y="601.0" class="var" text-anchor="middle">=</text>
+</g>
+<text x="45" y="660" class="small" text-anchor="start">AND forces b=F.</text>
+<text x="45" y="684" class="small" text-anchor="start">= forces s=F.</text>
+<text x="45" y="708" class="small" text-anchor="start">NOT gives n=T: one witness.</text>
+<rect x="525" y="425" width="480" height="310" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="455" class="var" text-anchor="start">Fix p=T</text>
+<line x1="619.25" y1="595.0" x2="644.0" y2="595.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="@S/body/1"/>
+<line x1="736.25" y1="595.0" x2="702.0" y2="595.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body/1" data-variable="S"/>
+<line x1="893.0" y1="505.0" x2="792.25" y2="505.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="619.25" y1="505.0" x2="734.25" y2="505.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="p"/>
+<line x1="616.1427920043135" y1="582.4248463135192" x2="734.25" y2="520.2631578947369" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="f:S/body" data-variable="@S/body/1"/>
+<line x1="790.25" y1="595.0" x2="891.0" y2="595.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="S"/>
+<line x1="920.0" y1="532.0" x2="920.0" y2="573.0" stroke="#8190a0" stroke-width="2" data-object="snow" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="snow" data-variable-node="p"><circle cx="592.25" cy="505.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="592.25" y="511.0" class="var" text-anchor="middle">p</text>
+<rect x="582.25" y="538.0" width="20" height="20" fill="white"/>
+<text x="592.25" y="553.0" class="var" text-anchor="middle" style="fill:#536477">T</text>
+</g>
+<g data-object="snow" data-variable-node="S"><circle cx="763.25" cy="595.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="763.25" y="601.0" class="var" text-anchor="middle">s</text>
+<rect x="736.75" y="628.0" width="53" height="20" fill="white"/>
+<text x="763.25" y="643.0" class="var" text-anchor="middle" style="fill:#536477">{F,T}</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body"><circle cx="920.0" cy="505.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="920.0" y="511.0" class="var" text-anchor="middle">b</text>
+<rect x="893.5" y="538.0" width="53" height="20" fill="white"/>
+<text x="920.0" y="553.0" class="var" text-anchor="middle" style="fill:#536477">{F,T}</text>
+</g>
+<g data-object="snow" data-variable-node="@S/body/1"><circle cx="592.25" cy="595.0" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="592.25" y="601.0" class="var" text-anchor="middle">n</text>
+<rect x="565.75" y="628.0" width="53" height="20" fill="white"/>
+<text x="592.25" y="643.0" class="var" text-anchor="middle" style="fill:#536477">{F,T}</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body/1"><rect x="644.0" y="573.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="673.0" y="601.0" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="snow" data-factor-node="f:S/body"><rect x="734.25" y="483.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="763.25" y="511.0" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="snow" data-factor-node="agree:S"><rect x="891.0" y="573.0" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="920.0" y="601.0" class="var" text-anchor="middle">=</text>
+</g>
+<text x="545" y="660" class="small" text-anchor="start">Local reduction leaves {F,T}.</text>
+<text x="545" y="684" class="small" text-anchor="start">Split s=F and s=T.</text>
+<text x="545" y="708" class="small" text-anchor="start">Both branches close: no witness.</text>
+<text x="30" y="768" class="small" text-anchor="start">Only B: s ↔ (p ∧ ¬s) licenses these deductions. “S is false” alone says nothing about weather.</text>
+</svg><p>An unassigned domain {F,T} is a search status, not a third truth value. The p=T branch demonstrates that local propagation can stop before detecting a global conflict.</p></section><section id="05-views"><svg xmlns="http://www.w3.org/2000/svg" width="1020" height="880" viewBox="0 0 1020 880" role="img" aria-label="Exact projection retains joint alternatives and hidden inconsistency">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="880" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">05  |  Change the question; preserve the constraints</text>
+<text x="30" y="70" class="body" text-anchor="start">Projection (hiding variables while retaining supported combinations) is existential quantification.</text>
+<rect x="25" y="95" width="970" height="275" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="125" class="var" text-anchor="start">A := NOT Tr(B); B := NOT Tr(A)</text>
+<line x1="392.0" y1="170.0" x2="586.0" y2="170.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:A/body" data-variable="@A/body"/>
+<line x1="828.806152496076" y1="223.451538124019" x2="644.0" y2="177.25" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:A/body" data-variable="B"/>
+<line x1="149.14953415699773" y1="217.92523292150113" x2="216.0" y2="184.5" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:A" data-variable="A"/>
+<line x1="338.0" y1="170.0" x2="274.0" y2="170.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:A" data-variable="@A/body"/>
+<line x1="588.0" y1="290.0" x2="394.0" y2="290.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:B/body" data-variable="@B/body"/>
+<line x1="151.19384750392396" y1="236.548461875981" x2="336.0" y2="282.75" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="f:B/body" data-variable="A"/>
+<line x1="830.8504658430022" y1="242.07476707849887" x2="764.0" y2="275.5" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:B" data-variable="B"/>
+<line x1="642.0" y1="290.0" x2="706.0" y2="290.0" stroke="#8190a0" stroke-width="2" data-object="opposite" data-factor="agree:B" data-variable="@B/body"/>
+<g data-object="opposite" data-variable-node="A"><circle cx="125" cy="230" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="125" y="236" class="var" text-anchor="middle">A</text>
+</g>
+<g data-object="opposite" data-variable-node="B"><circle cx="855" cy="230" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="855" y="236" class="var" text-anchor="middle">B</text>
+</g>
+<g data-object="opposite" data-variable-node="@A/body"><circle cx="365" cy="170" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="365" y="176" class="var" text-anchor="middle">a</text>
+</g>
+<g data-object="opposite" data-variable-node="@B/body"><circle cx="615" cy="290" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="615" y="296" class="var" text-anchor="middle">b</text>
+</g>
+<g data-object="opposite" data-factor-node="f:A/body"><rect x="586" y="148" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="615" y="176" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="opposite" data-factor-node="agree:A"><rect x="216" y="148" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="245" y="176" class="var" text-anchor="middle">=</text>
+</g>
+<g data-object="opposite" data-factor-node="f:B/body"><rect x="336" y="268" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="365" y="296" class="var" text-anchor="middle">NOT</text>
+</g>
+<g data-object="opposite" data-factor-node="agree:B"><rect x="706" y="268" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="735" y="296" class="var" text-anchor="middle">=</text>
+</g>
+<text x="45" y="350" class="small" text-anchor="start">a and b are body values. Both equations together preserve A ≠ B.</text>
+<rect x="25" y="390" width="470" height="260" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="420" class="var" text-anchor="start">Joint view of A,B: exactly two witnesses</text>
+<g ><circle cx="100" cy="465" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="471" class="var" text-anchor="middle">A</text>
+<rect x="90.0" y="498" width="20" height="20" fill="white"/>
+<text x="100" y="513" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><rect x="216" y="443" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="245" y="471" class="var" text-anchor="middle">≠</text>
+</g>
+<g ><circle cx="390" cy="465" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="390" y="471" class="var" text-anchor="middle">B</text>
+<rect x="380.0" y="498" width="20" height="20" fill="white"/>
+<text x="390" y="513" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<line x1="127" y1="465" x2="216" y2="465" stroke="#8190a0" stroke-width="2" />
+<line x1="274" y1="465" x2="363" y2="465" stroke="#8190a0" stroke-width="2" />
+<g ><circle cx="100" cy="570" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="576" class="var" text-anchor="middle">A</text>
+<rect x="90.0" y="603" width="20" height="20" fill="white"/>
+<text x="100" y="618" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><rect x="216" y="548" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="245" y="576" class="var" text-anchor="middle">≠</text>
+</g>
+<g ><circle cx="390" cy="570" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="390" y="576" class="var" text-anchor="middle">B</text>
+<rect x="380.0" y="603" width="20" height="20" fill="white"/>
+<text x="390" y="618" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<line x1="127" y1="570" x2="216" y2="570" stroke="#8190a0" stroke-width="2" />
+<line x1="274" y1="570" x2="363" y2="570" stroke="#8190a0" stroke-width="2" />
+<rect x="515" y="390" width="480" height="260" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="535" y="420" class="var" text-anchor="start">Hide B: A has two supported values</text>
+<g ><circle cx="590" cy="485" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="590" y="491" class="var" text-anchor="middle">A</text>
+<rect x="563.5" y="518" width="53" height="20" fill="white"/>
+<text x="590" y="533" class="var" text-anchor="middle" style="fill:#536477">{F,T}</text>
+</g>
+<g ><rect x="811" y="463" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="840" y="491" class="var" text-anchor="middle">∃B</text>
+</g>
+<line x1="617" y1="485" x2="811" y2="485" stroke="#8190a0" stroke-width="2" />
+<text x="535" y="605" class="small" text-anchor="start">Witness links recover B=T for A=F; B=F for A=T.</text>
+<rect x="25" y="680" width="970" height="155" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="710" class="var" text-anchor="start">Hidden liar: the question must say whether consistency is global</text>
+<g ><circle cx="100" cy="760" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="766" class="var" text-anchor="middle">p</text>
+</g>
+<g ><rect x="211" y="738" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="240" y="766" class="var" text-anchor="middle">=</text>
+</g>
+<g ><circle cx="380" cy="760" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="380" y="766" class="var" text-anchor="middle">Q</text>
+</g>
+<line x1="127" y1="760" x2="211" y2="760" stroke="#8190a0" stroke-width="2" />
+<line x1="269" y1="760" x2="353" y2="760" stroke="#8190a0" stroke-width="2" />
+<rect x="470" y="728" width="220" height="65" fill="#edf2f7" stroke="#14283e" stroke-dasharray="5 4"/>
+<text x="580" y="755" class="small" text-anchor="middle">collapsed L = NOT L</text>
+<text x="580" y="779" class="small" text-anchor="middle">still has no extension</text>
+<text x="730" y="750" class="var" text-anchor="start">Global projection: ∅</text>
+<text x="730" y="780" class="body" text-anchor="start">Local Q=p: 2 cases</text>
+<text x="45" y="820" class="small" text-anchor="start">Local evaluation explicitly removes L’s constraint. Merely hiding L does not.</text>
+<text x="30" y="870" class="small" text-anchor="start">Snow view: hiding p in all candidates retains 2 groups × 2 cases; restricting to consistent cases retains s=F only.</text>
+</svg><p>The displayed ≠ relation summarizes an exact joint projection. Its two tuples carry source witness identifiers in the evidence. The collapsed liar remains part of the global query.</p></section><section id="06-signature"><svg xmlns="http://www.w3.org/2000/svg" width="1020" height="680" viewBox="0 0 1020 680" role="img" aria-label="Signed-cycle double covers distinguish even and odd negative parity">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="680" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">06  |  A structural signature with a precise domain</text>
+<text x="30" y="70" class="body" text-anchor="start">Pure cycles only: each sentence refers to exactly one successor, with optional NOT.</text>
+<rect x="25" y="95" width="480" height="410" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="125" class="var" text-anchor="start">Two negative references: 2 models</text>
+<text x="50" y="155" class="body" text-anchor="start">S0 = ¬S1; S1 = ¬S2; S2 = S0</text>
+<text x="50" y="192" class="small" text-anchor="start">Lift each sentence to its F and T candidate copies:</text>
+<line x1="120.03677135428073" y1="273.09772896515676" x2="234.96322864571925" y2="376.90227103484324" stroke="#8190a0" stroke-width="2" />
+<line x1="120.03677135428073" y1="376.90227103484324" x2="234.96322864571925" y2="273.09772896515676" stroke="#8190a0" stroke-width="2" />
+<line x1="275.03677135428075" y1="273.09772896515676" x2="389.96322864571925" y2="376.90227103484324" stroke="#8190a0" stroke-width="2" />
+<line x1="275.03677135428075" y1="376.90227103484324" x2="389.96322864571925" y2="273.09772896515676" stroke="#8190a0" stroke-width="2" />
+<path d="M 410 231 V 220 H 100 V 231" fill="none" stroke="#8190a0" stroke-width="2"/>
+<path d="M 410 419 V 450 H 100 V 419" fill="none" stroke="#8190a0" stroke-width="2"/>
+<g ><circle cx="100" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="261" class="var" text-anchor="middle">S0</text>
+<rect x="90.0" y="288" width="20" height="20" fill="white"/>
+<text x="100" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="100" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="401" class="var" text-anchor="middle">S0</text>
+<rect x="90.0" y="428" width="20" height="20" fill="white"/>
+<text x="100" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="255" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="255" y="261" class="var" text-anchor="middle">S1</text>
+<rect x="245.0" y="288" width="20" height="20" fill="white"/>
+<text x="255" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="255" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="255" y="401" class="var" text-anchor="middle">S1</text>
+<rect x="245.0" y="428" width="20" height="20" fill="white"/>
+<text x="255" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="410" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="410" y="261" class="var" text-anchor="middle">S2</text>
+<rect x="400.0" y="288" width="20" height="20" fill="white"/>
+<text x="410" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="410" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="410" y="401" class="var" text-anchor="middle">S2</text>
+<rect x="400.0" y="428" width="20" height="20" fill="white"/>
+<text x="410" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<text x="50" y="484" class="small" text-anchor="start">2 components: S0-F cannot reach S0-T</text>
+<rect x="525" y="95" width="480" height="410" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="125" class="var" text-anchor="start">One negative reference: 0 models</text>
+<text x="550" y="155" class="body" text-anchor="start">S0 = ¬S1; S1 = S2; S2 = S0</text>
+<text x="550" y="192" class="small" text-anchor="start">Lift each sentence to its F and T candidate copies:</text>
+<line x1="620.0367713542807" y1="273.09772896515676" x2="734.9632286457193" y2="376.90227103484324" stroke="#8190a0" stroke-width="2" />
+<line x1="620.0367713542807" y1="376.90227103484324" x2="734.9632286457193" y2="273.09772896515676" stroke="#8190a0" stroke-width="2" />
+<line x1="782.0" y1="255.0" x2="883.0" y2="255.0" stroke="#8190a0" stroke-width="2" />
+<line x1="782.0" y1="395.0" x2="883.0" y2="395.0" stroke="#8190a0" stroke-width="2" />
+<path d="M 910 231 V 220 H 600 V 231" fill="none" stroke="#8190a0" stroke-width="2"/>
+<path d="M 910 419 V 450 H 600 V 419" fill="none" stroke="#8190a0" stroke-width="2"/>
+<g ><circle cx="600" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="600" y="261" class="var" text-anchor="middle">S0</text>
+<rect x="590.0" y="288" width="20" height="20" fill="white"/>
+<text x="600" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="600" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="600" y="401" class="var" text-anchor="middle">S0</text>
+<rect x="590.0" y="428" width="20" height="20" fill="white"/>
+<text x="600" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="755" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="755" y="261" class="var" text-anchor="middle">S1</text>
+<rect x="745.0" y="288" width="20" height="20" fill="white"/>
+<text x="755" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="755" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="755" y="401" class="var" text-anchor="middle">S1</text>
+<rect x="745.0" y="428" width="20" height="20" fill="white"/>
+<text x="755" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="910" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="910" y="261" class="var" text-anchor="middle">S2</text>
+<rect x="900.0" y="288" width="20" height="20" fill="white"/>
+<text x="910" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="910" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="910" y="401" class="var" text-anchor="middle">S2</text>
+<rect x="900.0" y="428" width="20" height="20" fill="white"/>
+<text x="910" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<text x="550" y="484" class="small" text-anchor="start">1 component: S0-F reaches S0-T</text>
+<text x="30" y="540" class="body" text-anchor="start">Proof: one circuit of references gives v0 = v0 XOR parity. Odd parity is impossible;</text>
+<text x="30" y="566" class="body" text-anchor="start">even parity lets either initial value determine every other value. This holds for every length.</text>
+<text x="30" y="602" class="body" text-anchor="start">Counterexample outside that class: s = p AND NOT s has a negative self-reference,</text>
+<text x="30" y="628" class="body" text-anchor="start">but p=F admits s=F. Conjunction prevents treating the negative reference as an equality.</text>
+<text x="30" y="660" class="small" text-anchor="start">Crossings are layout accidents. Connectivity and signed parity survive relabelling and redrawing.</text>
+</svg><p>The lower construction is the signed double cover (two value copies linked according to reference polarity). It is a different view from factor incidence; shared shape is not assumed.</p></section><section class="notes"><h2>Evidence and remaining questions</h2><p>The independent checker compared direct formula evaluation with exhaustive assignments to compiled constraints: 10 fixtures, 1,348 compiled assignments. It replayed 186 local traces and checked 112 finite views. All 510 signed cycles of lengths 1–8 were checked against the parity criterion.</p><p>The next visual question is concrete: can you locate why snow:case:2 fails, then explain why supposing s=F excludes p=T? Can you distinguish the two supported A,B pairs from four independent recombinations? These are proposed review tasks, not reported user-study results.</p><p>Sources: <a href="https://www.jfsowa.com/peirce/ms514.htm">Peirce MS 514</a>; <a href="https://www.isiweb.ee.ethz.ch/papers/arch/aloe-2001-1.pdf">Kschischang, Frey &amp; Loeliger (2001), §II</a>; <a href="https://www.jfsowa.com/pubs/contexts.htm">Sowa, Semantic Foundations of Contexts, §§2,6</a>. The full assessment, mathematical arguments, coverage ledger, and commands are in README.md. Machine-readable objects, candidates, proofs, and witness links are in evidence.json.</p></section></main></html>

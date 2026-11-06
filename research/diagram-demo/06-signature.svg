@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="680" viewBox="0 0 1020 680" role="img" aria-label="Signed-cycle double covers distinguish even and odd negative parity">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="680" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">06  |  A structural signature with a precise domain</text>
+<text x="30" y="70" class="body" text-anchor="start">Pure cycles only: each sentence refers to exactly one successor, with optional NOT.</text>
+<rect x="25" y="95" width="480" height="410" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="125" class="var" text-anchor="start">Two negative references: 2 models</text>
+<text x="50" y="155" class="body" text-anchor="start">S0 = ¬S1; S1 = ¬S2; S2 = S0</text>
+<text x="50" y="192" class="small" text-anchor="start">Lift each sentence to its F and T candidate copies:</text>
+<line x1="120.03677135428073" y1="273.09772896515676" x2="234.96322864571925" y2="376.90227103484324" stroke="#8190a0" stroke-width="2" />
+<line x1="120.03677135428073" y1="376.90227103484324" x2="234.96322864571925" y2="273.09772896515676" stroke="#8190a0" stroke-width="2" />
+<line x1="275.03677135428075" y1="273.09772896515676" x2="389.96322864571925" y2="376.90227103484324" stroke="#8190a0" stroke-width="2" />
+<line x1="275.03677135428075" y1="376.90227103484324" x2="389.96322864571925" y2="273.09772896515676" stroke="#8190a0" stroke-width="2" />
+<path d="M 410 231 V 220 H 100 V 231" fill="none" stroke="#8190a0" stroke-width="2"/>
+<path d="M 410 419 V 450 H 100 V 419" fill="none" stroke="#8190a0" stroke-width="2"/>
+<g ><circle cx="100" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="261" class="var" text-anchor="middle">S0</text>
+<rect x="90.0" y="288" width="20" height="20" fill="white"/>
+<text x="100" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="100" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="100" y="401" class="var" text-anchor="middle">S0</text>
+<rect x="90.0" y="428" width="20" height="20" fill="white"/>
+<text x="100" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="255" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="255" y="261" class="var" text-anchor="middle">S1</text>
+<rect x="245.0" y="288" width="20" height="20" fill="white"/>
+<text x="255" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="255" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="255" y="401" class="var" text-anchor="middle">S1</text>
+<rect x="245.0" y="428" width="20" height="20" fill="white"/>
+<text x="255" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="410" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="410" y="261" class="var" text-anchor="middle">S2</text>
+<rect x="400.0" y="288" width="20" height="20" fill="white"/>
+<text x="410" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="410" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="410" y="401" class="var" text-anchor="middle">S2</text>
+<rect x="400.0" y="428" width="20" height="20" fill="white"/>
+<text x="410" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<text x="50" y="484" class="small" text-anchor="start">2 components: S0-F cannot reach S0-T</text>
+<rect x="525" y="95" width="480" height="410" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="545" y="125" class="var" text-anchor="start">One negative reference: 0 models</text>
+<text x="550" y="155" class="body" text-anchor="start">S0 = ¬S1; S1 = S2; S2 = S0</text>
+<text x="550" y="192" class="small" text-anchor="start">Lift each sentence to its F and T candidate copies:</text>
+<line x1="620.0367713542807" y1="273.09772896515676" x2="734.9632286457193" y2="376.90227103484324" stroke="#8190a0" stroke-width="2" />
+<line x1="620.0367713542807" y1="376.90227103484324" x2="734.9632286457193" y2="273.09772896515676" stroke="#8190a0" stroke-width="2" />
+<line x1="782.0" y1="255.0" x2="883.0" y2="255.0" stroke="#8190a0" stroke-width="2" />
+<line x1="782.0" y1="395.0" x2="883.0" y2="395.0" stroke="#8190a0" stroke-width="2" />
+<path d="M 910 231 V 220 H 600 V 231" fill="none" stroke="#8190a0" stroke-width="2"/>
+<path d="M 910 419 V 450 H 600 V 419" fill="none" stroke="#8190a0" stroke-width="2"/>
+<g ><circle cx="600" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="600" y="261" class="var" text-anchor="middle">S0</text>
+<rect x="590.0" y="288" width="20" height="20" fill="white"/>
+<text x="600" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="600" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="600" y="401" class="var" text-anchor="middle">S0</text>
+<rect x="590.0" y="428" width="20" height="20" fill="white"/>
+<text x="600" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="755" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="755" y="261" class="var" text-anchor="middle">S1</text>
+<rect x="745.0" y="288" width="20" height="20" fill="white"/>
+<text x="755" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="755" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="755" y="401" class="var" text-anchor="middle">S1</text>
+<rect x="745.0" y="428" width="20" height="20" fill="white"/>
+<text x="755" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g ><circle cx="910" cy="255" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="910" y="261" class="var" text-anchor="middle">S2</text>
+<rect x="900.0" y="288" width="20" height="20" fill="white"/>
+<text x="910" y="303" class="var" text-anchor="middle" style="fill:#a24e13">F</text>
+</g>
+<g ><circle cx="910" cy="395" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="910" y="401" class="var" text-anchor="middle">S2</text>
+<rect x="900.0" y="428" width="20" height="20" fill="white"/>
+<text x="910" y="443" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<text x="550" y="484" class="small" text-anchor="start">1 component: S0-F reaches S0-T</text>
+<text x="30" y="540" class="body" text-anchor="start">Proof: one circuit of references gives v0 = v0 XOR parity. Odd parity is impossible;</text>
+<text x="30" y="566" class="body" text-anchor="start">even parity lets either initial value determine every other value. This holds for every length.</text>
+<text x="30" y="602" class="body" text-anchor="start">Counterexample outside that class: s = p AND NOT s has a negative self-reference,</text>
+<text x="30" y="628" class="body" text-anchor="start">but p=F admits s=F. Conjunction prevents treating the negative reference as an equality.</text>
+<text x="30" y="660" class="small" text-anchor="start">Crossings are layout accidents. Connectivity and signed parity survive relabelling and redrawing.</text>
+</svg>

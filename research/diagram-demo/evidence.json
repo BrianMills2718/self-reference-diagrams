@@ -1,0 +1,6846 @@
+{
+  "scope": "10 finite fixtures; all signed cycles length 1..8; tellers 1..10",
+  "counts": {
+    "objects": 10,
+    "compiled_assignments": 1348,
+    "traces": 186,
+    "cycle_patterns": 510,
+    "cycle_candidates": 87380,
+    "view_checks": 112,
+    "rejected_mutations": 3
+  },
+  "objects": {
+    "ordinary": {
+      "id": "ordinary",
+      "profile": "finite-classical-agreement",
+      "facts": [
+        "p"
+      ],
+      "definitions": {
+        "S": [
+          "fact",
+          "p"
+        ]
+      },
+      "variables": [
+        "p",
+        "S",
+        "@S/body"
+      ],
+      "occurrences": {
+        "S/body": {
+          "op": "fact",
+          "value": "@S/body",
+          "children": [],
+          "target": "p"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:S/body",
+          "scope": [
+            "@S/body",
+            "p"
+          ],
+          "source": "S/body",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:S",
+          "scope": [
+            "S",
+            "@S/body"
+          ],
+          "source": "S",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [
+          "p"
+        ],
+        "cases": [
+          {
+            "p": false
+          },
+          {
+            "p": true
+          }
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "negation": {
+      "id": "negation",
+      "profile": "finite-classical-agreement",
+      "facts": [
+        "p"
+      ],
+      "definitions": {
+        "S": [
+          "not",
+          [
+            "fact",
+            "p"
+          ]
+        ]
+      },
+      "variables": [
+        "p",
+        "S",
+        "@S/body",
+        "@S/body/0"
+      ],
+      "occurrences": {
+        "S/body": {
+          "op": "not",
+          "value": "@S/body",
+          "children": [
+            "S/body/0"
+          ]
+        },
+        "S/body/0": {
+          "op": "fact",
+          "value": "@S/body/0",
+          "children": [],
+          "target": "p"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:S/body/0",
+          "scope": [
+            "@S/body/0",
+            "p"
+          ],
+          "source": "S/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:S/body",
+          "scope": [
+            "@S/body",
+            "@S/body/0"
+          ],
+          "source": "S/body",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "agree:S",
+          "scope": [
+            "S",
+            "@S/body"
+          ],
+          "source": "S",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [
+          "p"
+        ],
+        "cases": [
+          {
+            "p": false
+          },
+          {
+            "p": true
+          }
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "conjunction": {
+      "id": "conjunction",
+      "profile": "finite-classical-agreement",
+      "facts": [
+        "p",
+        "q"
+      ],
+      "definitions": {
+        "S": [
+          "and",
+          [
+            "fact",
+            "p"
+          ],
+          [
+            "fact",
+            "q"
+          ]
+        ]
+      },
+      "variables": [
+        "p",
+        "q",
+        "S",
+        "@S/body",
+        "@S/body/0",
+        "@S/body/1"
+      ],
+      "occurrences": {
+        "S/body": {
+          "op": "and",
+          "value": "@S/body",
+          "children": [
+            "S/body/0",
+            "S/body/1"
+          ]
+        },
+        "S/body/0": {
+          "op": "fact",
+          "value": "@S/body/0",
+          "children": [],
+          "target": "p"
+        },
+        "S/body/1": {
+          "op": "fact",
+          "value": "@S/body/1",
+          "children": [],
+          "target": "q"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:S/body/0",
+          "scope": [
+            "@S/body/0",
+            "p"
+          ],
+          "source": "S/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:S/body/1",
+          "scope": [
+            "@S/body/1",
+            "q"
+          ],
+          "source": "S/body/1",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:S/body",
+          "scope": [
+            "@S/body",
+            "@S/body/0",
+            "@S/body/1"
+          ],
+          "source": "S/body",
+          "rows": [
+            [
+              false,
+              false,
+              false
+            ],
+            [
+              false,
+              false,
+              true
+            ],
+            [
+              false,
+              true,
+              false
+            ],
+            [
+              true,
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:S",
+          "scope": [
+            "S",
+            "@S/body"
+          ],
+          "source": "S",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [
+          "p",
+          "q"
+        ],
+        "cases": [
+          {
+            "p": false,
+            "q": false
+          },
+          {
+            "p": false,
+            "q": true
+          },
+          {
+            "p": true,
+            "q": false
+          },
+          {
+            "p": true,
+            "q": true
+          }
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "teller": {
+      "id": "teller",
+      "profile": "finite-classical-agreement",
+      "facts": [],
+      "definitions": {
+        "S": [
+          "ref",
+          "S"
+        ]
+      },
+      "variables": [
+        "S",
+        "@S/body"
+      ],
+      "occurrences": {
+        "S/body": {
+          "op": "ref",
+          "value": "@S/body",
+          "children": [],
+          "target": "S"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:S/body",
+          "scope": [
+            "@S/body",
+            "S"
+          ],
+          "source": "S/body",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:S",
+          "scope": [
+            "S",
+            "@S/body"
+          ],
+          "source": "S",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [],
+        "cases": [
+          {}
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "liar": {
+      "id": "liar",
+      "profile": "finite-classical-agreement",
+      "facts": [],
+      "definitions": {
+        "S": [
+          "not",
+          [
+            "ref",
+            "S"
+          ]
+        ]
+      },
+      "variables": [
+        "S",
+        "@S/body",
+        "@S/body/0"
+      ],
+      "occurrences": {
+        "S/body": {
+          "op": "not",
+          "value": "@S/body",
+          "children": [
+            "S/body/0"
+          ]
+        },
+        "S/body/0": {
+          "op": "ref",
+          "value": "@S/body/0",
+          "children": [],
+          "target": "S"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:S/body/0",
+          "scope": [
+            "@S/body/0",
+            "S"
+          ],
+          "source": "S/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:S/body",
+          "scope": [
+            "@S/body",
+            "@S/body/0"
+          ],
+          "source": "S/body",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "agree:S",
+          "scope": [
+            "S",
+            "@S/body"
+          ],
+          "source": "S",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [],
+        "cases": [
+          {}
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "snow": {
+      "id": "snow",
+      "profile": "finite-classical-agreement",
+      "facts": [
+        "p"
+      ],
+      "definitions": {
+        "S": [
+          "and",
+          [
+            "fact",
+            "p"
+          ],
+          [
+            "not",
+            [
+              "ref",
+              "S"
+            ]
+          ]
+        ]
+      },
+      "variables": [
+        "p",
+        "S",
+        "@S/body",
+        "@S/body/0",
+        "@S/body/1",
+        "@S/body/1/0"
+      ],
+      "occurrences": {
+        "S/body": {
+          "op": "and",
+          "value": "@S/body",
+          "children": [
+            "S/body/0",
+            "S/body/1"
+          ]
+        },
+        "S/body/0": {
+          "op": "fact",
+          "value": "@S/body/0",
+          "children": [],
+          "target": "p"
+        },
+        "S/body/1": {
+          "op": "not",
+          "value": "@S/body/1",
+          "children": [
+            "S/body/1/0"
+          ]
+        },
+        "S/body/1/0": {
+          "op": "ref",
+          "value": "@S/body/1/0",
+          "children": [],
+          "target": "S"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:S/body/0",
+          "scope": [
+            "@S/body/0",
+            "p"
+          ],
+          "source": "S/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:S/body/1/0",
+          "scope": [
+            "@S/body/1/0",
+            "S"
+          ],
+          "source": "S/body/1/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:S/body/1",
+          "scope": [
+            "@S/body/1",
+            "@S/body/1/0"
+          ],
+          "source": "S/body/1",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "f:S/body",
+          "scope": [
+            "@S/body",
+            "@S/body/0",
+            "@S/body/1"
+          ],
+          "source": "S/body",
+          "rows": [
+            [
+              false,
+              false,
+              false
+            ],
+            [
+              false,
+              false,
+              true
+            ],
+            [
+              false,
+              true,
+              false
+            ],
+            [
+              true,
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:S",
+          "scope": [
+            "S",
+            "@S/body"
+          ],
+          "source": "S",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [
+          "p"
+        ],
+        "cases": [
+          {
+            "p": false
+          },
+          {
+            "p": true
+          }
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "odd-pair": {
+      "id": "odd-pair",
+      "profile": "finite-classical-agreement",
+      "facts": [],
+      "definitions": {
+        "A": [
+          "not",
+          [
+            "ref",
+            "B"
+          ]
+        ],
+        "B": [
+          "ref",
+          "A"
+        ]
+      },
+      "variables": [
+        "A",
+        "B",
+        "@A/body",
+        "@A/body/0",
+        "@B/body"
+      ],
+      "occurrences": {
+        "A/body": {
+          "op": "not",
+          "value": "@A/body",
+          "children": [
+            "A/body/0"
+          ]
+        },
+        "A/body/0": {
+          "op": "ref",
+          "value": "@A/body/0",
+          "children": [],
+          "target": "B"
+        },
+        "B/body": {
+          "op": "ref",
+          "value": "@B/body",
+          "children": [],
+          "target": "A"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:A/body/0",
+          "scope": [
+            "@A/body/0",
+            "B"
+          ],
+          "source": "A/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:A/body",
+          "scope": [
+            "@A/body",
+            "@A/body/0"
+          ],
+          "source": "A/body",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "agree:A",
+          "scope": [
+            "A",
+            "@A/body"
+          ],
+          "source": "A",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:B/body",
+          "scope": [
+            "@B/body",
+            "A"
+          ],
+          "source": "B/body",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:B",
+          "scope": [
+            "B",
+            "@B/body"
+          ],
+          "source": "B",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [],
+        "cases": [
+          {}
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "opposite": {
+      "id": "opposite",
+      "profile": "finite-classical-agreement",
+      "facts": [],
+      "definitions": {
+        "A": [
+          "not",
+          [
+            "ref",
+            "B"
+          ]
+        ],
+        "B": [
+          "not",
+          [
+            "ref",
+            "A"
+          ]
+        ]
+      },
+      "variables": [
+        "A",
+        "B",
+        "@A/body",
+        "@A/body/0",
+        "@B/body",
+        "@B/body/0"
+      ],
+      "occurrences": {
+        "A/body": {
+          "op": "not",
+          "value": "@A/body",
+          "children": [
+            "A/body/0"
+          ]
+        },
+        "A/body/0": {
+          "op": "ref",
+          "value": "@A/body/0",
+          "children": [],
+          "target": "B"
+        },
+        "B/body": {
+          "op": "not",
+          "value": "@B/body",
+          "children": [
+            "B/body/0"
+          ]
+        },
+        "B/body/0": {
+          "op": "ref",
+          "value": "@B/body/0",
+          "children": [],
+          "target": "A"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:A/body/0",
+          "scope": [
+            "@A/body/0",
+            "B"
+          ],
+          "source": "A/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:A/body",
+          "scope": [
+            "@A/body",
+            "@A/body/0"
+          ],
+          "source": "A/body",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "agree:A",
+          "scope": [
+            "A",
+            "@A/body"
+          ],
+          "source": "A",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:B/body/0",
+          "scope": [
+            "@B/body/0",
+            "A"
+          ],
+          "source": "B/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:B/body",
+          "scope": [
+            "@B/body",
+            "@B/body/0"
+          ],
+          "source": "B/body",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "agree:B",
+          "scope": [
+            "B",
+            "@B/body"
+          ],
+          "source": "B",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [],
+        "cases": [
+          {}
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "hidden-liar": {
+      "id": "hidden-liar",
+      "profile": "finite-classical-agreement",
+      "facts": [
+        "p"
+      ],
+      "definitions": {
+        "Q": [
+          "fact",
+          "p"
+        ],
+        "L": [
+          "not",
+          [
+            "ref",
+            "L"
+          ]
+        ]
+      },
+      "variables": [
+        "p",
+        "Q",
+        "L",
+        "@Q/body",
+        "@L/body",
+        "@L/body/0"
+      ],
+      "occurrences": {
+        "Q/body": {
+          "op": "fact",
+          "value": "@Q/body",
+          "children": [],
+          "target": "p"
+        },
+        "L/body": {
+          "op": "not",
+          "value": "@L/body",
+          "children": [
+            "L/body/0"
+          ]
+        },
+        "L/body/0": {
+          "op": "ref",
+          "value": "@L/body/0",
+          "children": [],
+          "target": "L"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:Q/body",
+          "scope": [
+            "@Q/body",
+            "p"
+          ],
+          "source": "Q/body",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:Q",
+          "scope": [
+            "Q",
+            "@Q/body"
+          ],
+          "source": "Q",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:L/body/0",
+          "scope": [
+            "@L/body/0",
+            "L"
+          ],
+          "source": "L/body/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:L/body",
+          "scope": [
+            "@L/body",
+            "@L/body/0"
+          ],
+          "source": "L/body",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "agree:L",
+          "scope": [
+            "L",
+            "@L/body"
+          ],
+          "source": "L",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [
+          "p"
+        ],
+        "cases": [
+          {
+            "p": false
+          },
+          {
+            "p": true
+          }
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    },
+    "branch": {
+      "id": "branch",
+      "profile": "finite-classical-agreement",
+      "facts": [
+        "p"
+      ],
+      "definitions": {
+        "A": [
+          "not",
+          [
+            "and",
+            [
+              "ref",
+              "B"
+            ],
+            [
+              "ref",
+              "C"
+            ]
+          ]
+        ],
+        "B": [
+          "ref",
+          "A"
+        ],
+        "C": [
+          "fact",
+          "p"
+        ]
+      },
+      "variables": [
+        "p",
+        "A",
+        "B",
+        "C",
+        "@A/body",
+        "@A/body/0",
+        "@A/body/0/0",
+        "@A/body/0/1",
+        "@B/body",
+        "@C/body"
+      ],
+      "occurrences": {
+        "A/body": {
+          "op": "not",
+          "value": "@A/body",
+          "children": [
+            "A/body/0"
+          ]
+        },
+        "A/body/0": {
+          "op": "and",
+          "value": "@A/body/0",
+          "children": [
+            "A/body/0/0",
+            "A/body/0/1"
+          ]
+        },
+        "A/body/0/0": {
+          "op": "ref",
+          "value": "@A/body/0/0",
+          "children": [],
+          "target": "B"
+        },
+        "A/body/0/1": {
+          "op": "ref",
+          "value": "@A/body/0/1",
+          "children": [],
+          "target": "C"
+        },
+        "B/body": {
+          "op": "ref",
+          "value": "@B/body",
+          "children": [],
+          "target": "A"
+        },
+        "C/body": {
+          "op": "fact",
+          "value": "@C/body",
+          "children": [],
+          "target": "p"
+        }
+      },
+      "factors": [
+        {
+          "id": "f:A/body/0/0",
+          "scope": [
+            "@A/body/0/0",
+            "B"
+          ],
+          "source": "A/body/0/0",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:A/body/0/1",
+          "scope": [
+            "@A/body/0/1",
+            "C"
+          ],
+          "source": "A/body/0/1",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:A/body/0",
+          "scope": [
+            "@A/body/0",
+            "@A/body/0/0",
+            "@A/body/0/1"
+          ],
+          "source": "A/body/0",
+          "rows": [
+            [
+              false,
+              false,
+              false
+            ],
+            [
+              false,
+              false,
+              true
+            ],
+            [
+              false,
+              true,
+              false
+            ],
+            [
+              true,
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:A/body",
+          "scope": [
+            "@A/body",
+            "@A/body/0"
+          ],
+          "source": "A/body",
+          "rows": [
+            [
+              false,
+              true
+            ],
+            [
+              true,
+              false
+            ]
+          ]
+        },
+        {
+          "id": "agree:A",
+          "scope": [
+            "A",
+            "@A/body"
+          ],
+          "source": "A",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:B/body",
+          "scope": [
+            "@B/body",
+            "A"
+          ],
+          "source": "B/body",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:B",
+          "scope": [
+            "B",
+            "@B/body"
+          ],
+          "source": "B",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "f:C/body",
+          "scope": [
+            "@C/body",
+            "p"
+          ],
+          "source": "C/body",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        },
+        {
+          "id": "agree:C",
+          "scope": [
+            "C",
+            "@C/body"
+          ],
+          "source": "C",
+          "rows": [
+            [
+              false,
+              false
+            ],
+            [
+              true,
+              true
+            ]
+          ]
+        }
+      ],
+      "world_scope": {
+        "vary": [
+          "p"
+        ],
+        "cases": [
+          {
+            "p": false
+          },
+          {
+            "p": true
+          }
+        ],
+        "policy": "All Boolean combinations of listed observations; other facts ignored"
+      },
+      "ordinary_signature": {
+        "entities": [
+          "entity:snow",
+          "entity:wind"
+        ],
+        "names": {
+          "Snow": "entity:snow",
+          "Wind": "entity:wind"
+        },
+        "observations": {
+          "p": {
+            "predicate": "Falling",
+            "arguments": [
+              "Snow"
+            ]
+          },
+          "q": {
+            "predicate": "Blowing",
+            "arguments": [
+              "Wind"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "candidates": {
+    "ordinary": [
+      {
+        "id": "ordinary:case:0",
+        "assignment": {
+          "p": false,
+          "S": false,
+          "@S/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "ordinary:case:1",
+        "assignment": {
+          "p": false,
+          "S": true,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "ordinary:case:2",
+        "assignment": {
+          "p": true,
+          "S": false,
+          "@S/body": true
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "ordinary:case:3",
+        "assignment": {
+          "p": true,
+          "S": true,
+          "@S/body": true
+        },
+        "failed": [],
+        "consistent": true
+      }
+    ],
+    "negation": [
+      {
+        "id": "negation:case:0",
+        "assignment": {
+          "p": false,
+          "S": false,
+          "@S/body/0": false,
+          "@S/body": true
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "negation:case:1",
+        "assignment": {
+          "p": false,
+          "S": true,
+          "@S/body/0": false,
+          "@S/body": true
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "negation:case:2",
+        "assignment": {
+          "p": true,
+          "S": false,
+          "@S/body/0": true,
+          "@S/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "negation:case:3",
+        "assignment": {
+          "p": true,
+          "S": true,
+          "@S/body/0": true,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      }
+    ],
+    "conjunction": [
+      {
+        "id": "conjunction:case:0",
+        "assignment": {
+          "p": false,
+          "q": false,
+          "S": false,
+          "@S/body/0": false,
+          "@S/body/1": false,
+          "@S/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "conjunction:case:1",
+        "assignment": {
+          "p": false,
+          "q": false,
+          "S": true,
+          "@S/body/0": false,
+          "@S/body/1": false,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "conjunction:case:2",
+        "assignment": {
+          "p": false,
+          "q": true,
+          "S": false,
+          "@S/body/0": false,
+          "@S/body/1": true,
+          "@S/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "conjunction:case:3",
+        "assignment": {
+          "p": false,
+          "q": true,
+          "S": true,
+          "@S/body/0": false,
+          "@S/body/1": true,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "conjunction:case:4",
+        "assignment": {
+          "p": true,
+          "q": false,
+          "S": false,
+          "@S/body/0": true,
+          "@S/body/1": false,
+          "@S/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "conjunction:case:5",
+        "assignment": {
+          "p": true,
+          "q": false,
+          "S": true,
+          "@S/body/0": true,
+          "@S/body/1": false,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "conjunction:case:6",
+        "assignment": {
+          "p": true,
+          "q": true,
+          "S": false,
+          "@S/body/0": true,
+          "@S/body/1": true,
+          "@S/body": true
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "conjunction:case:7",
+        "assignment": {
+          "p": true,
+          "q": true,
+          "S": true,
+          "@S/body/0": true,
+          "@S/body/1": true,
+          "@S/body": true
+        },
+        "failed": [],
+        "consistent": true
+      }
+    ],
+    "teller": [
+      {
+        "id": "teller:case:0",
+        "assignment": {
+          "S": false,
+          "@S/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "teller:case:1",
+        "assignment": {
+          "S": true,
+          "@S/body": true
+        },
+        "failed": [],
+        "consistent": true
+      }
+    ],
+    "liar": [
+      {
+        "id": "liar:case:0",
+        "assignment": {
+          "S": false,
+          "@S/body/0": false,
+          "@S/body": true
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "liar:case:1",
+        "assignment": {
+          "S": true,
+          "@S/body/0": true,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      }
+    ],
+    "snow": [
+      {
+        "id": "snow:case:0",
+        "assignment": {
+          "p": false,
+          "S": false,
+          "@S/body/1/0": false,
+          "@S/body/0": false,
+          "@S/body/1": true,
+          "@S/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "snow:case:1",
+        "assignment": {
+          "p": false,
+          "S": true,
+          "@S/body/1/0": true,
+          "@S/body/0": false,
+          "@S/body/1": false,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "snow:case:2",
+        "assignment": {
+          "p": true,
+          "S": false,
+          "@S/body/1/0": false,
+          "@S/body/0": true,
+          "@S/body/1": true,
+          "@S/body": true
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "snow:case:3",
+        "assignment": {
+          "p": true,
+          "S": true,
+          "@S/body/1/0": true,
+          "@S/body/0": true,
+          "@S/body/1": false,
+          "@S/body": false
+        },
+        "failed": [
+          "agree:S"
+        ],
+        "consistent": false
+      }
+    ],
+    "odd-pair": [
+      {
+        "id": "odd-pair:case:0",
+        "assignment": {
+          "A": false,
+          "B": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": false
+        },
+        "failed": [
+          "agree:A"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "odd-pair:case:1",
+        "assignment": {
+          "A": false,
+          "B": true,
+          "@A/body/0": true,
+          "@A/body": false,
+          "@B/body": false
+        },
+        "failed": [
+          "agree:B"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "odd-pair:case:2",
+        "assignment": {
+          "A": true,
+          "B": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": true
+        },
+        "failed": [
+          "agree:B"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "odd-pair:case:3",
+        "assignment": {
+          "A": true,
+          "B": true,
+          "@A/body/0": true,
+          "@A/body": false,
+          "@B/body": true
+        },
+        "failed": [
+          "agree:A"
+        ],
+        "consistent": false
+      }
+    ],
+    "opposite": [
+      {
+        "id": "opposite:case:0",
+        "assignment": {
+          "A": false,
+          "B": false,
+          "@A/body/0": false,
+          "@B/body/0": false,
+          "@A/body": true,
+          "@B/body": true
+        },
+        "failed": [
+          "agree:A",
+          "agree:B"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "opposite:case:1",
+        "assignment": {
+          "A": false,
+          "B": true,
+          "@A/body/0": true,
+          "@B/body/0": false,
+          "@A/body": false,
+          "@B/body": true
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "opposite:case:2",
+        "assignment": {
+          "A": true,
+          "B": false,
+          "@A/body/0": false,
+          "@B/body/0": true,
+          "@A/body": true,
+          "@B/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "opposite:case:3",
+        "assignment": {
+          "A": true,
+          "B": true,
+          "@A/body/0": true,
+          "@B/body/0": true,
+          "@A/body": false,
+          "@B/body": false
+        },
+        "failed": [
+          "agree:A",
+          "agree:B"
+        ],
+        "consistent": false
+      }
+    ],
+    "hidden-liar": [
+      {
+        "id": "hidden-liar:case:0",
+        "assignment": {
+          "p": false,
+          "Q": false,
+          "L": false,
+          "@L/body/0": false,
+          "@Q/body": false,
+          "@L/body": true
+        },
+        "failed": [
+          "agree:L"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "hidden-liar:case:1",
+        "assignment": {
+          "p": false,
+          "Q": false,
+          "L": true,
+          "@L/body/0": true,
+          "@Q/body": false,
+          "@L/body": false
+        },
+        "failed": [
+          "agree:L"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "hidden-liar:case:2",
+        "assignment": {
+          "p": false,
+          "Q": true,
+          "L": false,
+          "@L/body/0": false,
+          "@Q/body": false,
+          "@L/body": true
+        },
+        "failed": [
+          "agree:Q",
+          "agree:L"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "hidden-liar:case:3",
+        "assignment": {
+          "p": false,
+          "Q": true,
+          "L": true,
+          "@L/body/0": true,
+          "@Q/body": false,
+          "@L/body": false
+        },
+        "failed": [
+          "agree:Q",
+          "agree:L"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "hidden-liar:case:4",
+        "assignment": {
+          "p": true,
+          "Q": false,
+          "L": false,
+          "@L/body/0": false,
+          "@Q/body": true,
+          "@L/body": true
+        },
+        "failed": [
+          "agree:Q",
+          "agree:L"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "hidden-liar:case:5",
+        "assignment": {
+          "p": true,
+          "Q": false,
+          "L": true,
+          "@L/body/0": true,
+          "@Q/body": true,
+          "@L/body": false
+        },
+        "failed": [
+          "agree:Q",
+          "agree:L"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "hidden-liar:case:6",
+        "assignment": {
+          "p": true,
+          "Q": true,
+          "L": false,
+          "@L/body/0": false,
+          "@Q/body": true,
+          "@L/body": true
+        },
+        "failed": [
+          "agree:L"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "hidden-liar:case:7",
+        "assignment": {
+          "p": true,
+          "Q": true,
+          "L": true,
+          "@L/body/0": true,
+          "@Q/body": true,
+          "@L/body": false
+        },
+        "failed": [
+          "agree:L"
+        ],
+        "consistent": false
+      }
+    ],
+    "branch": [
+      {
+        "id": "branch:case:0",
+        "assignment": {
+          "p": false,
+          "A": false,
+          "B": false,
+          "C": false,
+          "@A/body/0/0": false,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": false,
+          "@C/body": false
+        },
+        "failed": [
+          "agree:A"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:1",
+        "assignment": {
+          "p": false,
+          "A": false,
+          "B": false,
+          "C": true,
+          "@A/body/0/0": false,
+          "@A/body/0/1": true,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": false,
+          "@C/body": false
+        },
+        "failed": [
+          "agree:A",
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:2",
+        "assignment": {
+          "p": false,
+          "A": false,
+          "B": true,
+          "C": false,
+          "@A/body/0/0": true,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": false,
+          "@C/body": false
+        },
+        "failed": [
+          "agree:A",
+          "agree:B"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:3",
+        "assignment": {
+          "p": false,
+          "A": false,
+          "B": true,
+          "C": true,
+          "@A/body/0/0": true,
+          "@A/body/0/1": true,
+          "@A/body/0": true,
+          "@A/body": false,
+          "@B/body": false,
+          "@C/body": false
+        },
+        "failed": [
+          "agree:B",
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:4",
+        "assignment": {
+          "p": false,
+          "A": true,
+          "B": false,
+          "C": false,
+          "@A/body/0/0": false,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": true,
+          "@C/body": false
+        },
+        "failed": [
+          "agree:B"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:5",
+        "assignment": {
+          "p": false,
+          "A": true,
+          "B": false,
+          "C": true,
+          "@A/body/0/0": false,
+          "@A/body/0/1": true,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": true,
+          "@C/body": false
+        },
+        "failed": [
+          "agree:B",
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:6",
+        "assignment": {
+          "p": false,
+          "A": true,
+          "B": true,
+          "C": false,
+          "@A/body/0/0": true,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": true,
+          "@C/body": false
+        },
+        "failed": [],
+        "consistent": true
+      },
+      {
+        "id": "branch:case:7",
+        "assignment": {
+          "p": false,
+          "A": true,
+          "B": true,
+          "C": true,
+          "@A/body/0/0": true,
+          "@A/body/0/1": true,
+          "@A/body/0": true,
+          "@A/body": false,
+          "@B/body": true,
+          "@C/body": false
+        },
+        "failed": [
+          "agree:A",
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:8",
+        "assignment": {
+          "p": true,
+          "A": false,
+          "B": false,
+          "C": false,
+          "@A/body/0/0": false,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": false,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:A",
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:9",
+        "assignment": {
+          "p": true,
+          "A": false,
+          "B": false,
+          "C": true,
+          "@A/body/0/0": false,
+          "@A/body/0/1": true,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": false,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:A"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:10",
+        "assignment": {
+          "p": true,
+          "A": false,
+          "B": true,
+          "C": false,
+          "@A/body/0/0": true,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": false,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:A",
+          "agree:B",
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:11",
+        "assignment": {
+          "p": true,
+          "A": false,
+          "B": true,
+          "C": true,
+          "@A/body/0/0": true,
+          "@A/body/0/1": true,
+          "@A/body/0": true,
+          "@A/body": false,
+          "@B/body": false,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:B"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:12",
+        "assignment": {
+          "p": true,
+          "A": true,
+          "B": false,
+          "C": false,
+          "@A/body/0/0": false,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": true,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:B",
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:13",
+        "assignment": {
+          "p": true,
+          "A": true,
+          "B": false,
+          "C": true,
+          "@A/body/0/0": false,
+          "@A/body/0/1": true,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": true,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:B"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:14",
+        "assignment": {
+          "p": true,
+          "A": true,
+          "B": true,
+          "C": false,
+          "@A/body/0/0": true,
+          "@A/body/0/1": false,
+          "@A/body/0": false,
+          "@A/body": true,
+          "@B/body": true,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:C"
+        ],
+        "consistent": false
+      },
+      {
+        "id": "branch:case:15",
+        "assignment": {
+          "p": true,
+          "A": true,
+          "B": true,
+          "C": true,
+          "@A/body/0/0": true,
+          "@A/body/0/1": true,
+          "@A/body/0": true,
+          "@A/body": false,
+          "@B/body": true,
+          "@C/body": true
+        },
+        "failed": [
+          "agree:A"
+        ],
+        "consistent": false
+      }
+    ]
+  },
+  "proofs": {
+    "ordinary": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "p": [
+            false,
+            true
+          ],
+          "S": [
+            false,
+            true
+          ],
+          "@S/body": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "p",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "p": false
+            },
+            "steps": [
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false,
+                    true
+                  ],
+                  "@S/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                false
+              ],
+              "S": [
+                false
+              ],
+              "@S/body": [
+                false
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "p": false,
+            "S": false,
+            "@S/body": false
+          }
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "p": true
+            },
+            "steps": [
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false,
+                    true
+                  ],
+                  "@S/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "S": [
+                true
+              ],
+              "@S/body": [
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "p": true,
+            "S": true,
+            "@S/body": true
+          }
+        }
+      ]
+    },
+    "negation": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "p": [
+            false,
+            true
+          ],
+          "S": [
+            false,
+            true
+          ],
+          "@S/body": [
+            false,
+            true
+          ],
+          "@S/body/0": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "p",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "p": false
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    false
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false,
+                    true
+                  ],
+                  "@S/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                false
+              ],
+              "S": [
+                true
+              ],
+              "@S/body": [
+                true
+              ],
+              "@S/body/0": [
+                false
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "p": false,
+            "S": true,
+            "@S/body": true,
+            "@S/body/0": false
+          }
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "p": true
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false,
+                    true
+                  ],
+                  "@S/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "S": [
+                false
+              ],
+              "@S/body": [
+                false
+              ],
+              "@S/body/0": [
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "p": true,
+            "S": false,
+            "@S/body": false,
+            "@S/body/0": true
+          }
+        }
+      ]
+    },
+    "conjunction": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "p": [
+            false,
+            true
+          ],
+          "q": [
+            false,
+            true
+          ],
+          "S": [
+            false,
+            true
+          ],
+          "@S/body": [
+            false,
+            true
+          ],
+          "@S/body/0": [
+            false,
+            true
+          ],
+          "@S/body/1": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "p",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "p": false
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    false
+                  ],
+                  "@S/body/1": [
+                    false,
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false,
+                    true
+                  ],
+                  "@S/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                false
+              ],
+              "q": [
+                false,
+                true
+              ],
+              "S": [
+                false
+              ],
+              "@S/body": [
+                false
+              ],
+              "@S/body/0": [
+                false
+              ],
+              "@S/body/1": [
+                false,
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "split",
+          "variable": "q",
+          "children": [
+            {
+              "context": "root/0/0",
+              "trace": {
+                "assumptions": {
+                  "p": false,
+                  "q": false
+                },
+                "steps": [
+                  {
+                    "factor": "f:S/body/0",
+                    "variable": "@S/body/0",
+                    "before": {
+                      "@S/body/0": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1",
+                    "variable": "@S/body/1",
+                    "before": {
+                      "@S/body/1": [
+                        false,
+                        true
+                      ],
+                      "q": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body",
+                    "variable": "@S/body",
+                    "before": {
+                      "@S/body": [
+                        false,
+                        true
+                      ],
+                      "@S/body/0": [
+                        false
+                      ],
+                      "@S/body/1": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:S",
+                    "variable": "S",
+                    "before": {
+                      "S": [
+                        false,
+                        true
+                      ],
+                      "@S/body": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    false
+                  ],
+                  "q": [
+                    false
+                  ],
+                  "S": [
+                    false
+                  ],
+                  "@S/body": [
+                    false
+                  ],
+                  "@S/body/0": [
+                    false
+                  ],
+                  "@S/body/1": [
+                    false
+                  ]
+                },
+                "status": "open"
+              },
+              "kind": "witness",
+              "assignment": {
+                "p": false,
+                "q": false,
+                "S": false,
+                "@S/body": false,
+                "@S/body/0": false,
+                "@S/body/1": false
+              }
+            },
+            {
+              "context": "root/0/1",
+              "trace": {
+                "assumptions": {
+                  "p": false,
+                  "q": true
+                },
+                "steps": [
+                  {
+                    "factor": "f:S/body/0",
+                    "variable": "@S/body/0",
+                    "before": {
+                      "@S/body/0": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1",
+                    "variable": "@S/body/1",
+                    "before": {
+                      "@S/body/1": [
+                        false,
+                        true
+                      ],
+                      "q": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body",
+                    "variable": "@S/body",
+                    "before": {
+                      "@S/body": [
+                        false,
+                        true
+                      ],
+                      "@S/body/0": [
+                        false
+                      ],
+                      "@S/body/1": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:S",
+                    "variable": "S",
+                    "before": {
+                      "S": [
+                        false,
+                        true
+                      ],
+                      "@S/body": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    false
+                  ],
+                  "q": [
+                    true
+                  ],
+                  "S": [
+                    false
+                  ],
+                  "@S/body": [
+                    false
+                  ],
+                  "@S/body/0": [
+                    false
+                  ],
+                  "@S/body/1": [
+                    true
+                  ]
+                },
+                "status": "open"
+              },
+              "kind": "witness",
+              "assignment": {
+                "p": false,
+                "q": true,
+                "S": false,
+                "@S/body": false,
+                "@S/body/0": false,
+                "@S/body/1": true
+              }
+            }
+          ]
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "p": true
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "q": [
+                false,
+                true
+              ],
+              "S": [
+                false,
+                true
+              ],
+              "@S/body": [
+                false,
+                true
+              ],
+              "@S/body/0": [
+                true
+              ],
+              "@S/body/1": [
+                false,
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "split",
+          "variable": "q",
+          "children": [
+            {
+              "context": "root/1/0",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "q": false
+                },
+                "steps": [
+                  {
+                    "factor": "f:S/body/0",
+                    "variable": "@S/body/0",
+                    "before": {
+                      "@S/body/0": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1",
+                    "variable": "@S/body/1",
+                    "before": {
+                      "@S/body/1": [
+                        false,
+                        true
+                      ],
+                      "q": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body",
+                    "variable": "@S/body",
+                    "before": {
+                      "@S/body": [
+                        false,
+                        true
+                      ],
+                      "@S/body/0": [
+                        true
+                      ],
+                      "@S/body/1": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:S",
+                    "variable": "S",
+                    "before": {
+                      "S": [
+                        false,
+                        true
+                      ],
+                      "@S/body": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "q": [
+                    false
+                  ],
+                  "S": [
+                    false
+                  ],
+                  "@S/body": [
+                    false
+                  ],
+                  "@S/body/0": [
+                    true
+                  ],
+                  "@S/body/1": [
+                    false
+                  ]
+                },
+                "status": "open"
+              },
+              "kind": "witness",
+              "assignment": {
+                "p": true,
+                "q": false,
+                "S": false,
+                "@S/body": false,
+                "@S/body/0": true,
+                "@S/body/1": false
+              }
+            },
+            {
+              "context": "root/1/1",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "q": true
+                },
+                "steps": [
+                  {
+                    "factor": "f:S/body/0",
+                    "variable": "@S/body/0",
+                    "before": {
+                      "@S/body/0": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1",
+                    "variable": "@S/body/1",
+                    "before": {
+                      "@S/body/1": [
+                        false,
+                        true
+                      ],
+                      "q": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body",
+                    "variable": "@S/body",
+                    "before": {
+                      "@S/body": [
+                        false,
+                        true
+                      ],
+                      "@S/body/0": [
+                        true
+                      ],
+                      "@S/body/1": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:S",
+                    "variable": "S",
+                    "before": {
+                      "S": [
+                        false,
+                        true
+                      ],
+                      "@S/body": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "q": [
+                    true
+                  ],
+                  "S": [
+                    true
+                  ],
+                  "@S/body": [
+                    true
+                  ],
+                  "@S/body/0": [
+                    true
+                  ],
+                  "@S/body/1": [
+                    true
+                  ]
+                },
+                "status": "open"
+              },
+              "kind": "witness",
+              "assignment": {
+                "p": true,
+                "q": true,
+                "S": true,
+                "@S/body": true,
+                "@S/body/0": true,
+                "@S/body/1": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "teller": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "S": [
+            false,
+            true
+          ],
+          "@S/body": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "S",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "S": false
+            },
+            "steps": [
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "S": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              }
+            ],
+            "domains": {
+              "S": [
+                false
+              ],
+              "@S/body": [
+                false
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "S": false,
+            "@S/body": false
+          }
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "S": true
+            },
+            "steps": [
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "S": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "S": [
+                true
+              ],
+              "@S/body": [
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "S": true,
+            "@S/body": true
+          }
+        }
+      ]
+    },
+    "liar": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "S": [
+            false,
+            true
+          ],
+          "@S/body": [
+            false,
+            true
+          ],
+          "@S/body/0": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "S",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "S": false
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "S": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    false
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false
+                  ],
+                  "@S/body": [
+                    true
+                  ]
+                },
+                "after": []
+              }
+            ],
+            "domains": {
+              "S": [],
+              "@S/body": [
+                true
+              ],
+              "@S/body/0": [
+                false
+              ]
+            },
+            "status": "conflict"
+          },
+          "kind": "closed"
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "S": true
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "S": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    true
+                  ],
+                  "@S/body": [
+                    false
+                  ]
+                },
+                "after": []
+              }
+            ],
+            "domains": {
+              "S": [],
+              "@S/body": [
+                false
+              ],
+              "@S/body/0": [
+                true
+              ]
+            },
+            "status": "conflict"
+          },
+          "kind": "closed"
+        }
+      ]
+    },
+    "snow": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "p": [
+            false,
+            true
+          ],
+          "S": [
+            false,
+            true
+          ],
+          "@S/body": [
+            false,
+            true
+          ],
+          "@S/body/0": [
+            false,
+            true
+          ],
+          "@S/body/1": [
+            false,
+            true
+          ],
+          "@S/body/1/0": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "p",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "p": false
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    false
+                  ],
+                  "@S/body/1": [
+                    false,
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false,
+                    true
+                  ],
+                  "@S/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body/1/0",
+                "variable": "@S/body/1/0",
+                "before": {
+                  "@S/body/1/0": [
+                    false,
+                    true
+                  ],
+                  "S": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body/1",
+                "variable": "@S/body/1",
+                "before": {
+                  "@S/body/1": [
+                    false,
+                    true
+                  ],
+                  "@S/body/1/0": [
+                    false
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                false
+              ],
+              "S": [
+                false
+              ],
+              "@S/body": [
+                false
+              ],
+              "@S/body/0": [
+                false
+              ],
+              "@S/body/1": [
+                true
+              ],
+              "@S/body/1/0": [
+                false
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "p": false,
+            "S": false,
+            "@S/body": false,
+            "@S/body/0": false,
+            "@S/body/1": true,
+            "@S/body/1/0": false
+          }
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "p": true
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "S": [
+                false,
+                true
+              ],
+              "@S/body": [
+                false,
+                true
+              ],
+              "@S/body/0": [
+                true
+              ],
+              "@S/body/1": [
+                false,
+                true
+              ],
+              "@S/body/1/0": [
+                false,
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "split",
+          "variable": "S",
+          "children": [
+            {
+              "context": "root/1/0",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "S": false
+                },
+                "steps": [
+                  {
+                    "factor": "f:S/body/0",
+                    "variable": "@S/body/0",
+                    "before": {
+                      "@S/body/0": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1/0",
+                    "variable": "@S/body/1/0",
+                    "before": {
+                      "@S/body/1/0": [
+                        false,
+                        true
+                      ],
+                      "S": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1",
+                    "variable": "@S/body/1",
+                    "before": {
+                      "@S/body/1": [
+                        false,
+                        true
+                      ],
+                      "@S/body/1/0": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body",
+                    "variable": "@S/body",
+                    "before": {
+                      "@S/body": [
+                        false,
+                        true
+                      ],
+                      "@S/body/0": [
+                        true
+                      ],
+                      "@S/body/1": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:S",
+                    "variable": "S",
+                    "before": {
+                      "S": [
+                        false
+                      ],
+                      "@S/body": [
+                        true
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "S": [],
+                  "@S/body": [
+                    true
+                  ],
+                  "@S/body/0": [
+                    true
+                  ],
+                  "@S/body/1": [
+                    true
+                  ],
+                  "@S/body/1/0": [
+                    false
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            },
+            {
+              "context": "root/1/1",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "S": true
+                },
+                "steps": [
+                  {
+                    "factor": "f:S/body/0",
+                    "variable": "@S/body/0",
+                    "before": {
+                      "@S/body/0": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1/0",
+                    "variable": "@S/body/1/0",
+                    "before": {
+                      "@S/body/1/0": [
+                        false,
+                        true
+                      ],
+                      "S": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body/1",
+                    "variable": "@S/body/1",
+                    "before": {
+                      "@S/body/1": [
+                        false,
+                        true
+                      ],
+                      "@S/body/1/0": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:S/body",
+                    "variable": "@S/body",
+                    "before": {
+                      "@S/body": [
+                        false,
+                        true
+                      ],
+                      "@S/body/0": [
+                        true
+                      ],
+                      "@S/body/1": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:S",
+                    "variable": "S",
+                    "before": {
+                      "S": [
+                        true
+                      ],
+                      "@S/body": [
+                        false
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "S": [],
+                  "@S/body": [
+                    false
+                  ],
+                  "@S/body/0": [
+                    true
+                  ],
+                  "@S/body/1": [
+                    false
+                  ],
+                  "@S/body/1/0": [
+                    true
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            }
+          ]
+        }
+      ]
+    },
+    "odd-pair": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "A": [
+            false,
+            true
+          ],
+          "B": [
+            false,
+            true
+          ],
+          "@A/body": [
+            false,
+            true
+          ],
+          "@A/body/0": [
+            false,
+            true
+          ],
+          "@B/body": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "A",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "A": false
+            },
+            "steps": [
+              {
+                "factor": "agree:A",
+                "variable": "@A/body",
+                "before": {
+                  "A": [
+                    false
+                  ],
+                  "@A/body": [
+                    false,
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:B/body",
+                "variable": "@B/body",
+                "before": {
+                  "@B/body": [
+                    false,
+                    true
+                  ],
+                  "A": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:B",
+                "variable": "B",
+                "before": {
+                  "B": [
+                    false,
+                    true
+                  ],
+                  "@B/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:A/body/0",
+                "variable": "@A/body/0",
+                "before": {
+                  "@A/body/0": [
+                    false,
+                    true
+                  ],
+                  "B": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:A/body",
+                "variable": "@A/body",
+                "before": {
+                  "@A/body": [
+                    false
+                  ],
+                  "@A/body/0": [
+                    false
+                  ]
+                },
+                "after": []
+              }
+            ],
+            "domains": {
+              "A": [
+                false
+              ],
+              "B": [
+                false
+              ],
+              "@A/body": [],
+              "@A/body/0": [
+                false
+              ],
+              "@B/body": [
+                false
+              ]
+            },
+            "status": "conflict"
+          },
+          "kind": "closed"
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "A": true
+            },
+            "steps": [
+              {
+                "factor": "agree:A",
+                "variable": "@A/body",
+                "before": {
+                  "A": [
+                    true
+                  ],
+                  "@A/body": [
+                    false,
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:B/body",
+                "variable": "@B/body",
+                "before": {
+                  "@B/body": [
+                    false,
+                    true
+                  ],
+                  "A": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:B",
+                "variable": "B",
+                "before": {
+                  "B": [
+                    false,
+                    true
+                  ],
+                  "@B/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:A/body/0",
+                "variable": "@A/body/0",
+                "before": {
+                  "@A/body/0": [
+                    false,
+                    true
+                  ],
+                  "B": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:A/body",
+                "variable": "@A/body",
+                "before": {
+                  "@A/body": [
+                    true
+                  ],
+                  "@A/body/0": [
+                    true
+                  ]
+                },
+                "after": []
+              }
+            ],
+            "domains": {
+              "A": [
+                true
+              ],
+              "B": [
+                true
+              ],
+              "@A/body": [],
+              "@A/body/0": [
+                true
+              ],
+              "@B/body": [
+                true
+              ]
+            },
+            "status": "conflict"
+          },
+          "kind": "closed"
+        }
+      ]
+    },
+    "opposite": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "A": [
+            false,
+            true
+          ],
+          "B": [
+            false,
+            true
+          ],
+          "@A/body": [
+            false,
+            true
+          ],
+          "@A/body/0": [
+            false,
+            true
+          ],
+          "@B/body": [
+            false,
+            true
+          ],
+          "@B/body/0": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "A",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "A": false
+            },
+            "steps": [
+              {
+                "factor": "agree:A",
+                "variable": "@A/body",
+                "before": {
+                  "A": [
+                    false
+                  ],
+                  "@A/body": [
+                    false,
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:B/body/0",
+                "variable": "@B/body/0",
+                "before": {
+                  "@B/body/0": [
+                    false,
+                    true
+                  ],
+                  "A": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:B/body",
+                "variable": "@B/body",
+                "before": {
+                  "@B/body": [
+                    false,
+                    true
+                  ],
+                  "@B/body/0": [
+                    false
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:B",
+                "variable": "B",
+                "before": {
+                  "B": [
+                    false,
+                    true
+                  ],
+                  "@B/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:A/body/0",
+                "variable": "@A/body/0",
+                "before": {
+                  "@A/body/0": [
+                    false,
+                    true
+                  ],
+                  "B": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "A": [
+                false
+              ],
+              "B": [
+                true
+              ],
+              "@A/body": [
+                false
+              ],
+              "@A/body/0": [
+                true
+              ],
+              "@B/body": [
+                true
+              ],
+              "@B/body/0": [
+                false
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "A": false,
+            "B": true,
+            "@A/body": false,
+            "@A/body/0": true,
+            "@B/body": true,
+            "@B/body/0": false
+          }
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "A": true
+            },
+            "steps": [
+              {
+                "factor": "agree:A",
+                "variable": "@A/body",
+                "before": {
+                  "A": [
+                    true
+                  ],
+                  "@A/body": [
+                    false,
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:B/body/0",
+                "variable": "@B/body/0",
+                "before": {
+                  "@B/body/0": [
+                    false,
+                    true
+                  ],
+                  "A": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:B/body",
+                "variable": "@B/body",
+                "before": {
+                  "@B/body": [
+                    false,
+                    true
+                  ],
+                  "@B/body/0": [
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:B",
+                "variable": "B",
+                "before": {
+                  "B": [
+                    false,
+                    true
+                  ],
+                  "@B/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:A/body/0",
+                "variable": "@A/body/0",
+                "before": {
+                  "@A/body/0": [
+                    false,
+                    true
+                  ],
+                  "B": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              }
+            ],
+            "domains": {
+              "A": [
+                true
+              ],
+              "B": [
+                false
+              ],
+              "@A/body": [
+                true
+              ],
+              "@A/body/0": [
+                false
+              ],
+              "@B/body": [
+                false
+              ],
+              "@B/body/0": [
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "A": true,
+            "B": false,
+            "@A/body": true,
+            "@A/body/0": false,
+            "@B/body": false,
+            "@B/body/0": true
+          }
+        }
+      ]
+    },
+    "hidden-liar": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "p": [
+            false,
+            true
+          ],
+          "Q": [
+            false,
+            true
+          ],
+          "L": [
+            false,
+            true
+          ],
+          "@Q/body": [
+            false,
+            true
+          ],
+          "@L/body": [
+            false,
+            true
+          ],
+          "@L/body/0": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "p",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "p": false
+            },
+            "steps": [
+              {
+                "factor": "f:Q/body",
+                "variable": "@Q/body",
+                "before": {
+                  "@Q/body": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:Q",
+                "variable": "Q",
+                "before": {
+                  "Q": [
+                    false,
+                    true
+                  ],
+                  "@Q/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                false
+              ],
+              "Q": [
+                false
+              ],
+              "L": [
+                false,
+                true
+              ],
+              "@Q/body": [
+                false
+              ],
+              "@L/body": [
+                false,
+                true
+              ],
+              "@L/body/0": [
+                false,
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "split",
+          "variable": "L",
+          "children": [
+            {
+              "context": "root/0/0",
+              "trace": {
+                "assumptions": {
+                  "p": false,
+                  "L": false
+                },
+                "steps": [
+                  {
+                    "factor": "f:Q/body",
+                    "variable": "@Q/body",
+                    "before": {
+                      "@Q/body": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:Q",
+                    "variable": "Q",
+                    "before": {
+                      "Q": [
+                        false,
+                        true
+                      ],
+                      "@Q/body": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body/0",
+                    "variable": "@L/body/0",
+                    "before": {
+                      "@L/body/0": [
+                        false,
+                        true
+                      ],
+                      "L": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body",
+                    "variable": "@L/body",
+                    "before": {
+                      "@L/body": [
+                        false,
+                        true
+                      ],
+                      "@L/body/0": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:L",
+                    "variable": "L",
+                    "before": {
+                      "L": [
+                        false
+                      ],
+                      "@L/body": [
+                        true
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "L": [],
+                  "@Q/body": [
+                    false
+                  ],
+                  "@L/body": [
+                    true
+                  ],
+                  "@L/body/0": [
+                    false
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            },
+            {
+              "context": "root/0/1",
+              "trace": {
+                "assumptions": {
+                  "p": false,
+                  "L": true
+                },
+                "steps": [
+                  {
+                    "factor": "f:Q/body",
+                    "variable": "@Q/body",
+                    "before": {
+                      "@Q/body": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:Q",
+                    "variable": "Q",
+                    "before": {
+                      "Q": [
+                        false,
+                        true
+                      ],
+                      "@Q/body": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body/0",
+                    "variable": "@L/body/0",
+                    "before": {
+                      "@L/body/0": [
+                        false,
+                        true
+                      ],
+                      "L": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body",
+                    "variable": "@L/body",
+                    "before": {
+                      "@L/body": [
+                        false,
+                        true
+                      ],
+                      "@L/body/0": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:L",
+                    "variable": "L",
+                    "before": {
+                      "L": [
+                        true
+                      ],
+                      "@L/body": [
+                        false
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    false
+                  ],
+                  "Q": [
+                    false
+                  ],
+                  "L": [],
+                  "@Q/body": [
+                    false
+                  ],
+                  "@L/body": [
+                    false
+                  ],
+                  "@L/body/0": [
+                    true
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            }
+          ]
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "p": true
+            },
+            "steps": [
+              {
+                "factor": "f:Q/body",
+                "variable": "@Q/body",
+                "before": {
+                  "@Q/body": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:Q",
+                "variable": "Q",
+                "before": {
+                  "Q": [
+                    false,
+                    true
+                  ],
+                  "@Q/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "Q": [
+                true
+              ],
+              "L": [
+                false,
+                true
+              ],
+              "@Q/body": [
+                true
+              ],
+              "@L/body": [
+                false,
+                true
+              ],
+              "@L/body/0": [
+                false,
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "split",
+          "variable": "L",
+          "children": [
+            {
+              "context": "root/1/0",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "L": false
+                },
+                "steps": [
+                  {
+                    "factor": "f:Q/body",
+                    "variable": "@Q/body",
+                    "before": {
+                      "@Q/body": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:Q",
+                    "variable": "Q",
+                    "before": {
+                      "Q": [
+                        false,
+                        true
+                      ],
+                      "@Q/body": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body/0",
+                    "variable": "@L/body/0",
+                    "before": {
+                      "@L/body/0": [
+                        false,
+                        true
+                      ],
+                      "L": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body",
+                    "variable": "@L/body",
+                    "before": {
+                      "@L/body": [
+                        false,
+                        true
+                      ],
+                      "@L/body/0": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:L",
+                    "variable": "L",
+                    "before": {
+                      "L": [
+                        false
+                      ],
+                      "@L/body": [
+                        true
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "Q": [
+                    true
+                  ],
+                  "L": [],
+                  "@Q/body": [
+                    true
+                  ],
+                  "@L/body": [
+                    true
+                  ],
+                  "@L/body/0": [
+                    false
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            },
+            {
+              "context": "root/1/1",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "L": true
+                },
+                "steps": [
+                  {
+                    "factor": "f:Q/body",
+                    "variable": "@Q/body",
+                    "before": {
+                      "@Q/body": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:Q",
+                    "variable": "Q",
+                    "before": {
+                      "Q": [
+                        false,
+                        true
+                      ],
+                      "@Q/body": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body/0",
+                    "variable": "@L/body/0",
+                    "before": {
+                      "@L/body/0": [
+                        false,
+                        true
+                      ],
+                      "L": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:L/body",
+                    "variable": "@L/body",
+                    "before": {
+                      "@L/body": [
+                        false,
+                        true
+                      ],
+                      "@L/body/0": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:L",
+                    "variable": "L",
+                    "before": {
+                      "L": [
+                        true
+                      ],
+                      "@L/body": [
+                        false
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "Q": [
+                    true
+                  ],
+                  "L": [],
+                  "@Q/body": [
+                    true
+                  ],
+                  "@L/body": [
+                    false
+                  ],
+                  "@L/body/0": [
+                    true
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            }
+          ]
+        }
+      ]
+    },
+    "branch": {
+      "context": "root",
+      "trace": {
+        "assumptions": {},
+        "steps": [],
+        "domains": {
+          "p": [
+            false,
+            true
+          ],
+          "A": [
+            false,
+            true
+          ],
+          "B": [
+            false,
+            true
+          ],
+          "C": [
+            false,
+            true
+          ],
+          "@A/body": [
+            false,
+            true
+          ],
+          "@A/body/0": [
+            false,
+            true
+          ],
+          "@A/body/0/0": [
+            false,
+            true
+          ],
+          "@A/body/0/1": [
+            false,
+            true
+          ],
+          "@B/body": [
+            false,
+            true
+          ],
+          "@C/body": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "p",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "p": false
+            },
+            "steps": [
+              {
+                "factor": "f:C/body",
+                "variable": "@C/body",
+                "before": {
+                  "@C/body": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:C",
+                "variable": "C",
+                "before": {
+                  "C": [
+                    false,
+                    true
+                  ],
+                  "@C/body": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:A/body/0/1",
+                "variable": "@A/body/0/1",
+                "before": {
+                  "@A/body/0/1": [
+                    false,
+                    true
+                  ],
+                  "C": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:A/body/0",
+                "variable": "@A/body/0",
+                "before": {
+                  "@A/body/0": [
+                    false,
+                    true
+                  ],
+                  "@A/body/0/0": [
+                    false,
+                    true
+                  ],
+                  "@A/body/0/1": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:A/body",
+                "variable": "@A/body",
+                "before": {
+                  "@A/body": [
+                    false,
+                    true
+                  ],
+                  "@A/body/0": [
+                    false
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:A",
+                "variable": "A",
+                "before": {
+                  "A": [
+                    false,
+                    true
+                  ],
+                  "@A/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:B/body",
+                "variable": "@B/body",
+                "before": {
+                  "@B/body": [
+                    false,
+                    true
+                  ],
+                  "A": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:B",
+                "variable": "B",
+                "before": {
+                  "B": [
+                    false,
+                    true
+                  ],
+                  "@B/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:A/body/0/0",
+                "variable": "@A/body/0/0",
+                "before": {
+                  "@A/body/0/0": [
+                    false,
+                    true
+                  ],
+                  "B": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                false
+              ],
+              "A": [
+                true
+              ],
+              "B": [
+                true
+              ],
+              "C": [
+                false
+              ],
+              "@A/body": [
+                true
+              ],
+              "@A/body/0": [
+                false
+              ],
+              "@A/body/0/0": [
+                true
+              ],
+              "@A/body/0/1": [
+                false
+              ],
+              "@B/body": [
+                true
+              ],
+              "@C/body": [
+                false
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "witness",
+          "assignment": {
+            "p": false,
+            "A": true,
+            "B": true,
+            "C": false,
+            "@A/body": true,
+            "@A/body/0": false,
+            "@A/body/0/0": true,
+            "@A/body/0/1": false,
+            "@B/body": true,
+            "@C/body": false
+          }
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "p": true
+            },
+            "steps": [
+              {
+                "factor": "f:C/body",
+                "variable": "@C/body",
+                "before": {
+                  "@C/body": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:C",
+                "variable": "C",
+                "before": {
+                  "C": [
+                    false,
+                    true
+                  ],
+                  "@C/body": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:A/body/0/1",
+                "variable": "@A/body/0/1",
+                "before": {
+                  "@A/body/0/1": [
+                    false,
+                    true
+                  ],
+                  "C": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "A": [
+                false,
+                true
+              ],
+              "B": [
+                false,
+                true
+              ],
+              "C": [
+                true
+              ],
+              "@A/body": [
+                false,
+                true
+              ],
+              "@A/body/0": [
+                false,
+                true
+              ],
+              "@A/body/0/0": [
+                false,
+                true
+              ],
+              "@A/body/0/1": [
+                true
+              ],
+              "@B/body": [
+                false,
+                true
+              ],
+              "@C/body": [
+                true
+              ]
+            },
+            "status": "open"
+          },
+          "kind": "split",
+          "variable": "A",
+          "children": [
+            {
+              "context": "root/1/0",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "A": false
+                },
+                "steps": [
+                  {
+                    "factor": "agree:A",
+                    "variable": "@A/body",
+                    "before": {
+                      "A": [
+                        false
+                      ],
+                      "@A/body": [
+                        false,
+                        true
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:B/body",
+                    "variable": "@B/body",
+                    "before": {
+                      "@B/body": [
+                        false,
+                        true
+                      ],
+                      "A": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "agree:B",
+                    "variable": "B",
+                    "before": {
+                      "B": [
+                        false,
+                        true
+                      ],
+                      "@B/body": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:C/body",
+                    "variable": "@C/body",
+                    "before": {
+                      "@C/body": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:C",
+                    "variable": "C",
+                    "before": {
+                      "C": [
+                        false,
+                        true
+                      ],
+                      "@C/body": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body/0/0",
+                    "variable": "@A/body/0/0",
+                    "before": {
+                      "@A/body/0/0": [
+                        false,
+                        true
+                      ],
+                      "B": [
+                        false
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body/0/1",
+                    "variable": "@A/body/0/1",
+                    "before": {
+                      "@A/body/0/1": [
+                        false,
+                        true
+                      ],
+                      "C": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body/0",
+                    "variable": "@A/body/0",
+                    "before": {
+                      "@A/body/0": [
+                        false,
+                        true
+                      ],
+                      "@A/body/0/0": [
+                        false
+                      ],
+                      "@A/body/0/1": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      false
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body",
+                    "variable": "@A/body",
+                    "before": {
+                      "@A/body": [
+                        false
+                      ],
+                      "@A/body/0": [
+                        false
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "A": [
+                    false
+                  ],
+                  "B": [
+                    false
+                  ],
+                  "C": [
+                    true
+                  ],
+                  "@A/body": [],
+                  "@A/body/0": [
+                    false
+                  ],
+                  "@A/body/0/0": [
+                    false
+                  ],
+                  "@A/body/0/1": [
+                    true
+                  ],
+                  "@B/body": [
+                    false
+                  ],
+                  "@C/body": [
+                    true
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            },
+            {
+              "context": "root/1/1",
+              "trace": {
+                "assumptions": {
+                  "p": true,
+                  "A": true
+                },
+                "steps": [
+                  {
+                    "factor": "agree:A",
+                    "variable": "@A/body",
+                    "before": {
+                      "A": [
+                        true
+                      ],
+                      "@A/body": [
+                        false,
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:B/body",
+                    "variable": "@B/body",
+                    "before": {
+                      "@B/body": [
+                        false,
+                        true
+                      ],
+                      "A": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:B",
+                    "variable": "B",
+                    "before": {
+                      "B": [
+                        false,
+                        true
+                      ],
+                      "@B/body": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:C/body",
+                    "variable": "@C/body",
+                    "before": {
+                      "@C/body": [
+                        false,
+                        true
+                      ],
+                      "p": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "agree:C",
+                    "variable": "C",
+                    "before": {
+                      "C": [
+                        false,
+                        true
+                      ],
+                      "@C/body": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body/0/0",
+                    "variable": "@A/body/0/0",
+                    "before": {
+                      "@A/body/0/0": [
+                        false,
+                        true
+                      ],
+                      "B": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body/0/1",
+                    "variable": "@A/body/0/1",
+                    "before": {
+                      "@A/body/0/1": [
+                        false,
+                        true
+                      ],
+                      "C": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body/0",
+                    "variable": "@A/body/0",
+                    "before": {
+                      "@A/body/0": [
+                        false,
+                        true
+                      ],
+                      "@A/body/0/0": [
+                        true
+                      ],
+                      "@A/body/0/1": [
+                        true
+                      ]
+                    },
+                    "after": [
+                      true
+                    ]
+                  },
+                  {
+                    "factor": "f:A/body",
+                    "variable": "@A/body",
+                    "before": {
+                      "@A/body": [
+                        true
+                      ],
+                      "@A/body/0": [
+                        true
+                      ]
+                    },
+                    "after": []
+                  }
+                ],
+                "domains": {
+                  "p": [
+                    true
+                  ],
+                  "A": [
+                    true
+                  ],
+                  "B": [
+                    true
+                  ],
+                  "C": [
+                    true
+                  ],
+                  "@A/body": [],
+                  "@A/body/0": [
+                    true
+                  ],
+                  "@A/body/0/0": [
+                    true
+                  ],
+                  "@A/body/0/1": [
+                    true
+                  ],
+                  "@B/body": [
+                    true
+                  ],
+                  "@C/body": [
+                    true
+                  ]
+                },
+                "status": "conflict"
+              },
+              "kind": "closed"
+            }
+          ]
+        }
+      ]
+    },
+    "snow:s-true": {
+      "context": "root",
+      "trace": {
+        "assumptions": {
+          "S": true
+        },
+        "steps": [
+          {
+            "factor": "f:S/body/1/0",
+            "variable": "@S/body/1/0",
+            "before": {
+              "@S/body/1/0": [
+                false,
+                true
+              ],
+              "S": [
+                true
+              ]
+            },
+            "after": [
+              true
+            ]
+          },
+          {
+            "factor": "f:S/body/1",
+            "variable": "@S/body/1",
+            "before": {
+              "@S/body/1": [
+                false,
+                true
+              ],
+              "@S/body/1/0": [
+                true
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "f:S/body",
+            "variable": "@S/body",
+            "before": {
+              "@S/body": [
+                false,
+                true
+              ],
+              "@S/body/0": [
+                false,
+                true
+              ],
+              "@S/body/1": [
+                false
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "agree:S",
+            "variable": "S",
+            "before": {
+              "S": [
+                true
+              ],
+              "@S/body": [
+                false
+              ]
+            },
+            "after": []
+          }
+        ],
+        "domains": {
+          "p": [
+            false,
+            true
+          ],
+          "S": [],
+          "@S/body": [
+            false
+          ],
+          "@S/body/0": [
+            false,
+            true
+          ],
+          "@S/body/1": [
+            false
+          ],
+          "@S/body/1/0": [
+            true
+          ]
+        },
+        "status": "conflict"
+      },
+      "kind": "closed"
+    },
+    "snow:s-false": {
+      "context": "root",
+      "trace": {
+        "assumptions": {
+          "S": false
+        },
+        "steps": [
+          {
+            "factor": "f:S/body/1/0",
+            "variable": "@S/body/1/0",
+            "before": {
+              "@S/body/1/0": [
+                false,
+                true
+              ],
+              "S": [
+                false
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "f:S/body/1",
+            "variable": "@S/body/1",
+            "before": {
+              "@S/body/1": [
+                false,
+                true
+              ],
+              "@S/body/1/0": [
+                false
+              ]
+            },
+            "after": [
+              true
+            ]
+          },
+          {
+            "factor": "agree:S",
+            "variable": "@S/body",
+            "before": {
+              "S": [
+                false
+              ],
+              "@S/body": [
+                false,
+                true
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "f:S/body",
+            "variable": "@S/body/0",
+            "before": {
+              "@S/body": [
+                false
+              ],
+              "@S/body/0": [
+                false,
+                true
+              ],
+              "@S/body/1": [
+                true
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "f:S/body/0",
+            "variable": "p",
+            "before": {
+              "@S/body/0": [
+                false
+              ],
+              "p": [
+                false,
+                true
+              ]
+            },
+            "after": [
+              false
+            ]
+          }
+        ],
+        "domains": {
+          "p": [
+            false
+          ],
+          "S": [
+            false
+          ],
+          "@S/body": [
+            false
+          ],
+          "@S/body/0": [
+            false
+          ],
+          "@S/body/1": [
+            true
+          ],
+          "@S/body/1/0": [
+            false
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "witness",
+      "assignment": {
+        "p": false,
+        "S": false,
+        "@S/body": false,
+        "@S/body/0": false,
+        "@S/body/1": true,
+        "@S/body/1/0": false
+      }
+    },
+    "snow:p-false": {
+      "context": "root",
+      "trace": {
+        "assumptions": {
+          "p": false
+        },
+        "steps": [
+          {
+            "factor": "f:S/body/0",
+            "variable": "@S/body/0",
+            "before": {
+              "@S/body/0": [
+                false,
+                true
+              ],
+              "p": [
+                false
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "f:S/body",
+            "variable": "@S/body",
+            "before": {
+              "@S/body": [
+                false,
+                true
+              ],
+              "@S/body/0": [
+                false
+              ],
+              "@S/body/1": [
+                false,
+                true
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "agree:S",
+            "variable": "S",
+            "before": {
+              "S": [
+                false,
+                true
+              ],
+              "@S/body": [
+                false
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "f:S/body/1/0",
+            "variable": "@S/body/1/0",
+            "before": {
+              "@S/body/1/0": [
+                false,
+                true
+              ],
+              "S": [
+                false
+              ]
+            },
+            "after": [
+              false
+            ]
+          },
+          {
+            "factor": "f:S/body/1",
+            "variable": "@S/body/1",
+            "before": {
+              "@S/body/1": [
+                false,
+                true
+              ],
+              "@S/body/1/0": [
+                false
+              ]
+            },
+            "after": [
+              true
+            ]
+          }
+        ],
+        "domains": {
+          "p": [
+            false
+          ],
+          "S": [
+            false
+          ],
+          "@S/body": [
+            false
+          ],
+          "@S/body/0": [
+            false
+          ],
+          "@S/body/1": [
+            true
+          ],
+          "@S/body/1/0": [
+            false
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "witness",
+      "assignment": {
+        "p": false,
+        "S": false,
+        "@S/body": false,
+        "@S/body/0": false,
+        "@S/body/1": true,
+        "@S/body/1/0": false
+      }
+    },
+    "snow:p-true": {
+      "context": "root",
+      "trace": {
+        "assumptions": {
+          "p": true
+        },
+        "steps": [
+          {
+            "factor": "f:S/body/0",
+            "variable": "@S/body/0",
+            "before": {
+              "@S/body/0": [
+                false,
+                true
+              ],
+              "p": [
+                true
+              ]
+            },
+            "after": [
+              true
+            ]
+          }
+        ],
+        "domains": {
+          "p": [
+            true
+          ],
+          "S": [
+            false,
+            true
+          ],
+          "@S/body": [
+            false,
+            true
+          ],
+          "@S/body/0": [
+            true
+          ],
+          "@S/body/1": [
+            false,
+            true
+          ],
+          "@S/body/1/0": [
+            false,
+            true
+          ]
+        },
+        "status": "open"
+      },
+      "kind": "split",
+      "variable": "S",
+      "children": [
+        {
+          "context": "root/0",
+          "trace": {
+            "assumptions": {
+              "p": true,
+              "S": false
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:S/body/1/0",
+                "variable": "@S/body/1/0",
+                "before": {
+                  "@S/body/1/0": [
+                    false,
+                    true
+                  ],
+                  "S": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body/1",
+                "variable": "@S/body/1",
+                "before": {
+                  "@S/body/1": [
+                    false,
+                    true
+                  ],
+                  "@S/body/1/0": [
+                    false
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    true
+                  ],
+                  "@S/body/1": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    false
+                  ],
+                  "@S/body": [
+                    true
+                  ]
+                },
+                "after": []
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "S": [],
+              "@S/body": [
+                true
+              ],
+              "@S/body/0": [
+                true
+              ],
+              "@S/body/1": [
+                true
+              ],
+              "@S/body/1/0": [
+                false
+              ]
+            },
+            "status": "conflict"
+          },
+          "kind": "closed"
+        },
+        {
+          "context": "root/1",
+          "trace": {
+            "assumptions": {
+              "p": true,
+              "S": true
+            },
+            "steps": [
+              {
+                "factor": "f:S/body/0",
+                "variable": "@S/body/0",
+                "before": {
+                  "@S/body/0": [
+                    false,
+                    true
+                  ],
+                  "p": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:S/body/1/0",
+                "variable": "@S/body/1/0",
+                "before": {
+                  "@S/body/1/0": [
+                    false,
+                    true
+                  ],
+                  "S": [
+                    true
+                  ]
+                },
+                "after": [
+                  true
+                ]
+              },
+              {
+                "factor": "f:S/body/1",
+                "variable": "@S/body/1",
+                "before": {
+                  "@S/body/1": [
+                    false,
+                    true
+                  ],
+                  "@S/body/1/0": [
+                    true
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "f:S/body",
+                "variable": "@S/body",
+                "before": {
+                  "@S/body": [
+                    false,
+                    true
+                  ],
+                  "@S/body/0": [
+                    true
+                  ],
+                  "@S/body/1": [
+                    false
+                  ]
+                },
+                "after": [
+                  false
+                ]
+              },
+              {
+                "factor": "agree:S",
+                "variable": "S",
+                "before": {
+                  "S": [
+                    true
+                  ],
+                  "@S/body": [
+                    false
+                  ]
+                },
+                "after": []
+              }
+            ],
+            "domains": {
+              "p": [
+                true
+              ],
+              "S": [],
+              "@S/body": [
+                false
+              ],
+              "@S/body/0": [
+                true
+              ],
+              "@S/body/1": [
+                false
+              ],
+              "@S/body/1/0": [
+                true
+              ]
+            },
+            "status": "conflict"
+          },
+          "kind": "closed"
+        }
+      ]
+    }
+  },
+  "views": {
+    "ordinary": [
+      {
+        "values": {
+          "S": false
+        },
+        "witnesses": [
+          "ordinary:case:0"
+        ]
+      },
+      {
+        "values": {
+          "S": true
+        },
+        "witnesses": [
+          "ordinary:case:3"
+        ]
+      }
+    ],
+    "negation": [
+      {
+        "values": {
+          "S": false
+        },
+        "witnesses": [
+          "negation:case:2"
+        ]
+      },
+      {
+        "values": {
+          "S": true
+        },
+        "witnesses": [
+          "negation:case:1"
+        ]
+      }
+    ],
+    "conjunction": [
+      {
+        "values": {
+          "S": false
+        },
+        "witnesses": [
+          "conjunction:case:0",
+          "conjunction:case:2",
+          "conjunction:case:4"
+        ]
+      },
+      {
+        "values": {
+          "S": true
+        },
+        "witnesses": [
+          "conjunction:case:7"
+        ]
+      }
+    ],
+    "teller": [
+      {
+        "values": {
+          "S": false
+        },
+        "witnesses": [
+          "teller:case:0"
+        ]
+      },
+      {
+        "values": {
+          "S": true
+        },
+        "witnesses": [
+          "teller:case:1"
+        ]
+      }
+    ],
+    "liar": [],
+    "snow": [
+      {
+        "values": {
+          "S": false
+        },
+        "witnesses": [
+          "snow:case:0"
+        ]
+      }
+    ],
+    "odd-pair": [],
+    "opposite": [
+      {
+        "values": {
+          "A": false,
+          "B": true
+        },
+        "witnesses": [
+          "opposite:case:1"
+        ]
+      },
+      {
+        "values": {
+          "A": true,
+          "B": false
+        },
+        "witnesses": [
+          "opposite:case:2"
+        ]
+      }
+    ],
+    "hidden-liar": [],
+    "branch": [
+      {
+        "values": {
+          "A": true,
+          "B": true,
+          "C": false
+        },
+        "witnesses": [
+          "branch:case:6"
+        ]
+      }
+    ],
+    "snow:all-hide-p": [
+      {
+        "values": {
+          "S": false
+        },
+        "witnesses": [
+          "snow:case:0",
+          "snow:case:2"
+        ]
+      },
+      {
+        "values": {
+          "S": true
+        },
+        "witnesses": [
+          "snow:case:1",
+          "snow:case:3"
+        ]
+      }
+    ]
+  }
+}

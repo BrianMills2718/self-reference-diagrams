@@ -81,3 +81,13 @@ Arrows summarize conversational progression, not implication. The JSON includes 
 The accepted direction is the [project contract](reasoning-objects.md). The exact schema, propagation rules, graphical marks, and view algorithms remain proposals. The next visual review concerns a connected schematic; documentation approval does not imply approval of those still-unseen marks.
 
 PR #4 is merged. PRs #2, #3, and #5 remain unmerged. The [standards mapping](standards-mapping.md) recommends established foundations for the next implementation. This trace records approval to conduct that work, not prior user approval of the resulting recommendation or graphical marks.
+
+## Research evidence added, 28 October 2026
+
+The [review atlas](../research/diagram-demo/index.html) is a concrete proposal
+under O02, with independent finite evidence relevant to O01/O03. It introduces
+no new user requirement and records no visual approval. Its coverage ledger
+leaves quantified sentence objects, arithmetic, and program semantics under O04.
+The experiment tests signed-cycle connectivity and explicitly exhibits the
+failure of a blanket negative-reference diagnosis for conjunctions. Sowa's
+contextual models remain under consideration for the broader foundation.

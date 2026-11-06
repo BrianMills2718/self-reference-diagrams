@@ -56,3 +56,16 @@ PR #4 established the inquiry graph. The current trace adds the prototype approv
 “Open” describes incomplete local investigation, not a truth value or a guarantee of globally compatible possibilities. The guided tutorial should show world cases explicitly and introduce one component at a time.
 
 Live site: https://self-reference-diagrams.pages.dev . This revision does not deploy or alter runtime pages.
+
+## Research continuation: 28 October 2026
+
+The [six-plate review atlas](research/diagram-demo/index.html) now provides
+ordinary inference, teller/liar, all snow candidates, scoped investigations,
+correlation-preserving views, and a signed-cycle signature with a counterexample
+outside its scope. Its [README](research/diagram-demo/README.md) assesses primary
+sources, explains the finite translation/checker, and accounts for the full zoo.
+The independent Python experiment retains syntax, candidate failures, scoped
+branch certificates, and projection witnesses in `evidence.json`. It does not
+extend the production engine or establish visual approval. The next checkpoint
+is intelligibility of these actual drawings. PRs #3, #5, and #6 were still open;
+this continuation was built directly on main, without importing their code.

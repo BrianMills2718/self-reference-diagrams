@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="650" viewBox="0 0 1020 650" role="img" aria-label="Conjunction reasoning in Peirce and factor graph notation">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283e} .small{font-size:13px} .body{font-size:16px} .title{font-size:23px;font-weight:700} .var{font-size:17px;font-weight:700} .label{font-size:12px;fill:#536477}</style>
+<rect width="1020" height="650" fill="#f7f9fc"/>
+<text x="30" y="38" class="title" text-anchor="start">01  |  Start with ordinary reasoning</text>
+<text x="30" y="70" class="body" text-anchor="start">p means snow is falling; q means wind is blowing. S says p AND q.</text>
+<rect x="25" y="95" width="970" height="180" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="125" class="var" text-anchor="start">Peirce’s assertion sheet: juxtaposition means AND</text>
+<rect x="70" y="155" width="260" height="70" fill="none" stroke="#8190a0"/>
+<text x="140" y="200" class="title" text-anchor="start">p</text>
+<text x="255" y="200" class="title" text-anchor="start">q</text>
+<line x1="355" y1="190" x2="610" y2="190" stroke="#8190a0" stroke-width="2" />
+<text x="482.5" y="181.0" class="small" text-anchor="middle">erase q in a positive area</text>
+<path d="M600 184 L610 190 L600 196" fill="none" stroke="#8190a0" stroke-width="2"/>
+<rect x="640" y="155" width="260" height="70" fill="none" stroke="#8190a0"/>
+<text x="770" y="200" class="title" text-anchor="middle">p</text>
+<rect x="25" y="295" width="970" height="265" rx="14" fill="white" stroke="#d6dfe8"/>
+<text x="45" y="325" class="var" text-anchor="start">Factor graph: circles hold variables; squares impose joint conditions</text>
+<line x1="473.0" y1="450.0" x2="344.0" y2="450.0" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="f:S/body" data-variable="@S/body"/>
+<line x1="156.52939663382082" y1="420.019075038831" x2="286.0" y2="444.5135135135135" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="f:S/body" data-variable="p"/>
+<line x1="156.0648116117632" y1="492.9554563211451" x2="286.0" y2="457.8378378378378" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="f:S/body" data-variable="q"/>
+<line x1="828.0" y1="450.0" x2="709.0" y2="450.0" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="agree:S" data-variable="S"/>
+<line x1="527.0" y1="450.0" x2="651.0" y2="450.0" stroke="#8190a0" stroke-width="2" data-object="conjunction" data-factor="agree:S" data-variable="@S/body"/>
+<g data-object="conjunction" data-variable-node="p"><circle cx="130" cy="415" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="130" y="421" class="var" text-anchor="middle">p</text>
+<rect x="120.0" y="448" width="20" height="20" fill="white"/>
+<text x="130" y="463" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-variable-node="q"><circle cx="130" cy="500" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="130" y="506" class="var" text-anchor="middle">q</text>
+<rect x="120.0" y="533" width="20" height="20" fill="white"/>
+<text x="130" y="548" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-variable-node="S"><circle cx="855" cy="450" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="855" y="456" class="var" text-anchor="middle">s</text>
+<rect x="845.0" y="483" width="20" height="20" fill="white"/>
+<text x="855" y="498" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-variable-node="@S/body"><circle cx="500" cy="450" r="27" fill="#ffffff" stroke="#14283e" stroke-width="2"/>
+<text x="500" y="456" class="var" text-anchor="middle">b</text>
+<rect x="490.0" y="483" width="20" height="20" fill="white"/>
+<text x="500" y="498" class="var" text-anchor="middle" style="fill:#126b4b">T</text>
+</g>
+<g data-object="conjunction" data-factor-node="f:S/body"><rect x="286" y="428" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="315" y="456" class="var" text-anchor="middle">AND</text>
+</g>
+<g data-object="conjunction" data-factor-node="agree:S"><rect x="651" y="428" width="58" height="44" rx="2" fill="#edf2f7" stroke="#14283e" stroke-width="2"/>
+<text x="680" y="456" class="var" text-anchor="middle">=</text>
+</g>
+<text x="30" y="596" class="body" text-anchor="start">Suppose s=T. The = constraint forces b=T; AND then forces both p=T and q=T.</text>
+<text x="30" y="624" class="small" text-anchor="start">The sheet proof uses erasure. The network proof uses checked local relation reduction.</text>
+</svg>
