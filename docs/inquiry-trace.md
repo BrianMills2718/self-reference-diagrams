@@ -20,6 +20,12 @@ flowchart TD
   Q11 --> Q12["Checkable substrate; intractable instances"]
   Q12 --> Q14["Objects broader than sentences"]
   Q14 --> Q15["Repository alignment authorized"]
+  Q15 --> Q16["Prototype authorized"]
+  Q16 --> Q17["World labels and tutorial questioned"]
+  Q17 --> Q18["Primitives questioned"]
+  Q18 --> Q19["Entities and proofs distinguished"]
+  Q19 --> Q20["Existing foundations required"]
+  Q20 --> Q21["Mapping authorized"]
 ```
 
 Arrows summarize conversational progression, not implication. The JSON includes typed relations and additional open obligations.
@@ -47,6 +53,14 @@ Arrows summarize conversational progression, not implication. The JSON includes 
 | O02 | open | **Review a connected schematic.** No new gate or pathway notation has been visually approved. |
 | O03 | open | **Prove view guarantees within declared scope.** Projection must preserve dependencies and supporting extensions; approximate summaries require explicit guarantees. |
 | O04 | open | **Formalize richer self-reference and program behavior.** Strange loops require precise examples; arithmetic and halting need encodings and assumptions beyond predicate labels. |
+| Q16 | accepted | **Merge contract and prepare executable snow-object review.** After the assistant proposed merging PR #4 and preparing a checked snow object and schematic, the user approved. The approval did not approve unseen graphical marks. |
+| Q17 | accepted | **Explain world cases and introduce one piece at a time.** The user did not understand the world-fact T/F-open label, asked whether it covered relevant worlds, and requested a gradual tutorial. The assistant supplied a 15-stage conversational walkthrough. |
+| Q18 | accepted | **Recover the inventory of primitives.** The user asked for the ontological primitives after losing track. The assistant gave a component inventory that insufficiently distinguished mathematical levels. |
+| Q19 | accepted | **Separate entities, names, references, and entailments.** The user questioned missing ordinary entities, the meaning of reference, and whether inference records were entailments. The assistant clarified denotation and proof/consequence distinctions. |
+| Q20 | accepted | **Use existing formalizations instead of inventing elementary logic.** The user challenged the plausibility of creating these foundations ourselves. The assistant acknowledged that the basic distinctions and much graphical logic are already established. |
+| Q21 | accepted | **Research the mapping and select a foundation.** The user authorized mapping project components to established definitions and comparing foundations before further custom primitives. |
+| D01 | proposed | **Compose model theory, finite constraints, established proofs, and relational views.** Research recommendation: use existing mathematical structures and prove the project's translations. The exact implementation and final graphical notation remain reviewable choices. |
+| O05 | open | **Validate translations into established frameworks.** Compile supported syntax to constraints with a correspondence argument, connect proof records to a named calculus, and state each view's preservation contract. Existing formalizations do not certify unverified application code. |
 
 ## Corrections retained
 
@@ -58,8 +72,12 @@ Arrows summarize conversational progression, not implication. The JSON includes 
 - “Relevant subset” was refined into restriction, projection, collapse, or abstraction, each requiring its own preservation contract.
 - Infinity-groupoids and the ruliad remain exploratory analogies. No higher reversible structure or universal-computation ontology is adopted.
 
+- The apparent inventory of new primitives is now mapped to established syntax, model theory, proof theory, constraints, and relational queries.
+- “Reference” is split into denotation, variable binding, sentence identification, and explicit quotation/coding when supported.
+- The instruction to show one component at a time remains a tutorial requirement, even when the complete object is formalized.
+
 ## Current decision and next review
 
 The accepted direction is the [project contract](reasoning-objects.md). The exact schema, propagation rules, graphical marks, and view algorithms remain proposals. The next visual review concerns a connected schematic; documentation approval does not imply approval of those still-unseen marks.
 
-PR #2's earlier tutorial and PR #3's finite example suite are separate unmerged work. This trace does not treat them as approved or import their implementations.
+PR #4 is merged. PRs #2, #3, and #5 remain unmerged. The [standards mapping](standards-mapping.md) recommends established foundations for the next implementation. This trace records approval to conduct that work, not prior user approval of the resulting recommendation or graphical marks.

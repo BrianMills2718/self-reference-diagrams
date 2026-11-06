@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-27",
-  "scope": "Curated trace of the available conversation; paraphrases, not verbatim quotations. This inquiry provenance graph is not an implementation of the proposed reasoning-object substrate.",
+  "scope": "Curated trace of the available conversation; paraphrases, not verbatim quotations. This inquiry provenance graph is not an implementation of the proposed reasoning-object substrate. Updated through the standards-mapping authorization. No unmerged implementation is incorporated.",
   "statusDefinitions": {
     "accepted": "Explicit user request, correction, or approval.",
     "accepted_direction": "Assistant clarification consistent with subsequent user direction; exact mechanism not separately approved.",
@@ -200,6 +200,86 @@
         "kind": "conversation_paraphrase",
         "text": "Strange loops require precise examples; arithmetic and halting need encodings and assumptions beyond predicate labels."
       }
+    },
+    {
+      "id": "Q16",
+      "type": "authorization",
+      "status": "accepted",
+      "title": "Merge contract and prepare executable snow-object review",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "After the assistant proposed merging PR #4 and preparing a checked snow object and schematic, the user approved. The approval did not approve unseen graphical marks."
+      }
+    },
+    {
+      "id": "Q17",
+      "type": "correction",
+      "status": "accepted",
+      "title": "Explain world cases and introduce one piece at a time",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "The user did not understand the world-fact T/F-open label, asked whether it covered relevant worlds, and requested a gradual tutorial. The assistant supplied a 15-stage conversational walkthrough."
+      }
+    },
+    {
+      "id": "Q18",
+      "type": "question",
+      "status": "accepted",
+      "title": "Recover the inventory of primitives",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "The user asked for the ontological primitives after losing track. The assistant gave a component inventory that insufficiently distinguished mathematical levels."
+      }
+    },
+    {
+      "id": "Q19",
+      "type": "correction",
+      "status": "accepted",
+      "title": "Separate entities, names, references, and entailments",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "The user questioned missing ordinary entities, the meaning of reference, and whether inference records were entailments. The assistant clarified denotation and proof/consequence distinctions."
+      }
+    },
+    {
+      "id": "Q20",
+      "type": "correction",
+      "status": "accepted",
+      "title": "Use existing formalizations instead of inventing elementary logic",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "The user challenged the plausibility of creating these foundations ourselves. The assistant acknowledged that the basic distinctions and much graphical logic are already established."
+      }
+    },
+    {
+      "id": "Q21",
+      "type": "authorization",
+      "status": "accepted",
+      "title": "Research the mapping and select a foundation",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "The user authorized mapping project components to established definitions and comparing foundations before further custom primitives."
+      }
+    },
+    {
+      "id": "D01",
+      "type": "proposal",
+      "status": "proposed",
+      "title": "Compose model theory, finite constraints, established proofs, and relational views",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "Research recommendation: use existing mathematical structures and prove the project's translations. The exact implementation and final graphical notation remain reviewable choices."
+      }
+    },
+    {
+      "id": "O05",
+      "type": "open_obligation",
+      "status": "open",
+      "title": "Validate translations into established frameworks",
+      "evidence": {
+        "kind": "conversation_paraphrase",
+        "text": "Compile supported syntax to constraints with a correspondence argument, connect proof records to a named calculus, and state each view's preservation contract. Existing formalizations do not certify unverified application code."
+      }
     }
   ],
   "edges": [
@@ -292,6 +372,56 @@
       "from": "Q04",
       "to": "O04",
       "relation": "motivates"
+    },
+    {
+      "from": "Q15",
+      "to": "Q16",
+      "relation": "followed_by"
+    },
+    {
+      "from": "Q16",
+      "to": "Q17",
+      "relation": "reviewed_by"
+    },
+    {
+      "from": "Q17",
+      "to": "Q18",
+      "relation": "followed_by"
+    },
+    {
+      "from": "Q18",
+      "to": "Q19",
+      "relation": "clarified_by"
+    },
+    {
+      "from": "Q19",
+      "to": "Q20",
+      "relation": "challenged_by"
+    },
+    {
+      "from": "Q20",
+      "to": "Q21",
+      "relation": "authorized_by"
+    },
+    {
+      "from": "Q21",
+      "to": "D01",
+      "relation": "motivates"
+    },
+    {
+      "from": "D01",
+      "to": "O05",
+      "relation": "requires"
+    },
+    {
+      "from": "D01",
+      "to": "O01",
+      "relation": "refines"
+    },
+    {
+      "from": "Q17",
+      "to": "O02",
+      "relation": "refines"
     }
   ]
 }

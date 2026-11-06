@@ -6,6 +6,8 @@ The sentence is one component of an object. Worlds are not permanently inputs; a
 
 ## Current direction and status
 
+Start with the [standards mapping and foundation recommendation](docs/standards-mapping.md): ordinary model theory, finite constraint satisfaction, established proof calculi, and relational views. The linked reasoning object is an application record assembled from these structures, not a newly invented ontology.
+
 - [Project contract](docs/reasoning-objects.md): goals, terminology, formal kernel, view guarantees, and acceptance criteria.
 - [Inquiry graph and conversation trace](docs/inquiry-trace.md): how the requirements developed, including corrections and open questions.
 - [Machine-readable inquiry graph](docs/inquiry-graph.json): typed nodes, relations, and paraphrased conversational evidence.
@@ -40,7 +42,7 @@ Live site: https://self-reference-diagrams.pages.dev
 
 Run `bash tests/run-all.sh` (requires Node). Read-back consumes structured geometric data, not arbitrary pixels. A bounded unfolding failure is not a proof of inconsistency.
 
-The proposed example suite in PR #3 and earlier tutorial experiment in PR #2 are separate, unmerged work as of this revision. This change is based directly on main and depends on neither.
+PR #4's contract is merged. The example suite in PR #3, earlier tutorial in PR #2, and finite prototype in PR #5 remain separate, unmerged work as of this revision. This standards mapping is based directly on main and depends on none of those PRs.
 
 ## Sources and deployment
 
